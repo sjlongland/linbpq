@@ -26,6 +26,7 @@ along with LinBPQ/BPQ32.  If not, see http://www.gnu.org/licenses
 
 #include <stdio.h>
 #include <time.h>
+#include "roundptr.h"
 
 #ifdef WIN32
 //#include <Psapi.h>
@@ -5878,7 +5879,6 @@ VOID AddVirtualKISSPort(struct TNCINFO * TNC, int ARDOPPort, char * buf)
 	int space = &DATAAREA[DATABYTES] - NEXTFREEDATA;
 	char Msg[64];
 	unsigned char * ptr3;
-	unsigned int3;
 	int newPortNumber = 0;
 
 	if (TNC->ARDOPCommsMode == 'T')			// TCP
@@ -5908,11 +5908,7 @@ VOID AddVirtualKISSPort(struct TNCINFO * TNC, int ARDOPPort, char * buf)
 	ptr3 += sizeof (struct PORTCONTROL);
 
 	//	Round to word boundary (for ARM5 etc)
-
-	int3 = (int)ptr3;
-	int3 += 3;
-	int3 &= 0xfffffffc;
-	ptr3 = (UCHAR *)int3;
+	ptr3 = (UCHAR *)roundPtr(ptr3);
 
 	PORTVEC->PORTPOINTER = PORT;		// Chain to previous last port
 
@@ -5979,11 +5975,7 @@ VOID AddVirtualKISSPort(struct TNCINFO * TNC, int ARDOPPort, char * buf)
 	ptr3 += MHENTRIES * sizeof(MHSTRUC);
 
 	//	Round to word boundary (for ARM5 etc)
-
-	int3 = (int)ptr3;
-	int3 += 3;
-	int3 &= 0xfffffffc;
-	ptr3 = (UCHAR *)int3;
+	ptr3 = (UCHAR *)roundPtr(ptr3);
 
 	NEXTFREEDATA = ptr3;
 

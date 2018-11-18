@@ -34,6 +34,10 @@ along with LinBPQ/BPQ32.  If not, see http://www.gnu.org/licenses
 #include "stdio.h"
 #include <fcntl.h>
 
+#include <stdint.h>
+
+#include "roundptr.h"
+
 #include "kernelresource.h"
 #include "CHeaders.h"
 
@@ -566,7 +570,7 @@ BOOL Start()
 
 	unsigned char * ptr2, * ptr3, * ptr4;
 	USHORT * CWPTR;
-	int i, n, int3;
+	int i, n;
 
 	NEXTFREEDATA = &DATAAREA[0];			// For Reinit
 
@@ -1006,11 +1010,7 @@ BOOL Start()
 			ptr3 ++;							// Terminating NULL
 
 			//	Round to word boundary (for ARM5 etc)
-
-			int3 = (int)ptr3;
-			int3 += 3;
-			int3 &= 0xfffffffc;
-			ptr3 = (UCHAR *)int3;
+			ptr3 = (UCHAR *)roundPtr(ptr3);
 
 			PORT->PORTPOINTER = (struct PORTCONTROL *)ptr3;
 		}
@@ -1042,10 +1042,7 @@ BOOL Start()
 
 			//	Round to word boundsaty (for ARM5 etc)
 
-			int3 = (int)ptr3;
-			int3 += 3;
-			int3 &= 0xfffffffc;
-			ptr3 = (UCHAR *)int3;
+			ptr3 = (UCHAR *)roundPtr(ptr3);
 
 			PORT->PORTPOINTER = (struct PORTCONTROL *)ptr3;
 		}
@@ -1062,11 +1059,7 @@ BOOL Start()
 			ptr3 += MHENTRIES * sizeof(MHSTRUC);
 
 			//	Round to word boundsaty (for ARM5 etc)
-
-			int3 = (int)ptr3;
-			int3 += 3;
-			int3 &= 0xfffffffc;
-			ptr3 = (UCHAR *)int3;
+			ptr3 = (UCHAR *)roundPtr(ptr3);
 
 			PORT->PORTPOINTER = (struct PORTCONTROL *)ptr3;
 		}
@@ -1233,11 +1226,7 @@ BOOL Start()
 
 	IDHDDR.LENGTH = ptr3 - (unsigned char *)&IDHDDR;
 
-	{
-		UINT X = (UINT)NEXTFREEDATA;
-		X = (X + 3)& 0x0FFFFFFFC;	// MASK TO DWORD
-		NEXTFREEDATA = (UCHAR *)X;
-	}
+	NEXTFREEDATA = (UCHAR*)roundPtr(NEXTFREEDATA);
 	BUFFERPOOL = NEXTFREEDATA;
 
 	Consoleprintf("PORTS %x LINKS %x DESTS %x ROUTES %x L4 %x BUFFERS %x\n",

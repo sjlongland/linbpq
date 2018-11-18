@@ -15,14 +15,14 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with LinBPQ/BPQ32.  If not, see http://www.gnu.org/licenses
-*/	
+*/
 
 //
 //	C replacement for Main.asm
 //
 #define Kernel
 
-#define _CRT_SECURE_NO_DEPRECATE 
+#define _CRT_SECURE_NO_DEPRECATE
 #define _USE_32BIT_TIME_T
 
 #pragma data_seg("_BPQDATA")
@@ -32,7 +32,7 @@ along with LinBPQ/BPQ32.  If not, see http://www.gnu.org/licenses
 
 #include "time.h"
 #include "stdio.h"
-#include <fcntl.h>					 
+#include <fcntl.h>
 
 #include "kernelresource.h"
 #include "CHeaders.h"
@@ -63,7 +63,7 @@ struct DEST_LIST * DESTS = NULL;		// NODE LIST
 int  DEST_LIST_LEN = sizeof(struct DEST_LIST);
 
 struct _LINKTABLE * LINKS = NULL;
-int	LINK_TABLE_LEN = sizeof (struct _LINKTABLE); 
+int	LINK_TABLE_LEN = sizeof (struct _LINKTABLE);
 int	MAXLINKS = 30;
 
 
@@ -111,12 +111,12 @@ int PACLEN = 100;				//MAX PACKET SIZE
 
 int T3 = 3*61*3;				// LINK VALIDATION TIMER (3 MINS) (+ a bit to reduce RR collisions)
 
-int L2KILLTIME = 16*60*3;		// IDLE LINK TIMER (16 MINS)	
+int L2KILLTIME = 16*60*3;		// IDLE LINK TIMER (16 MINS)
 int L3LIVES = 15;				// MAX L3 HOPS
 int L4N2 =  3;					// LEVEL 4 RETRY COUNT
 int L4LIMIT = 60*15;			// IDLE SESSION LIMIT - 15 MINS
 int L4DELAY = 5;				// L4 DELAYED ACK TIMER
-	
+
 int BBS = 1;					// INCLUDE BBS SUPPORT
 int NODE = 1;					// INCLUDE SWITCH SUPPORT
 
@@ -167,7 +167,7 @@ UCHAR BBSALIAS[7] = "";
 
 UCHAR AX25CALL[7] = "";				// WORK AREA FOR AX25 <> NORMAL CALL CONVERSION
 UCHAR NORMCALL[10] = "";			// CALLSIGN IN NORMAL FORMAT
-int NORMLEN	= 0;					// LENGTH OF CALL IN NORMCALL	
+int NORMLEN	= 0;					// LENGTH OF CALL IN NORMCALL
 
 int CURRENTPORT = 0;				// PORT FOR CURRENT MESSAGE
 VOID * CURRENTPORTPTR = NULL;		// PORT CONTROL TABLE ENTRY FOR CURRENT PORT
@@ -182,7 +182,7 @@ UCHAR TEMPFIELD[7] = "";			// ADDRESS WORK FILED
 UINT TRACE_Q	= 0;				// TRANSMITTED FRAMES TO BE TRACED
 
 int RANDOM = 0;						// 'RANDOM' NUMBER FOR PERSISTENCE CALCS
- 
+
 int L2TIMERFLAG = 0;				// INCREMENTED AT 18HZ BY TIMER INTERRUPT
 int L3TIMERFLAG = 0;				// DITTO
 int L4TIMERFLAG = 0;				// DITTO
@@ -220,7 +220,7 @@ struct _MESSAGE IDHDDR = {0,0,23,0,0,3, 240};
 VOID * IDMSG = &IDHDDR;
 
 //DD	0		; CHAIN
-//			DB	0		; PORT	
+//			DB	0		; PORT
 int BTLENGTH = 9; //	DW	9		; LENGTH
 //			DB	0F0H		; PID
 char BTEXTFLD[256] ="\r";
@@ -228,7 +228,7 @@ char BTEXTFLD[256] ="\r";
 char BridgeMap[33][33] = {0};
 
 // Keep Buffers at end
-	
+
 #define DATABYTES 400000		// WAS 320000
 
 UCHAR DATAAREA[DATABYTES] = "";
@@ -262,7 +262,7 @@ VOID LINKTX(PEXTPORTDATA PORTVEC, UINT * Buffer)
 {
 	//	LOOP BACK TO SWITCH
 	struct _LINKTABLE * LINK;
-	
+
 	LINK = (struct _LINKTABLE *)Buffer[(BUFFLEN-4)/4];
 
 	if (LINK)
@@ -285,7 +285,7 @@ VOID LINKRX()
 VOID LINKTIMER()
 {
 }
-	
+
 VOID LINKCLOSE()
 {
 }
@@ -294,7 +294,7 @@ VOID LINKCLOSE()
 VOID EXTCLOSE()
 {
 }
-	
+
 BOOL KISSTXCHECK()
 {
 	return 0;
@@ -313,13 +313,13 @@ int Dummy()				// Dummy for missing EXT Driver
 VOID EXTINIT(PEXTPORTDATA PORTVEC)
 {
 	// LOAD DLL - NAME IS IN PORT_DLL_NAME
-	
+
 	VOID * Routine;
 
 	PORTVEC->PORT_EXT_ADDR = Dummy;
 
 	Routine = (VOID *)InitializeExtDriver(PORTVEC);
-	
+
 	if (Routine == 0)
 	{
 		WritetoConsoleLocal("Driver installation failed\n");
@@ -341,15 +341,15 @@ VOID EXTTX(PEXTPORTDATA PORTVEC, MESSAGE * Buffer)
 	struct _LINKTABLE * LINK;
 	struct PORTCONTROL * PORT = (struct PORTCONTROL *)PORTVEC;
 
-//	RESET TIMER, unless BAYCOM 
+//	RESET TIMER, unless BAYCOM
 
 	if (PORT->KISSFLAGS == 255)	// Used for BAYCOM
 	{
 		PORTVEC->PORT_EXT_ADDR(2, PORT->PORTNUMBER, Buffer);
-		
+
 		return;				// Baycom driver passes frames to trace once sent
 	}
-	
+
 	LINK = Buffer->Linkptr;
 
 	if (LINK)
@@ -359,20 +359,20 @@ VOID EXTTX(PEXTPORTDATA PORTVEC, MESSAGE * Buffer)
 
 		Buffer->Linkptr = 0;	// CLEAR FLAG FROM BUFFER
 	}
-	
+
 	PORTVEC->PORT_EXT_ADDR(2, PORT->PORTNUMBER, Buffer);
-	
+
 	if (PORT->PROTOCOL == 10)
 	{
 		ReleaseBuffer(Buffer);
 		return;
 	}
-	
+
 	C_Q_ADD(&TRACE_Q, Buffer);
 
 	return;
 
-}	
+}
 
 VOID EXTRX(PEXTPORTDATA PORTVEC)
 {
@@ -391,7 +391,7 @@ Loop:
 		return;
 
 	Len = PORTVEC->PORT_EXT_ADDR(1, PORT->PORTNUMBER, Message);
-	
+
 	if (Len == 0)
 	{
 		ReleaseBuffer((UINT *)Message);
@@ -400,17 +400,17 @@ Loop:
 
 	if (PORT->PROTOCOL == 10)
 	{
-		//	PACTOR Style Port - Negative values used to report events - for now -1 = Disconnected  
+		//	PACTOR Style Port - Negative values used to report events - for now -1 = Disconnected
 
 		if (Len == -1)
 		{
 			int Sessno = Message->PORT;
 			TRANSPORTENTRY * Session;
-	
+
 			ReleaseBuffer((UINT *)Message);
-		
+
 			// GET RID OF ANY SESSION ENTRIES
-	
+
 			Session = PORTVEC->ATTACHEDSESSIONS[Sessno];
 
 			if (Session)
@@ -569,7 +569,7 @@ BOOL Start()
 	int i, n, int3;
 
 	NEXTFREEDATA = &DATAAREA[0];			// For Reinit
-	
+
 	memset(DATAAREA, 0, DATABYTES);
 
 	// Reinit everything in case of restart
@@ -592,7 +592,7 @@ BOOL Start()
 	TimeLoaded = time(NULL);
 
 	AUTOSAVE = cfg->C_AUTOSAVE;
-	
+
 	if (cfg->C_L4APPL)
 		L4APPL = cfg->C_L4APPL;
 
@@ -600,7 +600,7 @@ BOOL Start()
 
 	IPRequired = cfg->C_IP;
 	PMRequired = cfg->C_PM;
-	
+
 	if (cfg->C_MAXHOPS)
 		MaxHops = cfg->C_MAXHOPS;
 
@@ -661,11 +661,11 @@ BOOL Start()
 	}
 
 	BBSQUAL = cfg->C_BBSQUAL;
-	
+
 	//	copy MYCALL to NETROMCALL
 
 	memcpy(MYNETROMCALL, MYNODECALL, 10);
-	
+
 	//	if NETROMCALL Defined, use it
 
 	if (cfg->C_NETROMCALL[0])
@@ -736,7 +736,7 @@ BOOL Start()
 
 	CMD = &COMMANDS[0];
 	n = 0;
-	
+
 	for (n = 0; n < NUMBEROFCOMMANDS; n++)
 	{
 		if (APPL1 == 0 && CMD->String[0] == '*')		// First appl
@@ -747,7 +747,7 @@ BOOL Start()
 
 		if (PASSCMD == 0 && memcmp(CMD->String, "PASSWORD", 8) == 0)
 			PASSCMD = n;
-		
+
 		CMD++;
 	}
 
@@ -765,12 +765,12 @@ BOOL Start()
 		if (ptr1->Command[0] != ' ')
 		{
 			ptr2 = (char *)&COMMANDS[APPL1 + i];
-	
+
 			memcpy(ptr2, ptr1, 12);
-		
+
 			// See if an Alias
-	
-			if (ptr1->CommandAlias[0] != ' ')	
+
+			if (ptr1->CommandAlias[0] != ' ')
 				memcpy(ptr3, ptr1->CommandAlias, ALIASLEN);
 
 			//	SET LENGTH FIELD
@@ -803,7 +803,7 @@ BOOL Start()
 	FULLPORT = (struct FULLPORTDATA *)PORTTABLE;
 
 	while (PortRec->PORTNUM)
-	{		
+	{
 		//	SET UP NEXT PORT PTR
 
 		PORT = &FULLPORT->PORTCONTROL;
@@ -823,7 +823,7 @@ BOOL Start()
 		PORT->PORTTIMERCODE = TIMERCODE[PORT->PORTTYPE / 2];	// ADDR OF INIT ROUTINE
 		PORT->PORTCLOSECODE = CLOSECODE[PORT->PORTTYPE / 2];	// ADDR OF INIT ROUTINE
 		PORT->PORTTXCHECKCODE = TXCHECKCODE[PORT->PORTTYPE / 2];	// ADDR OF INIT ROUTINE
-	
+
 
 		PORT->PROTOCOL = (char)PortRec->PROTOCOL;
 		PORT->IOBASE = PortRec->IOADDR;
@@ -839,13 +839,13 @@ BOOL Start()
 				sprintf(Name, "com%d", PORT->IOBASE);
 #else
 				sprintf(Name, "COM%d", PORT->IOBASE);
-#endif	
+#endif
 				PORT->SerialPortName = _strdup(Name);
 			}
 		}
 		PORT->INTLEVEL = (char)PortRec->INTLEVEL;
 		PORT->BAUDRATE = PortRec->SPEED;
-	
+
 		if (PORT->BAUDRATE == 49664)
 			PORT->BAUDRATE = (int)115200;
 
@@ -867,7 +867,7 @@ BOOL Start()
 			PORT->PORTSLOTTIME = (UCHAR)PortRec->SLOTTIME / 10;
 		else
 			PORT->PORTSLOTTIME = (UCHAR)PortRec->SLOTTIME;
-		
+
 		PORT->PORTPERSISTANCE = (UCHAR)PortRec->PERSIST;
 		PORT->FULLDUPLEX = (UCHAR)PortRec->FULLDUP;
 
@@ -878,7 +878,7 @@ BOOL Start()
 
 		PORT->PORTPACLEN = (UCHAR)PortRec->PACLEN;
 		PORT->QUAL_ADJUST = (UCHAR)PortRec->QUALADJUST;
-	
+
 		PORT->DIGIFLAG = PortRec->DIGIFLAG;
 		PORT->DIGIPORT = PortRec->DIGIPORT;
 		PORT->DIGIMASK = PortRec->DIGIMASK;
@@ -926,7 +926,7 @@ BOOL Start()
 
 		ptr2 = &PortRec->CWID[0];
 		CWPTR = &PORT->CWID[0];
-		
+
 		PORT->CWIDTIMER = (29 - PORT->PORTNUMBER) * 600; // TICKSPERMINUTE
 		PORT->CWPOINTER = &PORT->CWID[0];
 
@@ -986,7 +986,7 @@ BOOL Start()
 
 		if (*(ptr2))
 		{
-			ptr3 = (char *)PORT->PORTPOINTER;				// Permitted Calls follows Port Info 
+			ptr3 = (char *)PORT->PORTPOINTER;				// Permitted Calls follows Port Info
 			PORT->PERMITTEDCALLS = ptr3;
 
 			while (*(ptr2) > 32)
@@ -1021,7 +1021,7 @@ BOOL Start()
 
 		if (*(ptr2))
 		{
-			ptr3 = (char *)PORT->PORTPOINTER;				// Unproto follows port info  
+			ptr3 = (char *)PORT->PORTPOINTER;				// Unproto follows port info
 			PORT->PORTUNPROTO = ptr3;
 
 			while (*(ptr2) > 32)
@@ -1046,7 +1046,7 @@ BOOL Start()
 			int3 += 3;
 			int3 &= 0xfffffffc;
 			ptr3 = (UCHAR *)int3;
- 
+
 			PORT->PORTPOINTER = (struct PORTCONTROL *)ptr3;
 		}
 
@@ -1056,11 +1056,11 @@ BOOL Start()
 		{
 			NEEDMH = 1;								// Include MH in Command List
 
-			ptr3 = (char *)PORT->PORTPOINTER;				// Permitted Calls follows Port Info 
+			ptr3 = (char *)PORT->PORTPOINTER;				// Permitted Calls follows Port Info
 			PORT->PORTMHEARD = (PMHSTRUC)ptr3;
 
 			ptr3 += MHENTRIES * sizeof(MHSTRUC);
-	
+
 			//	Round to word boundsaty (for ARM5 etc)
 
 			int3 = (int)ptr3;
@@ -1082,13 +1082,13 @@ BOOL Start()
 
 	//	SET UP APPLICATION CALLS AND ALIASES
 
-	APPL = &APPLCALLTABLE[0]; 
+	APPL = &APPLCALLTABLE[0];
 
 	ptr2 = ConfigBuffer + ApplOffset;
 	ptr1 = (struct APPLCONFIG *)ptr2;
 
 	i = NumberofAppls;
-	
+
 	if (ptr1->ApplCall[0] == ' ')
 	{
 		//	APPL1CALL IS NOT SPECIFED - LEAVE VALUES SET FROM BBSCALL
@@ -1105,8 +1105,8 @@ BOOL Start()
 		memcpy(APPL->APPLALIAS_TEXT, ptr1->ApplAlias, 10);
 		ConvToAX25(APPL->APPLALIAS_TEXT, APPL->APPLALIAS);
 		ConvToAX25(ptr1->L2Alias, APPL->L2ALIAS);
-		memcpy(APPL->APPLCMD, ptr1->Command, 12);	
-	
+		memcpy(APPL->APPLCMD, ptr1->Command, 12);
+
 		APPL->APPLQUAL = ptr1->ApplQual;
 
 		if (ptr1->CommandAlias[0] != ' ')
@@ -1144,11 +1144,11 @@ BOOL Start()
 	while (*(ptr2))
 	{
 		int FRACK;
-		
+
 		ConvToAX25(ptr2, ROUTE->NEIGHBOUR_CALL);
 		ROUTE->NEIGHBOUR_QUAL = ptr2[10];
 		ROUTE->NEIGHBOUR_PORT = ptr2[11];
-		
+
 		PORT = GetPortTableEntryFromPortNum(ROUTE->NEIGHBOUR_PORT);
 
 		if (ptr2[12] & 0x40)
@@ -1166,14 +1166,14 @@ BOOL Start()
 		ROUTE->NBOUR_MAXFRAME = ptr2[12] & 0x3f;
 
 		FRACK = ptr2[13] | ptr2[14] << 8;
-		ROUTE->NBOUR_FRACK = FRACK / 333; 
+		ROUTE->NBOUR_FRACK = FRACK / 333;
 
 		ROUTE->NBOUR_PACLEN = ptr2[15];
 
 		ROUTE->OtherendsRouteQual = ROUTE->OtherendLocked = ptr2[16];
 
 		ROUTE->NEIGHBOUR_FLAG = 1;			// Locked
-		
+
 		ptr2 += 17;
 		ROUTE++;
 	}
@@ -1300,7 +1300,7 @@ BOOL Start()
 	{
 		// Add Application Entries
 
-		APPL = &APPLCALLTABLE[0]; 
+		APPL = &APPLCALLTABLE[0];
 		i = NumberofAppls;
 
 		while (i--)
@@ -1468,7 +1468,7 @@ VOID ReadNodes()
 		{
 			struct ROUTE * ROUTE = NULL;
 
-			//	FORMAT IS ROUTE ADD CALLSIGN  PORT QUAL (VIA .... 
+			//	FORMAT IS ROUTE ADD CALLSIGN  PORT QUAL (VIA ....
 
 			ptr = strtok_s(&line[10], seps, &Context);
 
@@ -1554,7 +1554,7 @@ VOID ReadNodes()
 			if (ptr == NULL) continue;
 			Qual = atoi(ptr);
 			ROUTE->NBOUR_PACLEN = Qual;
-	
+
 			ptr = strtok_s(NULL, seps, &Context);	// INP3
 			if (ptr == NULL) continue;
 			Qual = atoi(ptr);
@@ -1649,7 +1649,7 @@ RouteLoop:
 			{
 				OBSINIT = 255;			//; SPECIAL FOR LOCKED
 			}
-		
+
 			if (FindNeighbour(axcall, Port, &ROUTE))
 			{
 				PROCROUTES(DEST, ROUTE, Qual);
@@ -1691,7 +1691,7 @@ VOID TIMERINTERRUPT()
 //	CALL PORT TIMER ROUTINES
 
 	for (i = 0; i < NUMBEROFPORTS; i++)
-	{	
+	{
 		PORT->PORTTIMERCODE(PORT);
 		PORT = PORT->PORTPOINTER;
 	}
@@ -1730,7 +1730,7 @@ VOID TIMERINTERRUPT()
 		}
 */
 	}
-	
+
 	if (L4TIMERFLAG >= 10)				// 1 PER SEC
 	{
 		L4TIMERFLAG -= 10;
@@ -1760,7 +1760,7 @@ VOID TIMERINTERRUPT()
 
 		Message = (struct _MESSAGE *)Buffer;
 		Message->PORT |= 0x80;			// Set TX Bit
-	
+
 		BPQTRACE(Message, FALSE);		// Dont send TX'ed frames to APRS
 		ReleaseBuffer(Buffer);
 
@@ -1772,7 +1772,7 @@ VOID TIMERINTERRUPT()
 	PORT = PORTTABLE;
 
 	for (i = 0; i < NUMBEROFPORTS; i++)
-	{	
+	{
 		int Sent;
 
 		CURRENTPORT = PORT->PORTNUMBER;		 // PORT NUMBER
@@ -1783,7 +1783,7 @@ VOID TIMERINTERRUPT()
 		while (Buffer)
 		{
 			Message = (struct _MESSAGE *) Buffer;
-			
+
 			if (PORT->PROTOCOL == 10)
 			{
 				//	PACTOR Style Message
@@ -1806,11 +1806,11 @@ VOID TIMERINTERRUPT()
 					Buffer = Q_REM(&PORT->PORTRX_Q);
 					continue;
 				}
-			
+
 				Session->L4KILLTIMER = 0;		// Reset Idle Timeout
 
 				Partner = Session->L4CROSSLINK;
-	
+
 				if (Partner == NULL)
 				{
 					//	No Crosslink - pass to command handler
@@ -1850,11 +1850,11 @@ VOID TIMERINTERRUPT()
 			}
 
 			//	TIME STAMP IT
-	
+
 			time(&Message->Timestamp);
 
 			Message->PORT = CURRENTPORT;
-			
+
 			// Bridge if requested
 
 			for (toPort = 1; toPort <= NUMBEROFPORTS; toPort++)
@@ -1873,7 +1873,7 @@ VOID TIMERINTERRUPT()
 							PUT_ON_PORT_Q(BPORT, BBuffer);
 						else
 							ReleaseBuffer(BBuffer);
-					}	
+					}
 				}
 			}
 
@@ -1894,7 +1894,7 @@ VOID TIMERINTERRUPT()
 
 			Buffer = (UINT *)PORT->PORTTX_Q;
 			Message = (struct _MESSAGE *) Buffer;
-			
+
 			ret = PORT->PORTTXCHECKCODE(PORT, Message->PORT);
 
 			// Busy but not connected means TNC has gone - clear queue
@@ -1911,7 +1911,7 @@ VOID TIMERINTERRUPT()
 				ReleaseBuffer(Buffer);
 				break;
 			}
-	
+
 			ret = ret & 0xff;			// Only check bottom byte
 
 			if (ret == 0)		// Not busy
@@ -1940,10 +1940,10 @@ VOID TIMERINTERRUPT()
 
 			if (PORT->PROTOCOL != 10)
 				break;					// BUSY
-		
+
 			//	Try passing any other messages on the queue to the node.
 
-			PACTORSAVEQ = 0;	
+			PACTORSAVEQ = 0;
 
 PACTORLOOP:
 
@@ -1951,15 +1951,15 @@ PACTORLOOP:
 
 			if (Buffer == NULL)
 				goto ENDOFLIST;
-	
+
 			Message = (struct _MESSAGE *) Buffer;
 			ret = PORT->PORTTXCHECKCODE(PORT, Message->PORT);
 			ret = ret & 0xff;			// Only check bottom byte
-		
+
 			if (ret)		// Busy
 			{
 				//	Save it
-				
+
 				Buffer = Q_REM(&PORT->PORTTX_Q);
 				C_Q_ADD(&PACTORSAVEQ, Buffer);
 				goto PACTORLOOP;
@@ -2014,10 +2014,10 @@ ENDOFLIST:
 			while (Buffer)
 			{
 				ProcessIframe(LINK, Buffer);
-	
+
 				Buffer = Q_REM(&LINK->RX_Q);
 			}
-		
+
 			//	CHECK FOR OUTGOING MSGS
 
 			if (LINK->L2STATE >= 5)				// CANT SEND TEXT TILL CONNECTED
@@ -2059,9 +2059,9 @@ VOID DoListenMonitor(TRANSPORTENTRY * L4, MESSAGE * Msg)
 		return;
 
 	SetTraceOptionsEx(0x7fffffff, 1, 0, 0);
-	
+
 	len = IntDecodeFrame(Msg, MonBuffer, Msg->Timestamp, -1, FALSE, TRUE);
-	
+
 	SetTraceOptionsEx(SaveMMASK, SaveMTX, SaveMCOM, SaveMUI);
 
 	if (len == 0)
@@ -2091,7 +2091,7 @@ VOID DoListenMonitor(TRANSPORTENTRY * L4, MESSAGE * Msg)
 int BPQTRACE(MESSAGE * Msg, BOOL TOAPRS)
 {
 	//	ATTACH A COPY OF FRAME TO ANY BPQ HOST PORTS WITH MONITORING ENABLED
-	
+
 	TRANSPORTENTRY * L4 = L4TABLE;
 
 	UINT * Buffer;
@@ -2129,7 +2129,7 @@ int BPQTRACE(MESSAGE * Msg, BOOL TOAPRS)
 	i = MAXCIRCUITS;
 
 	if (QCOUNT < 300)
-		return FALSE;	// Until I add by session flow control		
+		return FALSE;	// Until I add by session flow control
 
 	while (i--)
 	{
@@ -2149,7 +2149,7 @@ VOID INITIALISEPORTS()
 {
 	char INITMSG[80];
 	struct PORTCONTROL * PORT = PORTTABLE;
-	
+
 	while (PORT)
 	{
 		sprintf(INITMSG, "Initialising Port %02d     ", PORT->PORTNUMBER);
@@ -2169,9 +2169,9 @@ VOID FindLostBuffers()
 	UINT CodeDump[16];
 	PBPQVECSTRUC HOSTSESS = BPQHOSTVECTOR;
 	struct _TRANSPORTENTRY * L4;	// Pointer to Session
-	
+
 	struct DEST_LIST * DEST = DESTS;
-	
+
 	n = MAXDESTS;
 
 	Debugprintf("Looking for missing Buffers");
@@ -2261,7 +2261,7 @@ VOID FindLostBuffers()
 			MESSAGE * Msg = (MESSAGE *)Bufferlist[n];
 
 			memcpy(CodeDump, Bufferlist[n], 64);
-	
+
 			for (i = 0; i < 16; i++)
 			{
 				rev = (CodeDump[i] & 0xff) << 24;
@@ -2282,7 +2282,7 @@ VOID FindLostBuffers()
 	}
 
 	// rebuild list for buffer check
-	Buff = BUFFERPOOL;	
+	Buff = BUFFERPOOL;
 	n = 0;
 
 	for (i = 0; i < NUMBEROFBUFFERS; i++)

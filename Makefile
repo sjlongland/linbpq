@@ -47,6 +47,11 @@ LDFLAGS := $(LDFLAGS) -Xlinker -Map=$(OBJECTS)/output.map
 # What libraries do we link in?
 LIBS := $(LIBS) -lrt -lm -lpthread -lconfig -lpcap
 
+# ----- Release-related options -----
+
+# What version is this?
+VERSION ?= $(shell git describe )
+
 # ----- No further changes beneath here should be needed -----
 
 # What files are we to build?
@@ -95,7 +100,18 @@ clean:
 realclean: clean
 	rm -f $(addprefix $(OBJECTS)/,$(OBJS:.o=.d))
 
+# Package up this current release as a tarball for download
+release: DESTDIR ?= $(PWD)
+release: $(DESTDIR)/linbpq-$(VERSION).tar.xz
+
+$(DESTDIR)/linbpq-$(VERSION).tar.xz: .git
+	git archive --format=tar \
+		--prefix=linbpq-$(VERSION) \
+		-o $(DESTDIR)/linbpq-$(VERSION).tar \
+		HEAD
+	xz -9 $(DESTDIR)/linbpq-$(VERSION).tar
+
 # The following targets do not produce files
-.PHONY: clean realclean all install linbpq
+.PHONY: clean realclean all install linbpq release
 
 -include $(wildcard $(OBJECTS)/*.d)

@@ -23,7 +23,7 @@ int GetListeningPortsPID(int Port);
 UINT InitializeExtDriver(PEXTPORTDATA PORTVEC);
 
 VOID PutLengthinBuffer(UCHAR * buff, int datalen);			// Neded for arm5 portability
-int GetLengthfromBuffer(UCHAR * buff);	
+int GetLengthfromBuffer(UCHAR * buff);
 
 
 #define GetBuff() _GetBuff(__FILE__, __LINE__)
@@ -230,7 +230,7 @@ extern int  DEST_LIST_LEN;
 extern int  MAXDESTS;			// MAX NODES IN SYSTEM
 
 extern struct _LINKTABLE * LINKS;
-extern int	LINK_TABLE_LEN; 
+extern int	LINK_TABLE_LEN;
 extern int	MAXLINKS;
 
 
@@ -268,12 +268,12 @@ extern int PACLEN;				//MAX PACKET SIZE
 
 extern int T3;				// LINK VALIDATION TIMER (3 MINS) (+ a bit to reduce RR collisions)
 
-extern int L2KILLTIME;		// IDLE LINK TIMER (16 MINS)	
+extern int L2KILLTIME;		// IDLE LINK TIMER (16 MINS)
 extern int L3LIVES;				// MAX L3 HOPS
 extern int L4N2;					// LEVEL 4 RETRY COUNT
 extern int L4LIMIT;			// IDLE SESSION LIMIT - 15 MINS
 extern int L4DELAY;				// L4 DELAYED ACK TIMER
-	
+
 extern int BBS;					// INCLUDE BBS SUPPORT
 extern int NODE;					// INCLUDE SWITCH SUPPORT
 
@@ -365,7 +365,7 @@ extern UCHAR BPQDirectory[];
 extern UCHAR BPQProgramDirectory[];
 
 extern char WINMOR[];
-extern char PACTORCALL[]; 
+extern char PACTORCALL[];
 
 extern UCHAR MCOM;
 extern UCHAR MUIONLY;

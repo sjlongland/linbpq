@@ -5,8 +5,11 @@
 # e.g. `make CROSS_COMPILE=arm-linux-gnueabi-` to cross-build for ARM on x86
 #   or `make install PREFIX=/usr`              to install to /usr instead.
 
-# Where do we install linbpq?
+# Where do we install linbpq's binaries and libraries?
 PREFIX ?= /usr/local
+
+# Where should linbpq "live"?  `bpqhome` will be copied to this location.
+DATADIR ?= /var/lib/linbpq
 
 # Where are our sources kept?  By default, the current working directory.
 SOURCES ?= .
@@ -23,6 +26,13 @@ I2C ?= y
 CROSS_COMPILE ?=
 CC=$(CROSS_COMPILE)gcc
 CXX=$(CROSS_COMPILE)g++
+
+# What to use for installing files, in case `install` isn't a BSD-compatible
+# "install" program?
+INSTALL ?= install
+
+# What to do to copy lots of files around
+TAR ?= tar
 
 # What C preprocessor flags do we use?
 CPPFLAGS := $(CPPFLAGS) -DLINBPQ -MMD
@@ -74,6 +84,10 @@ install: $(OBJECTS)/linbpq
 	install -t $(DESTDIR)$(PREFIX)/bin $(OBJECTS)/linbpq
 	setcap "CAP_NET_ADMIN=ep CAP_NET_RAW=ep CAP_NET_BIND_SERVICE=ep" \
 		$(DESTDIR)$(PREFIX)/bin/linbpq
+	install -d $(DESTDIR)$(DATADIR)
+	ln -s $(PREFIX)/bin/linbpq $(DESTDIR)$(DATADIR)/linbpq
+	( cd $(SOURCES)/bpqhome && tar cf - . ) \
+		| ( cd $(DESTDIR)$(DATADIR) && tar xf - )
 
 clean:
 	rm -f linbpq $(addprefix $(OBJECTS)/,$(OBJS))

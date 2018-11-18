@@ -162,7 +162,7 @@ void printStack(void);
 
 UINT _ReleaseBuffer(VOID *pBUFF, char * File, int Line)
 {
-	UINT * pointer, * BUFF = pBUFF;
+	uintptr_t * pointer, * BUFF = pBUFF;
 	int n = 0;
 
 	if (Semaphore.Flag == 0)
@@ -187,7 +187,7 @@ BOK1:
 
 	// See if already on free Queue
 
-	pointer = (UINT *)FREE_Q;
+	pointer = (uintptr_t *)FREE_Q;
 
 	while (pointer)
 	{
@@ -198,12 +198,12 @@ BOK1:
 
 			return 0;
 		}
-		if (pointer == (UINT *)pointer[0])
+		if (pointer == (uintptr_t *)pointer[0])
 		{
 			Debugprintf("Buffer chained to itself");
 			return 0;
 		}
-		pointer = (UINT *)pointer[0];
+		pointer = (uintptr_t *)pointer[0];
 		n++;
 
 		if (n > 1000)
@@ -213,11 +213,11 @@ BOK1:
 		}
 	}
 
-	pointer = (UINT *)FREE_Q;
+	pointer = (uintptr_t *)FREE_Q;
 
-	*BUFF=(UINT)pointer;
+	*BUFF=(uintptr_t)pointer;
 
-	FREE_Q=(UINT)BUFF;
+	FREE_Q=(uintptr_t)BUFF;
 
 	QCOUNT++;
 

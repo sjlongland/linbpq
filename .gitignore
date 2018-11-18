@@ -1,0 +1,8 @@
+# Object files
+*.o
+# Dependency files
+*.d
+# Output map
+output.map
+# Output binary
+linbpq

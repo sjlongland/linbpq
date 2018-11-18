@@ -1,14 +1,14 @@
 <!-- Version 5 18/10/2015 -->
-<!DOCTYPE html> 
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"> 
-<head> 
-<meta http-equiv="content-type" content="text/html; charset=UTF-8"/> 
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
 <style type="text/css">
-pre {margin-left: 4px;white-space: pre} 
+pre {margin-left: 4px;white-space: pre}
 #main{width:700px;position:absolute;left:0px;border:2px solid;background-color: #ffffff;}
 </style>
 <script src="/WebMail/webscript.js"></script>
-<title>WebMail</title> 
+<title>WebMail</title>
 
 </head>
 <body background=/background.jpg onload="initialize(120)" onresize="initialize(120)">
@@ -29,6 +29,6 @@ pre {margin-left: 4px;white-space: pre}
 <br>
 <div align=left id="main" style="overflow:scroll;">
 <pre align=left>%s</pre>
-</div> 
+</div>
 
 

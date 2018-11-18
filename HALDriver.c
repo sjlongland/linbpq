@@ -15,10 +15,10 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with LinBPQ/BPQ32.  If not, see http://www.gnu.org/licenses
-*/	
+*/
 
 //
-//	DLL to inteface HAL Communications Corp Clover/Pacor controllers to BPQ32 switch 
+//	DLL to inteface HAL Communications Corp Clover/Pacor controllers to BPQ32 switch
 //
 //	Uses BPQ EXTERNAL interface
 //
@@ -50,7 +50,7 @@ static int RigControlRow = 185;
 
 struct TNCINFO * TNCInfo[34];		// Records are Malloc'd
 
-#define	SOH	0x01	// CONTROL CODES 
+#define	SOH	0x01	// CONTROL CODES
 #define	ETB	0x17
 #define	DLE	0x10
 
@@ -63,7 +63,7 @@ extern HFONT hFont;
 static char status[23][50] = {"IDLE", "TFC", "RQ", "ERR", "PHS", "OVER", "FSK TX",
 		"FSK RX", "P-MODE100", "P-MODE200", "HUFMAN ON", "HUFMAN OFF", "P-MODE SBY(LISTEN ON)",
 		"P-MODE SBY(LISTEN OFF)", "ISS", "IRS",
-		"AMTOR SBY(LISTEN ON)", "AMTOR SBY(LISTEN OFF)", "AMTOR FEC TX", "AMTOR FEC RX",  "P-MODE FEC TX", 
+		"AMTOR SBY(LISTEN ON)", "AMTOR SBY(LISTEN OFF)", "AMTOR FEC TX", "AMTOR FEC RX",  "P-MODE FEC TX",
 		"FREE SIGNAL TX (AMTOR)", "FREE SIGNAL TX TIMED OUT (AMTOR)"};
 
 struct TNCINFO * CreateTTYInfo(int port, int speed);
@@ -118,7 +118,7 @@ UCHAR FN[MAX_PATH];
 	struct tm * tm;
 
 	T = time(NULL);
-	tm = gmtime(&T);	
+	tm = gmtime(&T);
 
 	sprintf(FN,"%s\\HALLog_%02d%02d%02d_%s.bin", BaseDir, tm->tm_mday, tm->tm_hour, tm->tm_min, Logs[Flags]);
 
@@ -196,7 +196,7 @@ int ProcessLine(char * buf, int Port)
 
 	BPQport=0;
 	BPQport = atoi(ptr);
-	
+
 	p_cmd = strtok(NULL, " \t\n\r");
 
 	if (Port && Port != BPQport)
@@ -244,7 +244,7 @@ ConfigLine:
 				*ptr++ = 13;
 				*ptr = 0;
 			}
-			
+
 			if (_memicmp(buf, "WL2KREPORT", 10) == 0)
 			{
 				TNC->WL2K = DecodeWL2KReportLine(buf);
@@ -279,7 +279,7 @@ ConfigLine:
 						*(ptr++) = tone2 >> 8;
 						*(ptr++) = tone2 & 0xff;
 
-						TNC->InitScriptLen += 6;	
+						TNC->InitScriptLen += 6;
 
 						continue;
 					}
@@ -288,7 +288,7 @@ ConfigLine:
 			}
 			if (_memicmp(buf, "DEFAULTMODE ", 12) == 0)
 			{
-					
+
 				ptr = strtok(&buf[12], " ,\t\n\r");
 				if (ptr)
 				{
@@ -299,7 +299,7 @@ ConfigLine:
 					else if (_stricmp(ptr, "AMTOR") == 0)
 						TNC->DefaultMode = AMTOR;
 					else goto BadLine;
-					
+
 					continue;
 				}
 				goto BadLine;
@@ -310,8 +310,8 @@ ConfigLine:
 			WritetoConsole(errbuf);
 			WritetoConsole("\r\n");
 	}
-	
-	return (TRUE);	
+
+	return (TRUE);
 }
 
 static int ExtProc(int fn, int port,unsigned char * buff)
@@ -324,7 +324,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 
 	if (TNC == NULL)
 		return 0;
-	
+
 	if (fn < 4 || fn > 5)
 		if (TNC->hDevice == 0)
 			return 0;					// Port not open
@@ -360,7 +360,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 			if (STREAM->PACTORtoBPQ_Q !=0)
 			{
 				int datalen;
-			
+
 				buffptr=Q_REM(&STREAM->PACTORtoBPQ_Q);
 
 				datalen=buffptr[1];
@@ -374,13 +374,13 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 
 	//			buff[5]=(datalen & 0xff);
 	//			buff[6]=(datalen >> 8);
-		
+
 				ReleaseBuffer(buffptr);
-	
+
 				return (1);
 			}
 		}
-			
+
 		return 0;
 
 	case 2:				// send
@@ -392,7 +392,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 		// Find TNC Record
 
 		Stream = buff[4];
-		
+
 		if (!TNC->TNCOK)
 		{
 			// Send Error Response
@@ -401,7 +401,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 			memcpy(buffptr+2, "No Connection to PACTOR TNC\r", 36);
 
 			C_Q_ADD(&STREAM->PACTORtoBPQ_Q, buffptr);
-			
+
 			return 0;
 		}
 
@@ -409,7 +409,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 
 		buffptr[1] = txlen;
 		memcpy(buffptr+2, &buff[8], txlen);
-		
+
 		C_Q_ADD(&STREAM->BPQtoPACTOR_Q, buffptr);
 
 		STREAM->FramesQueued++;
@@ -418,12 +418,12 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 
 
 	case 3:				// CHECK IF OK TO SEND. Also used to check if TNC is responding
-		
+
 		Stream = (int)buff;
-			
+
 		if (STREAM->FramesQueued  > 4)
 			return (1 | TNC->HostMode << 8);
-	
+
 		return TNC->HostMode << 8 | STREAM->Disconnecting << 15;		// OK, but lock attach if disconnecting
 
 	case 4:				// reinit
@@ -432,7 +432,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 
 	case 5:				// Close
 
-		CloseCOMPort(TNCInfo[port]->hDevice);		
+		CloseCOMPort(TNCInfo[port]->hDevice);
 		return (0);
 
 	case 6:				// Scan Control
@@ -499,7 +499,7 @@ UINT HALExtInit(EXTPORTDATA *  PortEntry)
 
 		return (int)ExtProc;
 	}
-	
+
 	TNC->Port = port;
 
 	TNC->Hardware = H_HAL;
@@ -540,7 +540,7 @@ UINT HALExtInit(EXTPORTDATA *  PortEntry)
 	len = sprintf(Msg, "%c%c%c%c%c%c%s", 0xcc, 0x56, 0x41, ClearOnDisc, SetEAS, SetMYCALL, TNC->NodeCall);
 	len++;					// We include the NULL
 
-	memcpy(&TNC->InitScript[TNC->InitScriptLen], Msg, len); 
+	memcpy(&TNC->InitScript[TNC->InitScriptLen], Msg, len);
 	TNC->InitScriptLen += len;
 
 	TNC->WebWindowProc = WebProc;
@@ -564,7 +564,7 @@ UINT HALExtInit(EXTPORTDATA *  PortEntry)
 
 	x = CreateWindowEx(0, "STATIC", "Comms State", WS_CHILD | WS_VISIBLE, 10,6,120,20, TNC->hDlg, NULL, hInstance, NULL);
 	x = TNC->xIDC_COMMSSTATE = CreateWindowEx(0, "STATIC", "", WS_CHILD | WS_VISIBLE, 116,6,386,20, TNC->hDlg, NULL, hInstance, NULL);
-	
+
 	x = CreateWindowEx(0, "STATIC", "TNC State", WS_CHILD | WS_VISIBLE, 10,28,106,20, TNC->hDlg, NULL, hInstance, NULL);
 	x = TNC->xIDC_TNCSTATE = CreateWindowEx(0, "STATIC", "", WS_CHILD | WS_VISIBLE, 116,28,520,20, TNC->hDlg, NULL, hInstance, NULL);
 
@@ -586,12 +586,12 @@ UINT HALExtInit(EXTPORTDATA *  PortEntry)
 	SendMessage(x, WM_SETFONT, (WPARAM)hFont, 0);
 	x = TNC->xIDC_LEDS = CreateWindowEx(0, "STATIC", "  X   X     X    X   X  X", WS_CHILD | WS_VISIBLE,116,158,280,20 , TNC->hDlg, NULL, hInstance, NULL);
 	SendMessage(x, WM_SETFONT, (WPARAM)hFont, 0);
-	
+
 	TNC->ClientHeight = 233;
 	TNC->ClientWidth = 500;
-	
+
 	MoveWindows(TNC);
-#endif	
+#endif
 
 	OpenCOMMPort(TNC, PortEntry->PORTCONTROL.SerialPortName, PortEntry->PORTCONTROL.BAUDRATE, FALSE);
 
@@ -603,9 +603,9 @@ UINT HALExtInit(EXTPORTDATA *  PortEntry)
 }
 
 
- 
+
 static VOID KISSCLOSE(int Port)
-{ 
+{
 	struct TNCINFO * conn = TNCInfo[Port];
 
 	// drop DTR and RTS
@@ -615,8 +615,8 @@ static VOID KISSCLOSE(int Port)
 
    // purge any outstanding reads/writes and close device handle
 
-	CloseCOMPort(conn->hDevice);		
-	
+	CloseCOMPort(conn->hDevice);
+
 	return;
 }
 
@@ -626,7 +626,7 @@ static void CheckRX(struct TNCINFO * TNC)
 	int Length, Len;
 	UCHAR * Xptr;
 
-	// only try to read number of bytes in queue 
+	// only try to read number of bytes in queue
 
 	if (TNC->RXLen == 500)
 		TNC->RXLen = 0;
@@ -651,7 +651,7 @@ static void CheckRX(struct TNCINFO * TNC)
 	if (TNC->XONXOFF)
 	{
 		Xptr = memchr(&TNC->RXBuffer, 0x11, Length);
-	
+
 		while(Xptr)
 		{
 			Debugprintf("XON Port %d", TNC->Port);
@@ -660,20 +660,20 @@ static void CheckRX(struct TNCINFO * TNC)
 		}
 
 		Xptr = memchr(&TNC->RXBuffer, 0x13, Length);
-	
+
 		while(Xptr)
 		{
 			Debugprintf("XOFF Port %d", TNC->Port);
 			memmove(Xptr, Xptr + 1, Length-- - (TNC->RXBuffer - Xptr));
 			Xptr = memchr(&TNC->RXBuffer, 0x13, Length);
 		}
-	
+
 		Xptr = memchr(&TNC->RXBuffer, 0x91, Length);			// See if packet contains 0x91 escape
 
 		if (Xptr)
-	
+
 			// Make sure we have the escaped char as well
-	
+
 			if ((Xptr - &TNC->RXBuffer[0]) == Length - 1)		// x91 is last char
 				return;
 	}
@@ -681,7 +681,7 @@ static void CheckRX(struct TNCINFO * TNC)
 	ProcessHALBuffer(TNC, Length);
 
 	TNC->RXLen = 0;
-	
+
 	return;
 
 }
@@ -705,9 +705,9 @@ VOID HALPoll(int Port)
 	int datalen;
 
 	if (TNC->Timeout)
-	{  
+	{
 		TNC->Timeout--;
-		
+
 		if (TNC->Timeout)			// Still waiting
 			return;
 
@@ -715,7 +715,7 @@ VOID HALPoll(int Port)
 
 		TNC->TNCOK = FALSE;
 		TNC->HostMode = 0;
-				
+
 		sprintf(TNC->WEB_COMMSSTATE,"%s Open but TNC not responding", TNC->PortRecord->PORTCONTROL.SerialPortName);
 		MySetWindowText(TNC->xIDC_COMMSSTATE, TNC->WEB_COMMSSTATE);
 
@@ -737,7 +737,7 @@ VOID HALPoll(int Port)
 		{
 			DoTNCReinit(TNC);
 			return;
-		}	
+		}
 
 	if (TNC->PortRecord->ATTACHEDSESSIONS[0] && STREAM->Attached == 0)
 	{
@@ -752,7 +752,7 @@ VOID HALPoll(int Port)
 
 		calllen = ConvFromAX25(TNC->PortRecord->ATTACHEDSESSIONS[0]->L4USER, STREAM->MyCall);
 		STREAM->MyCall[calllen] = 0;
-		
+
 		datalen = sprintf(TXMsg, "%c%s", SetMYCALL, STREAM->MyCall);
 		SendCmd(TNC, TXMsg, datalen + 1);			// Send the NULL
 
@@ -762,7 +762,7 @@ VOID HALPoll(int Port)
 		// Stop Scanning
 
 		sprintf(Msg, "%d SCANSTOP", TNC->Port);
-		
+
 		Rig_Command(-1, Msg);
 
 		SendCmd(TNC, "\x42", 1);		// Connect Enable off
@@ -809,7 +809,7 @@ VOID HALPoll(int Port)
 				SendCmd(TNC, "\x60\x09", 2);	// Robust Retries
 				SendCmd(TNC, "\x61\x09", 2);	// Normal Retries
 
-				break;			
+				break;
 			}
 
 			SendCmd(TNC, "\x52", 1);			// ConnectEnable
@@ -817,7 +817,7 @@ VOID HALPoll(int Port)
 			// Restart Scanning
 
 			sprintf(Status, "%d SCANSTART 15", TNC->Port);
-		
+
 			Rig_Command(-1, Status);
 
 			return;
@@ -834,7 +834,7 @@ VOID HALPoll(int Port)
 			UINT * buffptr;
 			UCHAR * MsgPtr;
 			unsigned char TXMsg[500];
-			
+
 			buffptr = (UINT * )STREAM->BPQtoPACTOR_Q;
 			datalen=buffptr[1];
 			MsgPtr = (UCHAR *)&buffptr[2];
@@ -843,7 +843,7 @@ VOID HALPoll(int Port)
 			{
 				if (TNC->SwallowSignon)
 				{
-					TNC->SwallowSignon = FALSE;	
+					TNC->SwallowSignon = FALSE;
 					if (strstr(MsgPtr, "Connected"))	// Discard *** connected
 					{
 						ReleaseBuffer(buffptr);
@@ -854,24 +854,24 @@ VOID HALPoll(int Port)
 
 				// Must send data in small chunks - the Hal has limited buffer space
 
-				// If in IRS force a turnround 
+				// If in IRS force a turnround
 
 				if (TNC->TXRXState == 'R' && TNC->CurrentMode != Clover)
 				{
 					if (TNC->TimeInRX++ > 15)
-						SendCmd(TNC, "\x87", 1);		// Changeover to ISS 
+						SendCmd(TNC, "\x87", 1);		// Changeover to ISS
 					else
 						goto Poll;
 				}
 
 				TNC->TimeInRX = 0;
-					
+
 				EncodeAndSend(TNC, MsgPtr, datalen);
 				buffptr=Q_REM(&STREAM->BPQtoPACTOR_Q);
 				ReleaseBuffer(buffptr);
 				WriteLogLine(2, MsgPtr, datalen);
 
-				STREAM->BytesTXed += datalen; 
+				STREAM->BytesTXed += datalen;
 				STREAM->FramesQueued--;
 
 				ShowTraffic(TNC);
@@ -909,7 +909,7 @@ VOID HALPoll(int Port)
 					TNC->CurrentMode = Clover;
 					buffptr[1] = sprintf((UCHAR *)&buffptr[2],"HAL} Ok\r");
 					C_Q_ADD(&STREAM->PACTORtoBPQ_Q, buffptr);
-			
+
 					MySetWindowText(TNC->xIDC_MODE, "Clover");
 					strcpy(TNC->WEB_MODE, "Clover");
 
@@ -953,7 +953,7 @@ VOID HALPoll(int Port)
 						SendCmd(TNC, "\x83", 1);		// Select P-MODE Standby
 
 						datalen = sprintf(TXMsg, "\x19%s", STREAM->RemoteCall);
-					
+
 						sprintf(TNC->WEB_TNCSTATE, "%s Connecting to %s - PACTOR", STREAM->MyCall, STREAM->RemoteCall);
 
 						// DOnt set connecting till we get the 19 response so we can trap listen as a fail
@@ -965,12 +965,12 @@ VOID HALPoll(int Port)
 						SendCmd(TNC, "\x57", 1);		// Enable TX buffer clear on disconnect
 
 						datalen = sprintf(TXMsg, "\x11%s", STREAM->RemoteCall);
-					
+
 						sprintf(TNC->WEB_TNCSTATE, "%s Connecting to %s - CLOVER", STREAM->MyCall, STREAM->RemoteCall);
 
-						break;			
+						break;
 					}
-					
+
 					MySetWindowText(TNC->xIDC_TNCSTATE, TNC->WEB_TNCSTATE);
 					SendCmd(TNC, TXMsg, datalen + 1);	// Include NULL
 
@@ -988,7 +988,7 @@ VOID HALPoll(int Port)
 
 					datalen = sprintf(TXMsg, "\x11%s", STREAM->RemoteCall);
 					SendCmd(TNC, TXMsg, datalen + 1);	// Include NULL
-					
+
 					sprintf(TNC->WEB_TNCSTATE, "%s Connecting to %s - CLOVER",
 					STREAM->MyCall, STREAM->RemoteCall);
 					MySetWindowText(TNC->xIDC_TNCSTATE, TNC->WEB_TNCSTATE);
@@ -1002,20 +1002,20 @@ VOID HALPoll(int Port)
 				{
 					SendCmd(TNC, "\x07", 1);		// Normal Disconnect
 					TNC->NeedPACTOR = 50;
-	
+
 					STREAM->Connecting = FALSE;
 					STREAM->ReportDISC = TRUE;
 					ReleaseBuffer(buffptr);
 
 					return;
 				}
-	
+
 				// Other Command ?? Treat as HEX string
 
 				datalen = sscanf(MsgPtr, "%X %X %X %X %X %X %X %X %X %X %X %X %X %X %X %X",
 					(UINT *)&TXMsg[0], (UINT *)&TXMsg[1], (UINT *)&TXMsg[2], (UINT *)&TXMsg[3], (UINT *)&TXMsg[4],
-					(UINT *)&TXMsg[5], (UINT *)&TXMsg[6], (UINT *)&TXMsg[7], (UINT *)&TXMsg[8], (UINT *)&TXMsg[9], 
-					(UINT *)&TXMsg[10], (UINT *)&TXMsg[11], (UINT *)&TXMsg[12], (UINT *)&TXMsg[13], 
+					(UINT *)&TXMsg[5], (UINT *)&TXMsg[6], (UINT *)&TXMsg[7], (UINT *)&TXMsg[8], (UINT *)&TXMsg[9],
+					(UINT *)&TXMsg[10], (UINT *)&TXMsg[11], (UINT *)&TXMsg[12], (UINT *)&TXMsg[13],
 					(UINT *)&TXMsg[14], (UINT *)&TXMsg[15]);
 
 //				SendCmd(TNC, TXMsg, datalen);
@@ -1072,7 +1072,7 @@ static VOID DoTNCReinit(struct TNCINFO * TNC)
 
 	return;
 
-}	
+}
 
 VOID ProcessHALData(struct TNCINFO * TNC)
 {
@@ -1094,17 +1094,17 @@ VOID ProcessHALData(struct TNCINFO * TNC)
 
 		if ((STREAM->BPQtoPACTOR_Q == 0) && STREAM->BytesAcked >= STREAM->BytesTXed)
 		{
-			// All sent 
+			// All sent
 
 			if (STREAM->Disconnecting)
 				TidyClose(TNC, 0);
 			else
 				if (TNC->CurrentMode != Clover)
-			
+
 				// turn round link
 
 					SendCmd(TNC, "\x0c" , 1);	// Turnround
-			
+
 		}
 	}
 	else
@@ -1113,7 +1113,7 @@ VOID ProcessHALData(struct TNCINFO * TNC)
 		{
 //			Debugprintf("RXed %d", Len);
 			buffptr = GetBuff();
-			if (buffptr == NULL) 
+			if (buffptr == NULL)
 				return;	// No buffers, so ignore
 
 			buffptr[1] = Len;				// Length
@@ -1235,7 +1235,7 @@ NotData:
 			TNC->DataEsc = DataEsc;
 
 			return;
-		}	
+		}
 	}
 
 	// Save State
@@ -1301,7 +1301,7 @@ CmdLoop:
 		// Mixture of mode and state - eg listen huffman on/off irs/iss, so cant just display
 
 		if (Len < 2) return;		// Wait for more
-	
+
 		StatusByte = TNC->CmdBuffer[1];
 
 		switch (StatusByte)
@@ -1370,16 +1370,16 @@ CmdLoop:
 		}
 		Used = 2;
 		break;
-		
+
 
 	case 0x7d:				// Get LED Status
-		
+
 		// We use Get LED Status as a Poll
 
 		if (Len < 2) return;		// Wait for more
-	
+
 		Leds = TNC->CmdBuffer[1];
-		sprintf(TNC->WEB_LEDS,"  %c   %c    %c    %c     %c %c ", 
+		sprintf(TNC->WEB_LEDS,"  %c   %c    %c    %c     %c %c ",
 			(Leds & 0x20)? 'X' : ' ',
 			(Leds & 0x10)? 'X' : ' ',
 			(Leds & 0x08)? 'X' : ' ',
@@ -1408,8 +1408,8 @@ CmdLoop:
 
 		break;
 
-	case 0x27:						// Clover ARQ LINK REQUEST status message 
-		
+	case 0x27:						// Clover ARQ LINK REQUEST status message
+
 		//indicates an incoming link request to either MYCALL ($8027 $8000), or MYALTCALL ($8027 $8001).
 
 		if (Len < 2) return;		// Wait for more
@@ -1419,7 +1419,7 @@ CmdLoop:
 		break;
 
 	case 0x2D:						// FSK ARQ Link Request status message
-		
+
 		// $802D $8001 $8000 CLOVER Link Request (not implemented)
 		// $802D $8002 $8000 AMTOR CCIR-476 Link Request
 		// $802D $8003 $8000 AMTOR CCIR-625 Link Request
@@ -1484,24 +1484,24 @@ CmdLoop:
 	case 0x31:						// Switch to Transmit Data characters
 	case 0x32:						// Switch to RX data from secondary port
 
-		TNC->DataMode = Opcode; 
+		TNC->DataMode = Opcode;
 		Used = 1;
 		break;
 
 	case 0x33:						// Send TX data to modem
 	case 0x34:						// Send TX data to secondary port
 
-		TNC->TXMode = Opcode; 
+		TNC->TXMode = Opcode;
 		Used = 1;
 		break;
 
-	case 0x70:						// Channel Spectra Data 
+	case 0x70:						// Channel Spectra Data
 									// $807F $80xx $8030 Invalid or unimplemented command code
 		if (Len < 9) return;		// Wait for more
 
 		Used = 9;
 		break;
-		
+
 	case 0x71:						// SelCall On/Off
 
 		if (Len < 2) return;		// Wait for more
@@ -1509,7 +1509,7 @@ CmdLoop:
 		Used = 2;
 		break;
 
-	case 0x72:						// Channel Spectra Data 
+	case 0x72:						// Channel Spectra Data
 									// $807F $80xx $8030 Invalid or unimplemented command code
 		if (Len < 15) return;		// Wait for more
 
@@ -1582,7 +1582,7 @@ CmdLoop:
 		// Following are all immediate commands - response is echo of command
 
 	case 0x6f:				// XON/XOFF on
-		
+
 //		TNC->XONXOFF = TRUE;	// And drop through
 //		Debugprintf("BPQ32 HAL Port %d - Enabling XON/XOFF mode", TNC->Port);
 
@@ -1688,7 +1688,7 @@ CmdLoop:
 
 }
 
-	
+
 VOID HALDisconnected(struct TNCINFO * TNC)
 {
 	struct STREAMINFO * STREAM = &TNC->Streams[0];
@@ -1709,9 +1709,9 @@ VOID HALDisconnected(struct TNCINFO * TNC)
 		UINT * buffptr;
 
 		// Connect Failed - actually I think HAL uses another code for connect failed, but leave here for now
-			
+
 		buffptr = GetBuff();
-	
+
 		if (buffptr)
 		{
 			buffptr[1]  = sprintf((UCHAR *)&buffptr[2], "*** Failure with %s\r", STREAM->RemoteCall);
@@ -1756,17 +1756,17 @@ BOOL HALConnected(struct TNCINFO * TNC, char * Call)
 	strcat(CallCopy, "          ");			// Some routines expect 10 char calls
 
 	STREAM->BytesRXed = STREAM->BytesTXed = STREAM->BytesAcked = 0;
-	STREAM->ConnectTime = time(NULL); 
+	STREAM->ConnectTime = time(NULL);
 
 	// Stop Scanner
 
 	sprintf(Msg, "%d SCANSTOP", TNC->Port);
-		
+
 	Rig_Command(-1, Msg);
 
 	ShowTraffic(TNC);
 
-	TNC->DataMode = RXDATA; 
+	TNC->DataMode = RXDATA;
 
 	OpenLogfile(0);
 	OpenLogfile(1);
@@ -1777,12 +1777,12 @@ BOOL HALConnected(struct TNCINFO * TNC, char * Call)
 		// Incoming Connect
 
 		ProcessIncommingConnect(TNC, CallCopy, 0, TRUE);
-					
+
 		sprintf(TNC->WEB_TNCSTATE, "%s Connected to %s Inbound", STREAM->RemoteCall, TNC->NodeCall);
 		MySetWindowText(TNC->xIDC_TNCSTATE, TNC->WEB_TNCSTATE);
 
 		if (TNC->CurrentMode != Clover)
-			SendCmd(TNC, "\x87", 1);		// Changeover to ISS 
+			SendCmd(TNC, "\x87", 1);		// Changeover to ISS
 
 		// If an autoconnect APPL is defined, send it
 
@@ -1809,14 +1809,14 @@ BOOL HALConnected(struct TNCINFO * TNC, char * Call)
 	}
 
 	// Connect Complete
-			
+
 	buffptr = GetBuff();
 	if (buffptr == 0) return TRUE;			// No buffers, so ignore
 
 	buffptr[1]  = sprintf((UCHAR *)&buffptr[2], "*** Connected to %s\r", Call);;
 
 	C_Q_ADD(&STREAM->PACTORtoBPQ_Q, buffptr);
-	
+
 	STREAM->Connecting = FALSE;
 	STREAM->Connected = TRUE;			// Subsequent data to data channel
 
@@ -1827,7 +1827,7 @@ BOOL HALConnected(struct TNCINFO * TNC, char * Call)
 
 
 	return TRUE;
-}	
+}
 
 
 static VOID EncodeAndSend(struct TNCINFO * TNC, UCHAR * txbuffer, int Len)
@@ -1865,11 +1865,11 @@ int	DLEEncode(UCHAR * inbuff, UCHAR * outbuff, int len)
 
 //	outbuff[0] = 0x80;
 //	outbuff[1] = 0x33;		// Send data to modem
-	
+
 	for (i=0;i<len;i++)
 	{
 		c=inbuff[i];
-		
+
 		switch (c)
 		{
 		case 0x80:
@@ -1896,7 +1896,7 @@ VOID ForcedClose(struct TNCINFO * TNC, int Stream)
 
 VOID CloseComplete(struct TNCINFO * TNC, int Stream)
 {
-		TNC->NeedPACTOR = 30;	
+		TNC->NeedPACTOR = 30;
 }
 
 

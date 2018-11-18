@@ -38,7 +38,7 @@
 #endif
 
 /*
- * Avoids a compiler warning in case this was already defined      
+ * Avoids a compiler warning in case this was already defined
  * (someone defined _WINSOCKAPI_ when including 'windows.h', in order
  * to prevent it from including 'winsock.h')
  */
@@ -61,4 +61,4 @@
 
 #define snprintf _snprintf
 #define vsnprintf _vsnprintf
-#define inline __inline 
+#define inline __inline

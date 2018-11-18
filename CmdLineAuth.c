@@ -2,7 +2,7 @@
 //
 
 #define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
-#define _CRT_SECURE_NO_DEPRECATE 
+#define _CRT_SECURE_NO_DEPRECATE
 
 #define _USE_32BIT_TIME_T
 
@@ -42,8 +42,8 @@ VOID CreateOneTimePassword(char * KeyPhrase)
 	{
 		chr = (Hash[i] & 31);
 		if (chr > 9) chr += 7;
-		
-		Password[i] = chr + 48; 
+
+		Password[i] = chr + 48;
 	}
 
 	Password[16] = 0;

@@ -15,7 +15,7 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with LinBPQ/BPQ32.  If not, see http://www.gnu.org/licenses
-*/	
+*/
 
 // Mail and Chat Server for BPQ32 Packet Switch
 //
@@ -36,7 +36,7 @@ struct MSESSION * MSessions = NULL;
 HWND hMCMonitor = NULL;
 HWND MCList;
 
-static HMENU hMCMenu;		// handle of menu 
+static HMENU hMCMenu;		// handle of menu
 
 static char MCClassName[]="BPQMCWINDOW";
 
@@ -51,7 +51,7 @@ void MCMoveWindows()
 	RECT rcClient;
 	int ClientWidth, ClientHeight;
 
-	GetClientRect(hMCMonitor, &rcClient); 
+	GetClientRect(hMCMonitor, &rcClient);
 
 	if (rcClient.bottom == 0)		// Minimised
 		return;
@@ -70,10 +70,10 @@ LRESULT CALLBACK MCWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam
 	LPRECT lprc;
 	struct MSESSION * Sess = MSessions;
 	struct MSESSION * Temp;
-	
+
 	switch (message)
-	{ 
-	
+	{
+
 	case WM_ACTIVATE:
 
 		break;
@@ -81,7 +81,7 @@ LRESULT CALLBACK MCWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam
 	case WM_CLOSE:
 		if (wParam)				// Used by Close All Programs.
 			return 0;
-			
+
 		return (DefWindowProc(hWnd, message, wParam, lParam));
 
 	case WM_COMMAND:
@@ -98,7 +98,7 @@ LRESULT CALLBACK MCWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam
 			return 0;;
 
 		case ID_EDIT_CLEAR:
-	
+
 			while (Sess)
 			{
 				ListView_DeleteItem(MCList, Sess->Index);
@@ -124,7 +124,7 @@ LRESULT CALLBACK MCWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam
 
 			MSessions = NULL;
 			return 0;
-		
+
 		default:
 			return 0;
 		}
@@ -134,15 +134,15 @@ LRESULT CALLBACK MCWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam
 		wmId    = LOWORD(wParam); // Remember, these are...
 		wmEvent = HIWORD(wParam); // ...different for Win32!
 
-		switch (wmId) { 
+		switch (wmId) {
 
-		case  SC_MINIMIZE: 
+		case  SC_MINIMIZE:
 
 			if (cfgMinToTray)
-				return ShowWindow(hWnd, SW_HIDE);		
-		
+				return ShowWindow(hWnd, SW_HIDE);
+
 			default:
-		
+
 				return (DefWindowProc(hWnd, message, wParam, lParam));
 		}
 
@@ -154,17 +154,17 @@ LRESULT CALLBACK MCWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam
 			Width = lprc->right-lprc->left;
 
 			MCMoveWindows();
-			
+
 			return TRUE;
 
 
 		case WM_DESTROY:
-		
-			// Remove the subclass from the edit control. 
 
-			GetWindowRect(hWnd,	&MonitorRect);	// For save soutine         
+			// Remove the subclass from the edit control.
 
-			if (cfgMinToTray) 
+			GetWindowRect(hWnd,	&MonitorRect);	// For save soutine
+
+			if (cfgMinToTray)
 				DeleteTrayMenuItem(hWnd);
 
 
@@ -186,7 +186,7 @@ static void MoveMCWindows()
 	int ClientHeight, ClientWidth;
 
 	GetWindowRect(hMCMonitor, &rcMain);
-	GetClientRect(hMCMonitor, &rcClient); 
+	GetClientRect(hMCMonitor, &rcClient);
 
 	ClientHeight = rcClient.bottom;
 	ClientWidth = rcClient.right;
@@ -199,15 +199,15 @@ static void MoveMCWindows()
 
 
 
-HWND CreateMCListView (HWND hwndParent) 
+HWND CreateMCListView (HWND hwndParent)
 {
     INITCOMMONCONTROLSEX icex;           // Structure for control initialization.
 	HWND hList;
 	LV_COLUMN Column;
-	LOGFONT lf; 
-    HFONT hFont; 
+	LOGFONT lf;
+    HFONT hFont;
 	int n = 0;
- 
+
 	memset(&lf, 0, sizeof(LOGFONT));
 
 	lf.lfHeight = 12;
@@ -215,21 +215,21 @@ HWND CreateMCListView (HWND hwndParent)
 	lf.lfPitchAndFamily = FIXED_PITCH;
 	strcpy (lf.lfFaceName, "FIXEDSYS");
 
-    hFont = CreateFontIndirect(&lf); 
-	
+    hFont = CreateFontIndirect(&lf);
+
 	icex.dwICC = ICC_LISTVIEW_CLASSES;
     InitCommonControlsEx(&icex);
 
     // Create the list-view window in report view with label editing enabled.
-    
-	hList = CreateWindow(WC_LISTVIEW, 
+
+	hList = CreateWindow(WC_LISTVIEW,
                                      "Messages",
                                      WS_CHILD | LVS_REPORT | LVS_EDITLABELS,
                                      0, 0, 100, 100,
                                      hwndParent,
                                      (HMENU)NULL,
                                      hInst,
-                                     NULL); 
+                                     NULL);
 
 	SendMessage(hList, WM_SETFONT,(WPARAM) hFont, 0);
 
@@ -240,50 +240,50 @@ HWND CreateMCListView (HWND hwndParent)
 	Column.mask=LVCF_WIDTH | LVCF_TEXT;
 	Column.pszText="ID";
 
-	SendMessage(hList, LVM_INSERTCOLUMN, n++, (LPARAM)&Column); 
+	SendMessage(hList, LVM_INSERTCOLUMN, n++, (LPARAM)&Column);
 	Column.cx=95;
 	Column.mask=LVCF_WIDTH | LVCF_TEXT;
 	Column.pszText="From";
 
-	SendMessage(hList, LVM_INSERTCOLUMN, n++, (LPARAM)&Column); 
+	SendMessage(hList, LVM_INSERTCOLUMN, n++, (LPARAM)&Column);
 
 	Column.cx=140;
 	Column.mask=LVCF_WIDTH | LVCF_TEXT;
 	Column.pszText="FileName";
 
-	SendMessage(hList, LVM_INSERTCOLUMN, n++, (LPARAM)&Column); 
+	SendMessage(hList, LVM_INSERTCOLUMN, n++, (LPARAM)&Column);
 
 	Column.cx=50;
 	Column.mask=LVCF_WIDTH | LVCF_TEXT;
 	Column.pszText="Size";
 
-	SendMessage(hList, LVM_INSERTCOLUMN, n++, (LPARAM)&Column); 
-	
+	SendMessage(hList, LVM_INSERTCOLUMN, n++, (LPARAM)&Column);
+
 	Column.cx=40;
 	Column.mask=LVCF_WIDTH | LVCF_TEXT;
 	Column.pszText="%";
-	SendMessage(hList, LVM_INSERTCOLUMN, n++, (LPARAM)&Column); 
+	SendMessage(hList, LVM_INSERTCOLUMN, n++, (LPARAM)&Column);
 
 	Column.cx=55;
 	Column.mask=LVCF_WIDTH | LVCF_TEXT;
 	Column.pszText="Time";
-	SendMessage(hList, LVM_INSERTCOLUMN, n++, (LPARAM)&Column); 
+	SendMessage(hList, LVM_INSERTCOLUMN, n++, (LPARAM)&Column);
 
 	Column.cx=55;
 	Column.mask=LVCF_WIDTH | LVCF_TEXT;
 	Column.pszText="Age";
-	SendMessage(hList, LVM_INSERTCOLUMN, n++, (LPARAM)&Column); 
+	SendMessage(hList, LVM_INSERTCOLUMN, n++, (LPARAM)&Column);
 
 	Column.cx=20;
 	Column.mask=LVCF_WIDTH | LVCF_TEXT;
 	Column.pszText="C";
 
-	SendMessage(hList, LVM_INSERTCOLUMN, n++, (LPARAM)&Column); 
+	SendMessage(hList, LVM_INSERTCOLUMN, n++, (LPARAM)&Column);
 
 	Column.cx=430;
 	Column.mask=LVCF_WIDTH | LVCF_TEXT;
 	Column.pszText="BlockList";
-	SendMessage(hList, LVM_INSERTCOLUMN, n++, (LPARAM) &Column); 
+	SendMessage(hList, LVM_INSERTCOLUMN, n++, (LPARAM) &Column);
 
 	ShowWindow(hList, SW_SHOWNORMAL);
 	UpdateWindow(hList);
@@ -355,18 +355,18 @@ void RefreshMCLine(struct MSESSION * MSession)
 	ret = SendMessage(MCList, LVM_SETITEMTEXT, (WPARAM)MSession->Index, (LPARAM) &Item);
 
 	if (ret == 0)
-		MSession->Index = ListView_InsertItem(MCList, &Item);	 
-			
+		MSession->Index = ListView_InsertItem(MCList, &Item);
+
 	sprintf(Size, "%d", MSession->MessageLen);
-	
+
 	if (MSession->MessageLen)
 	{
 		int i;
-		
+
 		pcent = (MSession->BlocksReceived * 100) / MSession->BlockCount;
 		sprintf(Percent, "%d", pcent);
 
-		// Flag received blocks. Normalise to 50 wide 
+		// Flag received blocks. Normalise to 50 wide
 
 		memset(BlockList, '.', 50);
 
@@ -416,23 +416,23 @@ BOOL CreateMulticastConsole()
 
 	bgBrush = CreateSolidBrush(BGCOLOUR);
 
-    wc.style = CS_HREDRAW | CS_VREDRAW; 
-    wc.lpfnWndProc = MCWndProc;       
-                                        
-    wc.cbClsExtra = 0;                
+    wc.style = CS_HREDRAW | CS_VREDRAW;
+    wc.lpfnWndProc = MCWndProc;
+
+    wc.cbClsExtra = 0;
     wc.cbWndExtra = DLGWINDOWEXTRA;
 	wc.hInstance = hInst;
     wc.hIcon = LoadIcon( hInst, MAKEINTRESOURCE(BPQICON) );
     wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-    wc.hbrBackground = bgBrush; 
+    wc.hbrBackground = bgBrush;
 
-	wc.lpszMenuName = NULL;	
-	wc.lpszClassName = MCClassName; 
+	wc.lpszMenuName = NULL;
+	wc.lpszClassName = MCClassName;
 
 	RegisterClass(&wc);
 
 	hMCMonitor=CreateDialog(hInst, MCClassName, 0, NULL);
-	
+
     if (!hMCMonitor)
         return (FALSE);
 
@@ -442,11 +442,11 @@ BOOL CreateMulticastConsole()
 //	CheckMenuItem(hMenu,MONCHAT, MonCHAT ? MF_CHECKED : MF_UNCHECKED);
 //	CheckMenuItem(hMenu,MONTCP, MonTCP ? MF_CHECKED : MF_UNCHECKED);
 
-	DrawMenuBar(hMCMonitor);	
+	DrawMenuBar(hMCMonitor);
 
 	// Create List View
-			
-	GetClientRect (hMCMonitor, &rcClient); 
+
+	GetClientRect (hMCMonitor, &rcClient);
 
 	MCList = CreateMCListView(hMCMonitor);
 
@@ -489,7 +489,7 @@ void CopyMCToClipboard(HWND hWnd)
 	char BlockList[128];
 
 	n = ListView_GetItemCount(MCList);
-	
+
 	Buffer = malloc((n + 1) * 200);
 
 	len = sprintf(Buffer, "ID   From       FileName          Size  %%  Time  Age     Blocklist\r\n");
@@ -497,7 +497,7 @@ void CopyMCToClipboard(HWND hWnd)
 	for (i=0; i<n; i++)
 	{
 		// Get Items
-		
+
 		ListView_GetItemText(MCList, i, 0, Key, 8);
 		ListView_GetItemText(MCList, i, 1, From, 15);
 		ListView_GetItemText(MCList, i, 2, FileName, 128);
@@ -513,13 +513,13 @@ void CopyMCToClipboard(HWND hWnd)
 		len += sprintf(&Buffer[len], "%4s %-10s %-16s %5s%4s %-6s%-6s%-2s%50s\r\n",
 			Key, From, FileName, Size, Percent, Time, Agestring, Complete, BlockList);
 	}
-	
+
 	hMem=GlobalAlloc(GMEM_MOVEABLE | GMEM_DDESHARE, len+1);
-	
+
 	if (hMem != 0)
 	{
 		ptr = GlobalLock(hMem);
-	
+
 		if (OpenClipboard(MainWnd))
 		{
 			strcpy(ptr, Buffer);
@@ -529,7 +529,7 @@ void CopyMCToClipboard(HWND hWnd)
 			CloseClipboard();
 		}
 			else
-				GlobalFree(hMem);		
+				GlobalFree(hMem);
 	}
 	free(Buffer);
 }
@@ -552,7 +552,7 @@ static unsigned int crcval = 0xFFFF;
 static void update(char c)
 {
 	int i;
-	
+
 	crcval ^= c & 255;
     for (i = 0; i < 8; ++i)
 	{
@@ -562,11 +562,11 @@ static void update(char c)
             crcval = (crcval >> 1);
     }
 }
-	
+
 static unsigned int CalcCRC(UCHAR * ptr, int Len)
 {
 	int i;
-	
+
 	crcval = 0xFFFF;
 	for (i = 0; i < Len; i++)
 	{
@@ -591,7 +591,7 @@ struct MSESSION * FindMSession(unsigned int Key)
 
 	//	 Not found
 
-	Sess = zalloc(sizeof(struct MSESSION)); 
+	Sess = zalloc(sizeof(struct MSESSION));
 
 	if (Sess == NULL)
 		return NULL;
@@ -618,10 +618,10 @@ UCHAR * LZUncompress(UCHAR * Decoded, int Len, int * NewLen)
 	unsigned char inprops[LZMA_PROPS_SIZE];
 	size_t inlen;
 	int r;
-	
+
 	UINT rlen;
 	UINT outlen;
-	
+
 	memcpy(&rlen, &Decoded[5], 4);
 
 	outlen = ntohl(rlen);
@@ -629,9 +629,9 @@ UCHAR * LZUncompress(UCHAR * Decoded, int Len, int * NewLen)
 
 	buf = malloc(outlen);
 
-	if (outlen > 1 << 25) 
+	if (outlen > 1 << 25)
 	{
-		Debugprintf("Refusing to decompress data (> 32 MiB)");				
+		Debugprintf("Refusing to decompress data (> 32 MiB)");
 		return NULL;
 	}
 
@@ -642,7 +642,7 @@ UCHAR * LZUncompress(UCHAR * Decoded, int Len, int * NewLen)
 
 	if ((r = LzmaUncompress(buf, &outlen, (const unsigned char*)Decoded + Len - inlen, &inlen,
 			inprops, LZMA_PROPS_SIZE)) != SZ_OK)
-	{			
+	{
 		Debugprintf("Lzma Uncompress failed: %s", LZMA_ERRORS[r]);
 		return NULL;
 	}
@@ -653,7 +653,7 @@ UCHAR * LZUncompress(UCHAR * Decoded, int Len, int * NewLen)
 }
 
 void decodeblock128(unsigned char in[8], unsigned char out[7] )
-{   
+{
 	out[0] = (unsigned char) (in[0] << 1 | in[1] >> 6);
 	out[1] = (unsigned char) (in[1] << 2 | in[2] >> 5);
 	out[2] = (unsigned char) (in[2] << 3 | in[3] >> 4);
@@ -675,7 +675,7 @@ void SaveMulticastMessage(struct MSESSION * MSession)
 
 	if (MSession->FileName == NULL)
 		return;						// Need Name
-		
+
 	MSession->Completed = TRUE;		// So we don't get it again
 
 	// If compresses and encoded, decode and decompress
@@ -684,11 +684,11 @@ void SaveMulticastMessage(struct MSESSION * MSession)
 	{
 		UCHAR * ptr1 = &MSession->Message[11];
 		UCHAR * ptr2 = malloc(MSession->MessageLen);	// Must get smaller
-		
+
 		int Len = MSession->MessageLen - 21;			// Header and Trailer
-		
+
 		Decoded = ptr2;
-	
+
 		// Decode Base64 encoding
 
 		while (Len > 0)
@@ -710,16 +710,16 @@ void SaveMulticastMessage(struct MSESSION * MSession)
 		UCHAR * Intermed;
 
 		int Len = MSession->MessageLen - 23;			// Header and Trailer
-		
+
 		Intermed = ptr2;
-	
+
 		// Decode Base128 encoding
 
 		// First remove transparency (as in base256)
 
 
 		// Extract decoded msg len
-		
+
 		ExpectedLen = atoi(ptr1);
 
 		ptr1 = strchr(ptr1, 10);
@@ -732,7 +732,7 @@ void SaveMulticastMessage(struct MSESSION * MSession)
 			Debugprintf("MCAST Missing Length Field");
 			return;
 		}
-					
+
 		Len -= HddrLen;;
 
 		while (Len > 0)
@@ -744,7 +744,7 @@ void SaveMulticastMessage(struct MSESSION * MSession)
 			{
 				ch = *(ptr1++);
 				Len--;
-				
+
 				switch (ch)
 				{
 					case ':' : *(ptr2++) =  ':';  break;
@@ -794,13 +794,13 @@ void SaveMulticastMessage(struct MSESSION * MSession)
 		UCHAR ch;
 
 		int Len = MSession->MessageLen - 23;			// Header and Trailer
-		
+
 		Decoded = ptr2;
-	
+
 		// Decode Base256 encoding
 
 		// Extract decoded msg len
-		
+
 		ExpectedLen = atoi(ptr1);
 
 		ptr1 = strchr(ptr1, 10);
@@ -813,7 +813,7 @@ void SaveMulticastMessage(struct MSESSION * MSession)
 			Debugprintf("MCAST Missing Length Field");
 			return;
 		}
-					
+
 		Len -= HddrLen;;
 
 		while (Len > 0)
@@ -825,7 +825,7 @@ void SaveMulticastMessage(struct MSESSION * MSession)
 			{
 				ch = *(ptr1++);
 				Len--;
-				
+
 				switch (ch)
 				{
 					case ':' : *(ptr2++) =  ':';  break;
@@ -889,7 +889,7 @@ void SaveMulticastMessage(struct MSESSION * MSession)
 		sprintf_s(MsgFile, sizeof(MsgFile), "%s/MCAST/%s", MailDir, MSession->FileName);
 
 		hFile = fopen(MsgFile, "wb");
-			
+
 		if (hFile)
 		{
 			WriteLen = fwrite(Uncompressed, 1, UncompressedLen, hFile);
@@ -899,7 +899,7 @@ void SaveMulticastMessage(struct MSESSION * MSession)
 
 		// if it looks like an export file (Starts SP SB or ST) and ends /ex
 		// import and delete it.
-		
+
 		if (*(ptr1) == 'S' && ptr1[2] == ' ')
 			if (_memicmp(&ptr1[UncompressedLen - 5], "/EX", 3) == 0)
 				ImportMessages(NULL, MsgFile, TRUE);
@@ -945,7 +945,7 @@ VOID ProcessMCASTLine(ConnectionInfo * conn, struct UserInfo * user, char * Buff
 		return;
 
 	crcval = CalcCRC(data, len);
-	
+
 	if (checksum != crcval)
 		return;
 
@@ -1011,7 +1011,7 @@ VOID ProcessMCASTLine(ConnectionInfo * conn, struct UserInfo * user, char * Buff
 		// SIZE 14 2995>{80BC}465 8 64
 
 		int a, b, c, n = sscanf(&data[6], "%d %d %d", &a, &b, &c);
-		
+
 		if (n == 3)
 		{
 			// We may already have some (or even all) the message if we
@@ -1035,8 +1035,8 @@ VOID ProcessMCASTLine(ConnectionInfo * conn, struct UserInfo * user, char * Buff
 					OldLoc = &MSession->Message[(MSession->BlockCount - 1) * MSession->BlockSize];
 
 					memmove(&MSession->Message[(MSession->BlockCount - 1) * c], OldLoc, MSession->BlockSize);
-		
-					MSession->BlockSize = c;	
+
+					MSession->BlockSize = c;
 				}
 
 				if (MSession->BlockCount < b)
@@ -1075,7 +1075,7 @@ VOID ProcessMCASTLine(ConnectionInfo * conn, struct UserInfo * user, char * Buff
 	if (strcmp(Opcode, "DATA") == 0)
 	{
 		//	<DATA 72 B21B>{80BC:1}[b256:start]401
-		
+
 		int Blockno = atoi(&data[6]);
 		char * dataptr = strchr(&data[6], '}');
 
@@ -1109,11 +1109,11 @@ VOID ProcessMCASTLine(ConnectionInfo * conn, struct UserInfo * user, char * Buff
 					// We based blocksize on last packet, so need to sort out mess
 
 					// Find where we put the block, and move it
-					
+
 					UCHAR * OldLoc = &MSession->Message[(MSession->BlockCount - 1) * MSession->BlockSize];
 					memmove(&MSession->Message[(MSession->BlockCount - 1) * blocksize], OldLoc, MSession->BlockSize);
-		
-					MSession->BlockSize = blocksize;	
+
+					MSession->BlockSize = blocksize;
 				}
 			}
 
@@ -1123,8 +1123,8 @@ VOID ProcessMCASTLine(ConnectionInfo * conn, struct UserInfo * user, char * Buff
 			{
 				MSession->Message = realloc(MSession->Message, Blockno * MSession->BlockSize);
 				MSession->BlockList = realloc(MSession->BlockList, Blockno);
-			
-				memset(&MSession->BlockList[MSession->BlockCount], 0, Blockno - MSession->BlockCount);		
+
+				memset(&MSession->BlockList[MSession->BlockCount], 0, Blockno - MSession->BlockCount);
 				MSession->BlockCount = Blockno;
 
 			}
@@ -1190,11 +1190,11 @@ DE GM8BPQ K
 
 */
 
-	return; 
+	return;
 /*
 	if (strcmp(Buffer, "ARQ::ETX\r") == 0)
 	{
-		// Decode it. 
+		// Decode it.
 
 		UCHAR * ptr1, * ptr2, * ptr3;
 		int len, linelen;
@@ -1212,7 +1212,7 @@ DE GM8BPQ K
 		int RMSMsgs = 0, BBSMsgs = 0;
 
 //		Msg->B2Flags |= B2Msg;
-				
+
 
 		ptr1 = conn->MailBuffer;
 		len = Msg->length;
@@ -1247,14 +1247,14 @@ DE GM8BPQ K
 			memcpy(FullFrom, ptr1, linelen);
 			FullFrom[linelen] = 0;
 
-			// B2 From may now contain an @BBS 
+			// B2 From may now contain an @BBS
 
 			strcpy(SaveFrom, FullFrom);
-				
+
 			FromHA = strlop(SaveFrom, '@');
 
 			if (strlen(SaveFrom) > 12) SaveFrom[12] = 0;
-			
+
 			strcpy(Msg->from, &SaveFrom[6]);
 
 			if (FromHA)
@@ -1268,7 +1268,7 @@ DE GM8BPQ K
 
 			ptr3 = strchr(Msg->from, '-');
 				if (ptr3) *ptr3 = 0;
-		
+
 		}
 		else if (_memicmp(ptr1, "To:", 3) == 0 || _memicmp(ptr1, "cc:", 3) == 0)
 		{
@@ -1303,11 +1303,11 @@ DE GM8BPQ K
 				else
 					Msg->via[0] = 0;
 			}
-		
+
 			if (_memicmp(&ptr1[4], "SMTP:", 5) == 0)
 			{
 				// Airmail Sends MARS messages as SMTP
-					
+
 				if (CheckifPacket(Msg->via))
 				{
 					// Packet Message
@@ -1315,7 +1315,7 @@ DE GM8BPQ K
 					memmove(FullTo, &FullTo[5], strlen(FullTo) - 4);
 					_strupr(FullTo);
 					_strupr(Msg->via);
-						
+
 					// Update the saved to: line (remove the smtp:)
 
 					strcpy(&HddrTo[Recipients][4], &HddrTo[Recipients][9]);
@@ -1339,7 +1339,7 @@ DE GM8BPQ K
 				}
 //					FullTo[0] = 0;
 
-		BBSMsg:		
+		BBSMsg:
 				_strupr(FullTo);
 				_strupr(Msg->via);
 			}
@@ -1386,7 +1386,7 @@ DE GM8BPQ K
 
 					if (ToUser->HomeBBS[0])
 					{
-						strcpy(Msg->via, ToUser->HomeBBS); 
+						strcpy(Msg->via, ToUser->HomeBBS);
 					}
 				}
 				else
@@ -1396,7 +1396,7 @@ DE GM8BPQ K
 					if (WP)
 					{
 						strcpy(Msg->via, WP->first_homebbs);
-			
+
 					}
 				}
 
@@ -1419,7 +1419,7 @@ DE GM8BPQ K
 			strcpy(RecpTo[Recipients++], FullTo);
 
 			// Remove the To: Line from the buffer
-			
+
 		}
 		else if (_memicmp(ptr1, "Type:", 4) == 0)
 		{
@@ -1453,7 +1453,7 @@ DE GM8BPQ K
 			memset(&rtime, 0, sizeof(struct tm));
 
 			// Date: 2009/07/25 10:08
-	
+
 			sscanf(&ptr1[5], "%04d/%02d/%02d %02d:%02d:%02d",
 					&rtime.tm_year, &rtime.tm_mon, &rtime.tm_mday, &rtime.tm_hour, &rtime.tm_min, &rtime.tm_sec);
 
@@ -1463,7 +1463,7 @@ DE GM8BPQ K
 			rtime.tm_year -= 1900;
 
 			Date = mktime(&rtime) - (time_t)_MYTIMEZONE;
-	
+
 			if (Date == (time_t)-1)
 				Date = time(NULL);
 
@@ -1476,8 +1476,8 @@ DE GM8BPQ K
 			ptr1 = ptr2 + 2;		// Skip cr
 			goto Loop;
 		}
-	
-		
+
+
 		// Processed all headers
 ProcessBody:
 
@@ -1501,7 +1501,7 @@ ProcessBody:
 	{
 		conn->MailBufferSize += 10000;
 		conn->MailBuffer = realloc(conn->MailBuffer, conn->MailBufferSize);
-	
+
 		if (conn->MailBuffer == NULL)
 		{
 			BBSputs(conn, "*** Failed to extend Message Buffer\r");
@@ -1527,7 +1527,7 @@ ARQ::STX
 //FLARQ COMPOSER
 Date: 16/01/2014 22:26:06
 To: g8bpq
-From: 
+From:
 Subject: test message
 
 Hello
@@ -1598,7 +1598,7 @@ VOID MCastTimer()
 
 int MulticastStatusHTML(char * Reply)
 {
-	char StatusPage [] = 
+	char StatusPage [] =
 		"<pre>ID    From      FileName        Size  %%  Time   Age   Blocklist"
 		"                                                   "
 		"\r\n<textarea cols=110 rows=6 name=MC>";
@@ -1639,12 +1639,12 @@ int MulticastStatusHTML(char * Reply)
 		if (Sess->MessageLen && Sess->BlockCount)
 		{
 			int pcent;
-		
+
 			pcent = (Sess->BlocksReceived * 100) / Sess->BlockCount;
 			sprintf(Percent, "%d", pcent);
 		}
 
-		// Flag received blocks. Normalise to 50 wide 
+		// Flag received blocks. Normalise to 50 wide
 
 		memset(BlockList, '.', 50);
 
@@ -1666,7 +1666,7 @@ int MulticastStatusHTML(char * Reply)
 		Len += sprintf(&Reply[Len], "%04X %-10s%-15s%5d %-3s %s %s %s\r\n",
 			Sess->Key, ID, FileName,
 			Sess->MessageLen, Percent, Time, Agestring, BlockList);
-			
+
 		Sess = Sess->Next;
 	}
 

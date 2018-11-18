@@ -2,7 +2,7 @@
 Copyright 2001-2018 John Wiseman G8BPQ
 
 This file is part of LinBPQ/BPQ32.
- 
+
 LinBPQ/BPQ32 is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
@@ -15,7 +15,7 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with LinBPQ/BPQ32.  If not, see http://www.gnu.org/licenses
-*/	
+*/
 
 // Control Routine for LinBPQ
 
@@ -422,7 +422,7 @@ VOID MonitorThread(int x)
 		Sleep(30000);
 //		Debugprintf("Monitor Thread Still going %d %d %d %x %d", LastSemGets, Semaphore.Gets, Semaphore.Flag, Semaphore.SemThreadID, SemHeldByAPI);
 
-	} 
+	}
 	while (TRUE);
 }
 
@@ -494,7 +494,7 @@ char * GetLogDirectory()
 {
 	return LogDirectory;
 }
-extern int POP3Timer;	
+extern int POP3Timer;
 
 int main(int argc, char * argv[])
 {
@@ -634,22 +634,22 @@ int main(int argc, char * argv[])
 #ifdef WIN32
 #else
 	openlog("LINBPQ", LOG_PID, LOG_DAEMON);
- 
+
 	memset (&act, '\0', sizeof(act));
- 
-	act.sa_handler = &sigint_handler; 
-	if (sigaction(SIGINT, &act, NULL) < 0) 
+
+	act.sa_handler = &sigint_handler;
+	if (sigaction(SIGINT, &act, NULL) < 0)
 		perror ("SIGINT");
 
-	act.sa_handler = &sigterm_handler; 
-	if (sigaction(SIGTERM, &act, NULL) < 0) 
+	act.sa_handler = &sigterm_handler;
+	if (sigaction(SIGTERM, &act, NULL) < 0)
 		perror ("sigaction");
 
-	act.sa_handler = SIG_IGN; 
-	if (sigaction(SIGHUP, &act, NULL) < 0) 
+	act.sa_handler = SIG_IGN;
+	if (sigaction(SIGHUP, &act, NULL) < 0)
 		perror ("SIGHUP");
 
-	if (sigaction(SIGPIPE, &act, NULL) < 0) 
+	if (sigaction(SIGPIPE, &act, NULL) < 0)
 		perror ("SIGPIPE");
 
 #endif
@@ -660,7 +660,7 @@ int main(int argc, char * argv[])
 			IncludesChat = TRUE;
 	}
 
-	if (IncludesChat) 
+	if (IncludesChat)
 	{
 		RunChat = TRUE;
 
@@ -824,9 +824,9 @@ int main(int argc, char * argv[])
 	if (SendAMPRDirect)
 	{
 		BOOL NeedSave = FALSE;
-		
+
 		user = LookupCall("AMPR");
-		
+
 		if (user == NULL)
 		{
 			user = AllocateUserRecord("AMPR");
@@ -945,9 +945,9 @@ int main(int argc, char * argv[])
 	{
 		if (_stricmp(argv[i], "daemon") == 0)
 		{
-	
+
 			// Convert to daemon
-	
+
 			pid_t pid, sid;
 
 		    /* Fork off the parent process */
@@ -1385,11 +1385,11 @@ int APIENTRY Reboot()
 	return CreateProcess(NULL, Cmd, NULL, NULL, FALSE,0 ,NULL ,NULL, &SInfo, &PInfo);
 	return 0;
 #else
-	
+
 	char * arg_list[] = {NULL, NULL, NULL, NULL, NULL};
 	pid_t child_pid;
 	char * Context;
-	signal(SIGCHLD, SIG_IGN); // Silently (and portably) reap children. 
+	signal(SIGCHLD, SIG_IGN); // Silently (and portably) reap children.
 
 	arg_list[0] = "sudo";
 	arg_list[1] = "shutdown";
@@ -1398,26 +1398,26 @@ int APIENTRY Reboot()
 
 	//	Fork and Exec shutdown
 
-	// Duplicate this process.  
+	// Duplicate this process.
 
-	child_pid = fork(); 
+	child_pid = fork();
 
-	if (child_pid == -1) 
-	{    				
-		printf ("Reboot fork() Failed\n"); 
+	if (child_pid == -1)
+	{
+		printf ("Reboot fork() Failed\n");
 		return 0;
 	}
 
-	if (child_pid == 0) 
- 	{    				
-		execvp (arg_list[0], arg_list); 
-        
-		/* The execvp  function returns only if an error occurs.  */ 
+	if (child_pid == 0)
+ 	{
+		execvp (arg_list[0], arg_list);
 
-		printf ("Failed to run shutdown\n"); 
+		/* The execvp  function returns only if an error occurs.  */
+
+		printf ("Failed to run shutdown\n");
 		exit(0);			// Kill the new process
 	}
-	return TRUE;								 
+	return TRUE;
 #endif
 
 }
@@ -1499,7 +1499,7 @@ int GetListeningPortsPID(int Port)
 	// Get PID of process for this TCP Port
 
 	// Get Length of table
-	
+
 	GetExtendedTcpTable(TcpTable, &dwSize, TRUE, AF_INET, TCP_TABLE_OWNER_PID_LISTENER, 0);
 
 	TcpTable = malloc(dwSize);
@@ -1508,7 +1508,7 @@ int GetListeningPortsPID(int Port)
 	for (n = 0; n < TcpTable->dwNumEntries; n++)
 	{
 		Row = &TcpTable->table[n];
-		
+
 		if (Row->dwLocalPort == Port && Row->dwState == MIB_TCP_STATE_LISTEN)
 		{
 			return Row->dwOwningPid;

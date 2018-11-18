@@ -15,10 +15,10 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with LinBPQ/BPQ32.  If not, see http://www.gnu.org/licenses
-*/	
+*/
 
 //
-//	DLL to inteface DED Host Mode TNCs to BPQ32 switch 
+//	DLL to inteface DED Host Mode TNCs to BPQ32 switch
 //
 //	Uses BPQ EXTERNAL interface
 
@@ -30,7 +30,7 @@ along with LinBPQ/BPQ32.  If not, see http://www.gnu.org/licenses
 #include <stdlib.h>
 #include "time.h"
 
-#define MaxStreams 10	
+#define MaxStreams 10
 
 #include "CHeaders.h"
 #include "tncinfo.h"
@@ -109,7 +109,7 @@ ConfigLine:
 		{
 		}
 		else
-		
+
 		if (_memicmp(buf, "SWITCHMODES", 11) == 0)
 		{
 		}
@@ -119,7 +119,7 @@ ConfigLine:
 //			TNC->UseAPPLCalls = TRUE;
 		}
 		else if (_memicmp(buf, "DEBUGLOG", 8) == 0)	// Write Debug Log
-			TNC->WRITELOG = atoi(&buf[8]);	
+			TNC->WRITELOG = atoi(&buf[8]);
 		else
 		if (_memicmp(buf, "DEFAULT ROBUST", 14) == 0)
 		{
@@ -179,7 +179,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 
 	if (TNC == NULL)
 		return 0;
-	
+
 	if (TNC->hDevice == 0)
 	{
 		// Try to reopen every 30 secs
@@ -190,7 +190,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 			return 0;
 
 		TNC->ReopenTimer = 0;
-		
+
 		OpenCOMMPort(TNC, TNC->PortRecord->PORTCONTROL.SerialPortName, TNC->PortRecord->PORTCONTROL.BAUDRATE, TRUE);
 
 		if (TNC->hDevice == 0)
@@ -218,7 +218,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 		for (Stream = 0; Stream <= MaxStreams; Stream++)
 		{
 			STREAM = &TNC->Streams[Stream];
-			
+
 			if (STREAM->PACTORtoBPQ_Q == 0)
 			{
 				if (STREAM->DiscWhenAllSent)
@@ -231,7 +231,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 			else
 			{
 				int datalen;
-			
+
 				buffptr=Q_REM(&STREAM->PACTORtoBPQ_Q);
 
 				datalen=buffptr[1];
@@ -245,14 +245,14 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 
 	//			buff[5]=(datalen & 0xff);
 	//			buff[6]=(datalen >> 8);
-				
+
 				ReleaseBuffer(buffptr);
-	
+
 				return (1);
 			}
 		}
-	
-			
+
+
 		return 0;
 
 	case 2:				// send
@@ -271,7 +271,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 			memcpy(buffptr+2, "No Connection to PACTOR TNC\r", 36);
 
 			C_Q_ADD(&TNC->Streams[Stream].PACTORtoBPQ_Q, buffptr);
-			
+
 			return 0;
 		}
 
@@ -279,11 +279,11 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 
 		buffptr[1] = txlen;
 		memcpy(buffptr+2, &buff[8], txlen);
-		
+
 		C_Q_ADD(&TNC->Streams[Stream].BPQtoPACTOR_Q, buffptr);
 
 		TNC->Streams[Stream].FramesOutstanding++;
-		
+
 		return (0);
 
 
@@ -302,7 +302,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 		}
 		else
 		{
-			if (STREAM->FramesOutstanding > 3 || TNC->Buffers < 200)	
+			if (STREAM->FramesOutstanding > 3 || TNC->Buffers < 200)
 				return (1 | TNCOK << 8 | STREAM->Disconnecting << 15);		}
 
 		return TNCOK << 8 | STREAM->Disconnecting << 15;		// OK, but lock attach if disconnecting
@@ -364,12 +364,12 @@ UINT TrackerMExtInit(EXTPORTDATA *  PortEntry)
 
 		return (int) ExtProc;
 	}
-	
+
 	TNC->Port = port;
 	TNC->Hardware = H_TRKM;
 
 	// Set up DED addresses for streams
-	
+
 	for (Stream = 0; Stream <= MaxStreams; Stream++)
 	{
 		TNC->Streams[Stream].DEDStream = Stream;	// DED Stream = BPQ Stream (We don't use Stream 0)
@@ -380,7 +380,7 @@ UINT TrackerMExtInit(EXTPORTDATA *  PortEntry)
 
 	PortEntry->MAXHOSTMODESESSIONS = TNC->PacketChannels + 1; //TNC->PacketChannels + 1;
 	PortEntry->PERMITGATEWAY = TRUE;					// Can change ax.25 call on each stream
-	PortEntry->SCANCAPABILITIES = NONE;				// Scan Control 3 stage/conlock 
+	PortEntry->SCANCAPABILITIES = NONE;				// Scan Control 3 stage/conlock
 
 	TNC->PortRecord = PortEntry;
 
@@ -388,7 +388,7 @@ UINT TrackerMExtInit(EXTPORTDATA *  PortEntry)
 		memcpy(TNC->NodeCall, MYNODECALL, 10);
 	else
 		ConvFromAX25(&PortEntry->PORTCONTROL.PORTCALL[0], TNC->NodeCall);
-		
+
 	PortEntry->PORTCONTROL.PROTOCOL = 10;
 	PortEntry->PORTCONTROL.PORTQUALITY = 0;
 	PortEntry->PORTCONTROL.UICAPABLE = 1;
@@ -402,7 +402,7 @@ UINT TrackerMExtInit(EXTPORTDATA *  PortEntry)
 	// get NODECALL for RP tests
 
 	memcpy(NodeCall, MYNODECALL, 10);
-		
+
 	ptr=strchr(NodeCall, ' ');
 	if (ptr) *(ptr) = 0;					// Null Terminate
 
@@ -423,7 +423,7 @@ UINT TrackerMExtInit(EXTPORTDATA *  PortEntry)
 	sprintf(YCmd, "Y %d\r", TNC->PacketChannels);
 	strcat(TNC->InitScript, YCmd);
 	strcat(TNC->InitScript, "E 1\r");      //  	Echo - Restart process needs echo
-	
+
 	sprintf(msg, "I %s\r", TNC->NodeCall);
 	strcat(TNC->InitScript, msg);
 
@@ -447,11 +447,11 @@ static void DEDCheckRX(struct TNCINFO * TNC)
 
 	if (Len == 0)
 		return;					// Nothing doing
-	
+
 	TNC->RXLen += Len;
 
 	Length = TNC->RXLen;
-	
+
 	ptr = TNC->RXBuffer;
 
 	CURSOR = &TNC->DEDBuffer[TNC->InputLen];
@@ -459,7 +459,7 @@ static void DEDCheckRX(struct TNCINFO * TNC)
 	if (TNC->HostMode == 0)
 	{
 		// If we are just restarting, and TNC is in host mode, we may get "Invalid Channel" Back
-		
+
 		if (memcmp(ptr, "\x18\x02INVALID", 9) == 0)
 		{
 			if (TNC->WRITELOG)
@@ -472,7 +472,7 @@ static void DEDCheckRX(struct TNCINFO * TNC)
 			return;
 		}
 
-		// Command is echoed as * command * 
+		// Command is echoed as * command *
 
 		if (strstr(ptr, "*") || TNC->ReinitState == 5)		// 5 is waiting for reponse to JHOST1
 		{
@@ -532,7 +532,7 @@ static void DEDCheckRX(struct TNCINFO * TNC)
 					// Success, no more info
 
 					ProcessDEDFrame(TNC);
-						
+
 					TNC->HOSTSTATE = 0;
 					break;
 				}
@@ -540,7 +540,7 @@ static void DEDCheckRX(struct TNCINFO * TNC)
 				if (character > 0 && character < 6)
 				{
 					// Null Terminated Response)
-					
+
 					TNC->HOSTSTATE = 5;
 					CURSOR = &TNC->DEDBuffer[0];
 					break;
@@ -563,7 +563,7 @@ static void DEDCheckRX(struct TNCINFO * TNC)
 			case 5:		//  Collecting Null Terminated Response
 
 				*(CURSOR++) = character;
-				
+
 				if (character)
 					continue;			// MORE TO COME
 
@@ -643,7 +643,7 @@ static VOID DEDPoll(int Port)
 	if (TNC->Timeout)
 	{
 		TNC->Timeout--;
-		
+
 		if (TNC->Timeout)			// Still waiting
 			return;
 
@@ -665,7 +665,7 @@ static VOID DEDPoll(int Port)
 
 		TNC->InitPtr = TNC->InitScript;
 		TNC->HOSTSTATE = 0;
-		
+
 		for (Stream = 0; Stream <= MaxStreams; Stream++)
 		{
 			if (TNC->PortRecord->ATTACHEDSESSIONS[Stream])		// Connected
@@ -701,7 +701,7 @@ static VOID DEDPoll(int Port)
 		int len;
 
 		start = TNC->InitPtr;
-		
+
 		if (*(start) == 0)			// End of Script
 		{
 			TNC->InitPtr = NULL;
@@ -711,21 +711,21 @@ static VOID DEDPoll(int Port)
 		{
 			end = strchr(start, 13);
 			len = ++end - start -1;	// exclude cr
-			
+
 			TNC->InitPtr = end;
 
 			Poll[0] = 0;			// Channel
 			Poll[1] = 1;			// Command
 			Poll[2] = len - 1;
 			memcpy(&Poll[3], start, len);
-		
+
 			StuffAndSend(TNC, Poll, len + 3);
 
 			return;
 
 		}
 	}
-		
+
 	for (Stream = 0; Stream <= MaxStreams; Stream++)
 	{
 		if (TNC->Streams[Stream].CmdSet)
@@ -734,7 +734,7 @@ static VOID DEDPoll(int Port)
 			int len;
 
 			start = TNC->Streams[Stream].CmdSet;
-		
+
 			if (*(start + 2) == 0)			// End of Script
 			{
 				free(TNC->Streams[Stream].CmdSave);
@@ -748,7 +748,7 @@ static VOID DEDPoll(int Port)
 
 				memcpy(&Poll[0], start, len);
 				Poll[2] = len - 4;
-		
+
 				StuffAndSend(TNC, Poll, len);
 
 				return;
@@ -767,7 +767,7 @@ static VOID DEDPoll(int Port)
 			int datalen;
 			UINT * buffptr;
 			char * Buffer;
-			
+
 			buffptr=Q_REM(&TNC->Streams[Stream].BPQtoPACTOR_Q);
 
 			datalen=buffptr[1];
@@ -779,7 +779,7 @@ static VOID DEDPoll(int Port)
 			{
 				if (TNC->SwallowSignon && Stream == 0)
 				{
-					TNC->SwallowSignon = FALSE;	
+					TNC->SwallowSignon = FALSE;
 					if (strstr(Buffer, "Connected"))	// Discard *** connected
 					{
 						ReleaseBuffer(buffptr);
@@ -792,9 +792,9 @@ static VOID DEDPoll(int Port)
 
 				Poll[2] = datalen - 1;
 				memcpy(&Poll[3], buffptr+2, datalen);
-		
+
 				ReleaseBuffer(buffptr);
-		
+
 				StuffAndSend(TNC, Poll, datalen + 3);
 
 				TNC->Streams[Stream].InternalCmd = TNC->Streams[Stream].Connected;
@@ -804,7 +804,7 @@ static VOID DEDPoll(int Port)
 
 				return;
 			}
-			
+
 			// Command. Do some sanity checking and look for things to process locally
 
 			Poll[1] = 1;			// Command
@@ -834,11 +834,11 @@ static VOID DEDPoll(int Port)
 
 					buffptr[1] = sprintf((UCHAR *)&buffptr[2], "TRK} Can't Connect after ATTACH\r");
 					C_Q_ADD(&TNC->Streams[0].PACTORtoBPQ_Q, buffptr);
-				
+
 					return;
 
 				}
-				
+
 				if (*(++Buffer) == ' ') Buffer++;		// Space isn't needed
 
 				memcpy(TNC->Streams[Stream].RemoteCall, Buffer, 9);
@@ -846,21 +846,21 @@ static VOID DEDPoll(int Port)
 				TNC->Streams[Stream].Connecting = TRUE;
 
 				TNC->Streams[Stream].CmdSet = TNC->Streams[Stream].CmdSave = zalloc(100);
-							
+
 				sprintf(TNC->Streams[Stream].CmdSet, "%c%c%cI%s%c%c%c%c%s", Stream, 1, 1,
 					TNC->Streams[Stream].MyCall, 0, Stream, 1, 1, (char *)buffptr+8);
 
 				ReleaseBuffer(buffptr);
-	
+
 				TNC->Streams[Stream].InternalCmd = FALSE;
-				return;				
+				return;
 			}
 
 			Poll[2] = datalen - 1;
 			memcpy(&Poll[3], buffptr+2, datalen);
-		
+
 			ReleaseBuffer(buffptr);
-		
+
 			StuffAndSend(TNC, Poll, datalen + 3);
 
 			TNC->Streams[Stream].InternalCmd = TNC->Streams[Stream].Connected;
@@ -874,17 +874,17 @@ static VOID DEDPoll(int Port)
 		int datalen;
 		char * Buffer;
 		char CCMD[80] = "C";
-		char Call[12] = "           ";		
+		char Call[12] = "           ";
 		struct _MESSAGE * buffptr;
-			
+
 		buffptr = Q_REM(&TNC->PortRecord->UI_Q);
-		
+
 		datalen = buffptr->LENGTH - 7;
 		Buffer = &buffptr->DEST[0];		// Raw Frame
 		Buffer[datalen] = 0;
 
 		TNC->Streams[0].CmdSet = TNC->Streams[0].CmdSave = zalloc(500);
-							
+
 //		sprintf(TNC->Streams[Stream].CmdSet, "I%s\r%s\r", TNC->Streams[Stream].MyCall, buffptr+2);
 
 		// Buffer has an ax.25 header, which we need to pick out and set as channel 0 Connect address
@@ -934,7 +934,7 @@ static VOID DEDPoll(int Port)
 		Poll[0] = TNC->Streams[0].DEDStream;
 		Poll[1] = 0x1;			// Command
 		TNC->Streams[0].InternalCmd = TRUE;
-	
+
 		Poll[2] = 1;			// Len-1
 		Poll[3] = '@';
 		Poll[4] = 'B';			// Buffers
@@ -959,22 +959,22 @@ static VOID DEDPoll(int Port)
 	STREAM = &TNC->Streams[Stream];
 
 	STREAM->IntCmdDelay++;
-	
+
 	if (STREAM->IntCmdDelay > 10)
 	{
 		STREAM->IntCmdDelay = 0;
-		
+
 		if (STREAM->FramesOutstanding)
 		{
 			Poll[0] = STREAM->DEDStream;
 			Poll[1] = 0x1;			// Command
 			STREAM->InternalCmd = TRUE;
-	
+
 			Poll[2] = 0;			// Len-1
 			Poll[3] = 'L';			// Status
 			StuffAndSend(TNC, Poll, 4);
 
-			return;	
+			return;
 		}
 	}
 
@@ -1076,7 +1076,7 @@ static VOID DoTermModeTimeout(struct TNCINFO * TNC)
 		}
 
 		// Try Again
-		
+
 		TNC->ReinitState = 1;
 		ExitHost(TNC);
 
@@ -1085,7 +1085,7 @@ static VOID DoTermModeTimeout(struct TNCINFO * TNC)
 	if (TNC->ReinitState == 3)
 	{
 		// Entering Host Mode
-	
+
 		// Assume ok
 
 		TNC->HostMode = TRUE;
@@ -1187,7 +1187,7 @@ static VOID ProcessDEDFrame(struct TNCINFO * TNC)
 	Stream = TNC->MSGCHANNEL;
 
 	//	See if Poll Reply or Data
-	
+
 	if (TNC->MSGTYPE == 0)
 	{
 		// Success - Nothing Follows
@@ -1210,25 +1210,25 @@ static VOID ProcessDEDFrame(struct TNCINFO * TNC)
 
 			if (Stream > MaxStreams)
 				return;
-	
+
 			STREAM = &TNC->Streams[Stream];
 
 			STREAM->IntCmdDelay++;
-	
+
 			if (STREAM->IntCmdDelay > 10)
 			{
 				STREAM->IntCmdDelay = 0;
-		
+
 				if (STREAM->FramesOutstanding)
 				{
 					Poll[0] = STREAM->DEDStream;
 					Poll[1] = 0x1;			// Command
 					STREAM->InternalCmd = TRUE;
-	
+
 					Poll[2] = 0;			// Len-1
 					Poll[3] = 'L';			// Status
 					StuffAndSend(TNC, Poll, 4);
-					return;	
+					return;
 				}
 			}
 
@@ -1239,7 +1239,7 @@ static VOID ProcessDEDFrame(struct TNCINFO * TNC)
 
 			StuffAndSend(TNC, Poll, 4);
 			STREAM->InternalCmd = FALSE;
-	
+
 			return;
 		}
 
@@ -1254,7 +1254,7 @@ static VOID ProcessDEDFrame(struct TNCINFO * TNC)
 		{
 			if (TNC->TXBuffer[8] == '0')	// JHOST0
 			{
-				TNC->Timeout = 1;			// 
+				TNC->Timeout = 1;			//
 				return;
 			}
 		}
@@ -1281,7 +1281,7 @@ static VOID ProcessDEDFrame(struct TNCINFO * TNC)
 		int len;
 
 		Buffer = Msg;
-		
+
 		ptr = strchr(Buffer, 0);
 
 		if (ptr == 0)
@@ -1312,7 +1312,7 @@ static VOID ProcessDEDFrame(struct TNCINFO * TNC)
 					int s1, s2, s3, s4, s5, s6, num;
 
 					num = sscanf(Buffer, "%d %d %d %d %d %d", &s1, &s2, &s3, &s4, &s5, &s6);
-			
+
 					TNC->Streams[Stream].FramesOutstanding = s3;
 					return;
 				}
@@ -1326,7 +1326,7 @@ static VOID ProcessDEDFrame(struct TNCINFO * TNC)
 						return;
 					}
 				}
-					
+
 				return;
 			}
 
@@ -1353,10 +1353,10 @@ static VOID ProcessDEDFrame(struct TNCINFO * TNC)
 		{
 			if (TNC->TXBuffer[8] == '0')	// JHOST0
 			{
-				TNC->Timeout = 1;			// 
+				TNC->Timeout = 1;			//
 				return;
 			}
-		}	
+		}
 
 		if (TNC->MSGCHANNEL == 0)			// Unproto Channel
 			return;
@@ -1374,7 +1374,7 @@ static VOID ProcessDEDFrame(struct TNCINFO * TNC)
 		}
 
 		if (TNC->MSGTYPE == 3)					// Status
-		{			
+		{
 			struct STREAMINFO * STREAM = &TNC->Streams[Stream];
 
 			if (strstr(Buffer, "DISCONNECTED") || strstr(Buffer, "LINK FAILURE") || strstr(Buffer, "BUSY"))
@@ -1385,7 +1385,7 @@ static VOID ProcessDEDFrame(struct TNCINFO * TNC)
 				if (STREAM->Connecting && STREAM->Disconnecting == FALSE)
 				{
 					// Connect Failed
-			
+
 					buffptr = GetBuff();
 					if (buffptr == 0) return;			// No buffers, so ignore
 
@@ -1395,7 +1395,7 @@ static VOID ProcessDEDFrame(struct TNCINFO * TNC)
 						buffptr[1]  = sprintf((UCHAR *)&buffptr[2], "*** Failure with %s\r", TNC->Streams[Stream].RemoteCall);
 
 					C_Q_ADD(&STREAM->PACTORtoBPQ_Q, buffptr);
-	
+
 					STREAM->Connecting = FALSE;
 					STREAM->Connected = FALSE;				// In case!
 					STREAM->FramesOutstanding = 0;
@@ -1404,7 +1404,7 @@ static VOID ProcessDEDFrame(struct TNCINFO * TNC)
 
 					return;
 				}
-					
+
 				// Must Have been connected or disconnecting - Release Session
 
 				STREAM->Connecting = FALSE;
@@ -1429,10 +1429,10 @@ static VOID ProcessDEDFrame(struct TNCINFO * TNC)
 				if (Call[1] == ':')
 					Call +=2;
 
-				ptr = strchr(Call, ' ');	
+				ptr = strchr(Call, ' ');
 				if (ptr) *ptr = 0;
 
-				ptr = strchr(Call, 13);	
+				ptr = strchr(Call, 13);
 				if (ptr) *ptr = 0;
 
 				STREAM->Connected = TRUE;			// Subsequent data to data channel
@@ -1488,7 +1488,7 @@ static VOID ProcessDEDFrame(struct TNCINFO * TNC)
 				else
 				{
 					// Connect Complete
-			
+
 					buffptr = GetBuff();
 					if (buffptr == 0) return;			// No buffers, so ignore
 
@@ -1496,7 +1496,7 @@ static VOID ProcessDEDFrame(struct TNCINFO * TNC)
 
 					C_Q_ADD(&STREAM->PACTORtoBPQ_Q, buffptr);
 
-				}		
+				}
 			}
 			return;
 		}
@@ -1520,7 +1520,7 @@ static VOID ProcessDEDFrame(struct TNCINFO * TNC)
 				char Status[80];
 
 				if (ptr1) memcpy(DestCall, &ptr1[3], 10);
-				
+
 				ptr1 = strchr(DestCall, ' ');
 				if (ptr1) *(ptr1) = 0;					// Null Terminate
 
@@ -1569,7 +1569,7 @@ static VOID ProcessDEDFrame(struct TNCINFO * TNC)
 			DoMonitorHddr(TNC, Msg, framelen, TNC->MSGTYPE);
 			return;
 
-		
+
 		}
 
 		// 1, 2, 4, 5 - pass to Appl
@@ -1600,13 +1600,13 @@ static VOID ProcessDEDFrame(struct TNCINFO * TNC)
 	{
 		//char StatusMsg[60];
 		//int Status, ISS, Offset;
-		
+
 		// Connected Data
-		
+
 		buffptr = GetBuff();
 
 		if (buffptr == NULL) return;			// No buffers, so ignore
-			
+
 		buffptr[1] = framelen;				// Length
 		TNC->Streams[Stream].BytesRXed += buffptr[1];
 		memcpy(&buffptr[2], Msg, buffptr[1]);

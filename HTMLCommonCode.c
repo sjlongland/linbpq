@@ -15,7 +15,7 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with LinBPQ/BPQ32.  If not, see http://www.gnu.org/licenses
-*/	
+*/
 
 
 // General C Routines common to bpq32 and linbpq.mainly moved from BPQ32.c
@@ -48,7 +48,7 @@ char * GetTemplateFromFile(int Version, char * FN)
 	}
 
 	hFile = fopen(MsgFile, "rb");
-	
+
 	if (hFile == 0)
 	{
 		MsgBytes = _strdup("File is missing");
@@ -57,7 +57,7 @@ char * GetTemplateFromFile(int Version, char * FN)
 
 	FileSize = STAT.st_size;
 	MsgBytes = malloc(FileSize + 1);
-	ReadLen = fread(MsgBytes, 1, FileSize, hFile); 
+	ReadLen = fread(MsgBytes, 1, FileSize, hFile);
 	MsgBytes[FileSize] = 0;
 	fclose(hFile);
 
@@ -77,6 +77,6 @@ char * GetTemplateFromFile(int Version, char * FN)
 			sprintf(MsgBytes, "Wrong Version of HTML Page %s - is %d should be %d. Please update", FN, PageVersion, Version);
 		}
 	}
-	
+
 	return MsgBytes;
 }

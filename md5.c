@@ -15,7 +15,7 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with LinBPQ/BPQ32.  If not, see http://www.gnu.org/licenses
-*/	
+*/
 
 /*
  * This code implements the MD5 message-digest algorithm.
@@ -163,7 +163,7 @@ cvs_MD5Update (ctx, buf, len)
 }
 
 /*
- * Final wrapup - pad to 64-byte boundary with the bit pattern 
+ * Final wrapup - pad to 64-byte boundary with the bit pattern
  * 1 0* (64-bit count of bits processed, MSB-first)
  */
 void
@@ -329,6 +329,6 @@ DllExport VOID APIENTRY md5 (char *arg, unsigned char * checksum)
 	cvs_MD5Init (&context);
 	cvs_MD5Update (&context, arg, strlen (arg));
 	cvs_MD5Final (checksum, &context);
-	
+
 	return;
 }

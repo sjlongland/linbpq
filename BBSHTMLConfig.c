@@ -15,7 +15,7 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with LinBPQ/BPQ32.  If not, see http://www.gnu.org/licenses
-*/	
+*/
 
 #define _CRT_SECURE_NO_DEPRECATE
 #define _USE_32BIT_TIME_T
@@ -139,8 +139,8 @@ char MailSignon[] = "<html><head><title>BPQ32 Mail Server Access</title></head><
 	"<h3 align=center>Please enter Callsign and Password to access the BBS</h3>"
 	"<form method=post action=/Mail/Signon?Mail>"
 	"<table align=center  bgcolor=white>"
-	"<tr><td>User</td><td><input type=text name=user tabindex=1 size=20 maxlength=50 /></td></tr>" 
-	"<tr><td>Password</td><td><input type=password name=password tabindex=2 size=20 maxlength=50 /></td></tr></table>"  
+	"<tr><td>User</td><td><input type=text name=user tabindex=1 size=20 maxlength=50 /></td></tr>"
+	"<tr><td>Password</td><td><input type=password name=password tabindex=2 size=20 maxlength=50 /></td></tr></table>"
 	"<p align=center><input type=submit value=Submit /><input type=submit value=Cancel name=Cancel /></form>";
 
 
@@ -174,16 +174,16 @@ char RefreshMainPage[] = "<html><head>"
 	"<td><a href=/>Node Menu</a></td>"
 	"</tr></table>";
 
-char StatusPage [] = 
+char StatusPage [] =
 
 "<form style=\"font-family: monospace; text-align: center\"  method=post action=/Mail/DisSession?%s>"
 "<br>User&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Callsign&nbsp;&nbsp; Stream Queue<br>"
 "<select style=\"font-family: monospace;\" tabindex=1 size=10 name=call>";
 
-char StreamEnd[] = 
+char StreamEnd[] =
 "</select><br><input name=Disconnect value=Disconnect type=submit><br><br>";
 
-char StatusTail[] = 
+char StatusTail[] =
 "Msgs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <input readonly=readonly value=%d size=3><br>"
 "Sysop Msgs <input readonly=readonly value=%d size=3><br>"
 "Held Msgs&nbsp; <input readonly=readonly value=%d size=3><br>"
@@ -206,7 +206,7 @@ char UILine[] = "<input %sname=En%d type=checkbox> %s <input size=40 value=\"%s\
 char UITail[] = "<br><br><input name=Update value=Update type=submit> "
 "<input name=Cancel value=Cancel type=submit><br></form>";
 
-char FWDSelectHddr[] = 
+char FWDSelectHddr[] =
 	"<form style=\"font-family: monospace; text-align: center;\" method=post action=/Mail/FWDSel?%s>"
 	"Max Size to Send &nbsp;&nbsp; <input value=%d size=3 name=MaxTX><br>"
 	"Max Size to Receive <input value=%d size=3 name=MaxRX><br>"
@@ -221,7 +221,7 @@ char FWDSelectTail[] =
 	"name=Cancel value=Cancel type=submit>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
 	"&nbsp; <input name=Select value=Select type=submit></form>";
 
-char UserSelectHddr[] = 
+char UserSelectHddr[] =
 	"<form style=\"font-family: monospace; text-align: center\" method=post action=/Mail/Users?%s>"
 	"Please Select User<br><br><select tabindex=1 size=10 name=call>";
 
@@ -245,7 +245,7 @@ char UserUpdateLine[] = "<option value=%s>%s</option>";
 //<input checked="checked" name=%s type="checkbox"><br>
 
 
-char FWDUpdate[] = 
+char FWDUpdate[] =
 "<h3 align=center>Update Forwarding for BBS %s</h3>"
 "<form style=\"font-family: monospace; text-align: center\" method=post action=/Mail/FWD?%s"
 " name=Test>&nbsp;&nbsp;&nbsp;&nbsp;"
@@ -272,7 +272,7 @@ char FWDUpdate[] =
 "<input name=Submit value=Update type=submit> <input name=Fwd value=\"Start Forwarding\" type=submit> "
 "<input name=Cancel value=Cancel type=submit></form><br></body></html>";
 
-static char MailDetailPage[] = 
+static char MailDetailPage[] =
 "<html><head><meta content=\"text/html; charset=ISO-8859-1\" http-equiv=\"content-type\">"
 "<title>MsgEdit</title></head><body><h4>Message %d</h4>"
 "<form style=\"font-family: monospace;\" method=post action=/Mail/Msg?%s name=Msgs>"
@@ -311,7 +311,7 @@ static char MailDetailPage[] =
 
 char MailDetailTail[] = "</table></form>";
 
-char Welcome[] = "<form style=\"font-family: monospace; text-align: center;\"" 
+char Welcome[] = "<form style=\"font-family: monospace; text-align: center;\""
 "method=post action=/Mail/Welcome?%s>"
 "Normal User Welcome<br>"
 "<textarea cols=80 rows=3 name=NUWelcome>%s</textarea><br>"
@@ -339,7 +339,7 @@ static char MsgEditPage[] = "<html><head><meta content=\"text/html; charset=ISO-
 
 static char WPDetail[] = "<form style=\"font-family: monospace;\" method=post action=/Mail/WP?%s>"
 "<br><table style=\"text-align: left; width: 431px;\" border=0 cellpadding=2 cellspacing=2><tbody>"
- 
+
 "<tr><td>Call</td><td><input readonly=readonly size=10 value=\"%s\"></td></tr>"
 "<tr><td>Name</td><td><input size=30 name=Name value=\"%s\"></td></tr>"
 "<tr><td>Home BBS 1</td><td><input size=40 name=Home1 value=%s></td></tr>"
@@ -407,13 +407,13 @@ void ConvertTitletoUTF8(char * Title, char * UTF8Title)
 		int wlen;
 		int len = origlen;
 
-		wlen = MultiByteToWideChar(CP_ACP, 0, Title, len, BufferW, origlen * 2); 
-		len = WideCharToMultiByte(CP_UTF8, 0, BufferW, wlen, UTF8Title, origlen * 2, NULL, NULL); 
+		wlen = MultiByteToWideChar(CP_ACP, 0, Title, len, BufferW, origlen * 2);
+		len = WideCharToMultiByte(CP_UTF8, 0, BufferW, wlen, UTF8Title, origlen * 2, NULL, NULL);
 #else
 		int left = 2 * strlen(Title);
 		int len = origlen;
 		iconv_t * icu = NULL;
-				
+
 		if (icu == NULL)
 			icu = iconv_open("UTF-8", "CP1252");
 
@@ -485,14 +485,14 @@ void ProcessMailHTTPMessage(struct HTTPConnectionInfo * Session, char * Method, 
 	if (_memicmp(URL, "/WebMail", 8) == 0)
 	{
 		// Pass All Webmail messages to Webmail
-			
+
 		ProcessWebMailMessage(Session, Context, LOCAL, Method, NodeURL, input, Reply, RLen);
 		return;
 
 	}
 
 	if (strcmp(Method, "POST") == 0)
-	{	
+	{
 		if (_stricmp(NodeURL, "/Mail/Header") == 0)
 		{
 			*RLen = SendHeader(Reply, Session->Key);
@@ -530,11 +530,11 @@ void ProcessMailHTTPMessage(struct HTTPConnectionInfo * Session, char * Method, 
 			char * param = strstr(input, "\r\n\r\n");	// End of headers
 
 			if (param)
-			{		
+			{
 				Session->User = LookupCall(param+4);
 				if (Session->User)
 				{
-					* RLen = SendUserDetails(Session, Reply, Key); 
+					* RLen = SendUserDetails(Session, Reply, Key);
 					return;
 				}
 			}
@@ -552,13 +552,13 @@ void ProcessMailHTTPMessage(struct HTTPConnectionInfo * Session, char * Method, 
 			char * param = strstr(input, "\r\n\r\n");	// End of headers
 
 			if (param)
-			{		
+			{
 				int Msgno = atoi(param + 4);
 				struct MsgInfo * Msg = FindMessageByNumber(Msgno);
 
 				Session->Msg = Msg;				// Save current Message
-	
-				* RLen = SendMessageDetails(Msg, Reply, Key); 
+
+				* RLen = SendMessageDetails(Msg, Reply, Key);
 				return;
 			}
 		}
@@ -604,11 +604,11 @@ void ProcessMailHTTPMessage(struct HTTPConnectionInfo * Session, char * Method, 
 			char * param = strstr(input, "\r\n\r\n");	// End of headers
 
 			if (param)
-			{		
+			{
 				WPRec * WP = LookupWP(param+4);
 				Session->WP = WP;				// Save current Message
-	
-				* RLen = SendWPDetails(WP, Reply, Key); 
+
+				* RLen = SendWPDetails(WP, Reply, Key);
 				return;
 			}
 		}
@@ -632,7 +632,7 @@ void ProcessMailHTTPMessage(struct HTTPConnectionInfo * Session, char * Method, 
 			// Get filter string
 
 			param = strstr(input, "\r\n\r\n");	// End of headers
-			
+
 
 			if (param)
  			{
@@ -674,11 +674,11 @@ void ProcessMailHTTPMessage(struct HTTPConnectionInfo * Session, char * Method, 
 				{
 					len += sprintf(&Reply[len], "%d|", Msg->number);
 				}
-			} 
+			}
 			*RLen = len;
 			return;
 		}
-		
+
 		if (_stricmp(NodeURL, "/Mail/UserList.txt") == 0)
 		{
 			SendUserSelectPage(Reply, RLen, Key);
@@ -694,15 +694,15 @@ void ProcessMailHTTPMessage(struct HTTPConnectionInfo * Session, char * Method, 
 		if (_stricmp(NodeURL, "/Mail/FwdDetails") == 0)
 		{
 			char * param;
-			
+
 			param = strstr(input, "\r\n\r\n");	// End of headers
 
 			if (param)
-			{		
+			{
 				Session->User = LookupCall(param+4);
 				if (Session->User)
 				{
-					SendFwdDetails(Session, Reply, RLen, Key); 
+					SendFwdDetails(Session, Reply, RLen, Key);
 					return;
 				}
 			}
@@ -721,7 +721,7 @@ void ProcessMailHTTPMessage(struct HTTPConnectionInfo * Session, char * Method, 
 	{
 		if (jsTemplate)
 			free(jsTemplate);
-		
+
 		jsTemplate = GetTemplateFromFile(1, "webscript.js");
 
 		ReplyLen = sprintf(Reply, "HTTP/1.1 200 OK\r\nContent-Length: %d\r\n"
@@ -736,7 +736,7 @@ void ProcessMailHTTPMessage(struct HTTPConnectionInfo * Session, char * Method, 
 		*RLen = SendHeader(Reply, Session->Key);
  		return;
 	}
-	
+
 	if (_stricmp(NodeURL, "/Mail/all.html") == 0)
 	{
 		*RLen = SendHeader(Reply, Session->Key);
@@ -795,7 +795,7 @@ void ProcessMailHTTPMessage(struct HTTPConnectionInfo * Session, char * Method, 
 
 		*RLen = sprintf(Reply, UserListTemplate, Key, Key, BBSName,
 			Key, Key, Key, Key, Key, Key, Key, Key);
-	
+
 		return;
 	}
 
@@ -830,7 +830,7 @@ void ProcessMailHTTPMessage(struct HTTPConnectionInfo * Session, char * Method, 
 		if (Msg->B2Flags)
 		{
 			// Remove B2 Headers (up to the File: Line)
-			
+
 			char * bptr;
 			bptr = strstr(ptr, "Body:");
 			if (bptr)
@@ -846,7 +846,7 @@ void ProcessMailHTTPMessage(struct HTTPConnectionInfo * Session, char * Method, 
 		ptr[BodyLen] = 0;
 
 		sprintf(Reply, "HTTP/1.1 200 OK\r\nContent-Length: %d\r\nContent-Disposition: attachment; filename=\"SavedMsg%05d.txt\" \r\n\r\n",
-			strlen(Hddr) + strlen(ptr), Msg->number);	
+			strlen(Hddr) + strlen(ptr), Msg->number);
 		strcat(Reply, Hddr);
 		strcat(Reply, ptr);
 
@@ -882,7 +882,7 @@ void ProcessMailHTTPMessage(struct HTTPConnectionInfo * Session, char * Method, 
 			free(MailBuffer);
 			return;
 		}
-		
+
 		ptr = MailBuffer;
 
 		while(ptr && *ptr != 13)
@@ -902,7 +902,7 @@ void ProcessMailHTTPMessage(struct HTTPConnectionInfo * Session, char * Method, 
 
 				memcpy(FileName[Files++], &ptr1[1], (ptr2-ptr1 - 2));
 			}
-				
+
 			ptr = ptr2;
 			ptr++;
 		}
@@ -931,7 +931,7 @@ void ProcessMailHTTPMessage(struct HTTPConnectionInfo * Session, char * Method, 
 				FileLen[i], FileName[i]);
 
 			memcpy(&Reply[Len + *RLen], ptr, FileLen[i]);
-	
+
 			*RLen += (Len + FileLen[i]);
 
 			ptr += FileLen[i];
@@ -969,7 +969,7 @@ void ProcessMailHTTPMessage(struct HTTPConnectionInfo * Session, char * Method, 
 
 		if (MsgEditTemplate)
 		{
-			int len =sprintf(Reply, MsgEditTemplate, PageLen, PageLen, PageLen - 97, Key, Key, Key, Key, Key, 
+			int len =sprintf(Reply, MsgEditTemplate, PageLen, PageLen, PageLen - 97, Key, Key, Key, Key, Key,
 				BBSName, Key, Key, Key, Key, Key, Key, Key, Key);
 			*RLen = len;
 			return;
@@ -985,7 +985,7 @@ void ProcessMailHTTPMessage(struct HTTPConnectionInfo * Session, char * Method, 
 		// Edit Message
 
 		char * MsgBytes;
-	
+
 		MsgBytes = ReadMessageFile(Session->Msg->number);
 
 		// See if Multipart
@@ -1036,7 +1036,7 @@ void ProcessMailHTTPMessage(struct HTTPConnectionInfo * Session, char * Method, 
 	if (_stricmp(NodeURL, "/Mail/WPInfo.txt") == 0)
 	{
 		int i = 0, n, len = 0;
-		WPRec * WP[10000]; 
+		WPRec * WP[10000];
 
 		// Get array of addresses
 
@@ -1067,7 +1067,7 @@ int SendWPDetails(WPRec * WP, char * Reply, char * Key)
 {
 	int len = 0;
 	char D1[80], D2[80];
-	
+
 	if (WP)
 	{
 		strcpy(D1, FormatDateAndTime(WP->last_modif, FALSE));
@@ -1078,10 +1078,10 @@ int SendWPDetails(WPRec * WP, char * Reply, char * Key)
 			WP->first_qth, WP->secnd_qth,
 			WP->first_zip, WP->secnd_zip, D1, D2,
 			WP->Type,
-			WP->changed, 
+			WP->changed,
 			WP->seen);
 	}
-	return(len);	
+	return(len);
 }
 VOID SaveWP(struct HTTPConnectionInfo * Session, char * MsgPtr, char * Reply, int * RLen, char * Key)
 {
@@ -1100,13 +1100,13 @@ VOID SaveWP(struct HTTPConnectionInfo * Session, char * MsgPtr, char * Reply, in
 		}
 
 		if (strcmp(input + 4, "Delete") == 0)
-		{			
+		{
 			for (n = 1; n <= NumberofWPrecs; n++)
 			{
 				if (Session->WP == WPRecPtr[n])
 					break;
 			}
-		
+
 			if (n <= NumberofWPrecs)
 			{
 				WP = Session->WP;
@@ -1115,11 +1115,11 @@ VOID SaveWP(struct HTTPConnectionInfo * Session, char * MsgPtr, char * Reply, in
 				{
 					WPRecPtr[n] = WPRecPtr[n+1];		// move down all following entries
 				}
-	
+
 				NumberofWPrecs--;
-	
+
 				free(WP);
-			
+
 				SaveWPDatabase();
 
 				Session->WP = WPRecPtr[1];
@@ -1152,7 +1152,7 @@ VOID SaveWP(struct HTTPConnectionInfo * Session, char * MsgPtr, char * Reply, in
 	GetDlgItemText(hDlg, IDC_ZIP2, WP->secnd_zip, 31);
 		WP->seen = GetDlgItemInt(hDlg, IDC_SEEN, &OK1, FALSE);
 */
-	
+
 		WP->last_modif = time(NULL);
 		WP->Type = 'U';
 		WP->changed = 1;
@@ -1163,12 +1163,12 @@ VOID SaveWP(struct HTTPConnectionInfo * Session, char * MsgPtr, char * Reply, in
 
 
 int SendMessageDetails(struct MsgInfo * Msg, char * Reply, char * Key)
-{	
+{
 	int BBSNo = 1, x, y, len = 0;
 	char D1[80], D2[80], D3[80];
 	struct UserInfo * USER;
 	int i = 0, n;
-	struct UserInfo * bbs[NBBBS+2] = {0}; 
+	struct UserInfo * bbs[NBBBS+2] = {0};
 
 	if (Msg)
 	{
@@ -1182,7 +1182,7 @@ int SendMessageDetails(struct MsgInfo * Msg, char * Reply, char * Key)
 			sprintf(EmailFromLine, "Email From <input style=\"width:320px;\" name=EFROM value=%s><br>", Msg->emailfrom);
 
 		len = sprintf(Reply, MailDetailPage, Msg->number, Key,
-			Msg->from, D1, 
+			Msg->from, D1,
 			(Msg->type == 'B')?sel:"",
 			(Msg->type == 'P')?sel:"",
 			(Msg->type == 'T')?sel:"",
@@ -1211,23 +1211,23 @@ int SendMessageDetails(struct MsgInfo * Msg, char * Reply, char * Key)
 		qsort((void *)bbs, i, 4, compare );
 
 		n = 0;
-		
+
 		for (y = 0; y < NBBBS/8; y++)
 		{
 			len += sprintf(&Reply[len],"<tr>");
 			for (x= 0; x < 8; x++)
 			{
-				char * Colour  = NotThisOne;	
+				char * Colour  = NotThisOne;
 
 				if (bbs[n])
 				{
-					if (memcmp(Msg->fbbs, zeros, NBMASK) != 0)	
+					if (memcmp(Msg->fbbs, zeros, NBMASK) != 0)
 						if (check_fwd_bit(Msg->fbbs, bbs[n]->BBSNumber))
 								Colour = ToSend;
-					if (memcmp(Msg->forw, zeros, NBMASK) != 0)	
+					if (memcmp(Msg->forw, zeros, NBMASK) != 0)
 						if (check_fwd_bit(Msg->forw, bbs[n]->BBSNumber))
 								Colour = Sent;
-				
+
 					len += sprintf(&Reply[len],"<td style=\"background-color: %s;\"onclick=ck(\"%d\")>%s</td>",
 						Colour, bbs[n]->BBSNumber, bbs[n]->Call);
 				}
@@ -1242,7 +1242,7 @@ int SendMessageDetails(struct MsgInfo * Msg, char * Reply, char * Key)
 		}
 		len += sprintf(&Reply[len], "%s", MailDetailTail);
 	}
-	return(len);	
+	return(len);
 }
 
 char ** GetMultiStringInput(char * input, char * key)
@@ -1270,7 +1270,7 @@ char **	SeparateMultiString(char * MultiString, BOOL NoToUpper)
 	ptr2 = zalloc(strlen(MultiString) + 1);
 	DecodedString = ptr2;
 
-	// Input has crlf or lf - replace with 
+	// Input has crlf or lf - replace with
 
 
 
@@ -1299,7 +1299,7 @@ char **	SeparateMultiString(char * MultiString, BOOL NoToUpper)
 	while (ptr && strlen(ptr))
 	{
 		ptr1 = strchr(ptr, '|');
-			
+
 		if (ptr1)
 			*(ptr1++) = 0;
 
@@ -1387,7 +1387,7 @@ VOID GetCheckBox(char * input, char * key, int * value)
 		*value = 0;
 }
 
-	
+
 VOID * GetOverrideFromString(char * input)
 {
 	char * ptr1;
@@ -1399,11 +1399,11 @@ VOID * GetOverrideFromString(char * input)
 
 	Value = zalloc(4);				// always NULL entry on end even if no values
 	Value[0] = NULL;
-	
+
 	while (ptr && strlen(ptr))
 	{
 		ptr1 = strchr(ptr, 13);
-			
+
 		if (ptr1)
 		{
 			*(ptr1) = 0;
@@ -1498,7 +1498,7 @@ VOID SaveHousekeeping(struct HTTPConnectionInfo * Session, char * MsgPtr, char *
 
 		GetParam(input, "At=", LTATString);
 		LTAT = GetOverrideFromString(LTATString);
- 
+
 		SaveConfig(ConfigName);
 		GetConfig(ConfigName);
 	}
@@ -1526,7 +1526,7 @@ VOID SaveWelcome(struct HTTPConnectionInfo * Session, char * MsgPtr, char * Repl
 			*RLen = SendHeader(Reply, Session->Key);
  			return;
 		}
-		
+
 		GetMallocedParam(input, "NUWelcome=", &WelcomeMsg);
 		GetMallocedParam(input, "NewWelcome=", &NewWelcomeMsg);
 		GetMallocedParam(input, "ExWelcome=", &ExpertWelcomeMsg);
@@ -1548,7 +1548,7 @@ VOID SaveWelcome(struct HTTPConnectionInfo * Session, char * MsgPtr, char * Repl
 		if (SignoffMsg[0] == 13)
 			SignoffMsg[0] = 0;
 	}
-	
+
 	SendWelcomePage(Reply, RLen, Key);
 	return;
 }
@@ -1575,7 +1575,7 @@ VOID ProcessConfUpdate(struct HTTPConnectionInfo * Session, char * MsgPtr, char 
 			SendUIPage(Reply, RLen, Key);
 			return;
 		}
-	
+
 		GetParam(input, "BBSCall=", BBSName);
 		_strupr(BBSName);
 		strlop(BBSName, '-');
@@ -1623,20 +1623,20 @@ VOID ProcessConfUpdate(struct HTTPConnectionInfo * Session, char * MsgPtr, char 
 		GetParam(input, "ISPDomain=", MyDomain);
 		GetParam(input, "SMTPServer=", ISPSMTPName);
 		GetParam(input, "ISPEHLOName=", ISPEHLOName);
-			
+
 		GetParam(input, "ISPSMTPPort=", Temp);
 		ISPSMTPPort = atoi(Temp);
-	
+
 		GetParam(input, "POP3Server=", ISPPOP3Name);
 
-		GetParam(input, "ISPPOP3Port=", Temp);	
+		GetParam(input, "ISPPOP3Port=", Temp);
 		ISPPOP3Port = atoi(Temp);
-	
+
 		GetParam(input, "ISPAccount=", ISPAccountName);
-	
+
 		GetParam(input, "ISPPassword=", ISPAccountPass);
 		EncryptedPassLen = EncryptPass(ISPAccountPass, EncryptedISPAccountPass);
-		
+
 		GetParam(input, "PollInterval=", Temp);
 		ISPPOP3Interval = atoi(Temp);
 
@@ -1663,7 +1663,7 @@ VOID ProcessConfUpdate(struct HTTPConnectionInfo * Session, char * MsgPtr, char 
 		SaveConfig(ConfigName);
 		GetConfig(ConfigName);
 	}
-	
+
 	SendConfigPage(Reply, RLen, Key);
 	return;
 }
@@ -1736,7 +1736,7 @@ VOID ProcessDisUser(struct HTTPConnectionInfo * Session, char * MsgPtr, char * R
 			int Stream = atoi(ptr + 5);
 			Disconnect(Stream);
 		}
-	}	
+	}
 	SendStatusPage(Reply, RLen, Rest);
 }
 
@@ -1860,7 +1860,7 @@ VOID SaveFwdDetails(struct HTTPConnectionInfo * Session, char * MsgPtr, char * R
 		GetConfig(ConfigName);
 
 		ReinitializeFWDStruct(Session->User);
-	
+
 		SendFwdDetails(Session, Reply, RLen, Session->Key);
 	}
 }
@@ -1894,7 +1894,7 @@ VOID ProcessUserUpdate(struct HTTPConnectionInfo * Session, char * MsgPtr, char 
 				if (Session->User == UserRecPtr[n])
 					break;
 			}
-		
+
 			if (n <= NumberofUsers)
 			{
 				USER = Session->User;
@@ -1903,14 +1903,14 @@ VOID ProcessUserUpdate(struct HTTPConnectionInfo * Session, char * MsgPtr, char 
 				{
 					UserRecPtr[n] = UserRecPtr[n+1];		// move down all following entries
 				}
-	
+
 				NumberofUsers--;
 
 				if (USER->flags & F_BBS)	// was a BBS?
 					DeleteBBS(USER);
-	
+
 				free(USER);
-			
+
 				SaveUserDatabase();
 
 				Session->User = UserRecPtr[1];
@@ -1931,7 +1931,7 @@ VOID ProcessUserUpdate(struct HTTPConnectionInfo * Session, char * MsgPtr, char 
 				Call[6] = 0;
 
 			_strupr(Call);
-		
+
 			if (Call[0] == 0 || LookupCall(Call))
 			{
 				// Null or exists
@@ -1942,7 +1942,7 @@ VOID ProcessUserUpdate(struct HTTPConnectionInfo * Session, char * MsgPtr, char 
 
 			USER = AllocateUserRecord(Call);
 			USER->Temp = zalloc(sizeof (struct TempUserInfo));
-		
+
 			SendUserSelectPage(Reply, RLen, Session->Key);
 			return;
 
@@ -2032,13 +2032,13 @@ VOID ProcessUserUpdate(struct HTTPConnectionInfo * Session, char * MsgPtr, char 
 		ptr1 = GetNextParam(&ptr2);		// Name
 		strcpy(USER->Name, ptr1);
 		ptr1 = GetNextParam(&ptr2);		// Pass
-		strcpy(USER->pass, ptr1);		
+		strcpy(USER->pass, ptr1);
 		ptr1 = GetNextParam(&ptr2);		// CMS Pass
 		if (memcmp("****************", ptr1, strlen(ptr1) != 0))
 		{
 			strcpy(USER->CMSPass, ptr1);
 		}
-		
+
 		ptr1 = GetNextParam(&ptr2);		// QTH
 		strcpy(USER->Address, ptr1);
 		ptr1 = GetNextParam(&ptr2);		// ZIP
@@ -2096,7 +2096,7 @@ VOID SaveMessageText(struct HTTPConnectionInfo * Session, char * MsgPtr, char * 
 		if (ptr)
 		{
 			*ptr = 0;
-		
+
 			// Undo any % transparency
 
 		ptr1 = ptr2 = input + 8;
@@ -2131,12 +2131,12 @@ VOID SaveMessageText(struct HTTPConnectionInfo * Session, char * MsgPtr, char * 
 		Msg->length = MsgLen;
 
 			sprintf_s(MsgFile, sizeof(MsgFile), "%s/m_%06d.mes", MailDir, Msg->number);
-	
+
 			hFile = fopen(MsgFile, "wb");
-	
+
 			if (hFile)
 			{
-				WriteLen = fwrite(input + 8, 1, Msg->length, hFile); 
+				WriteLen = fwrite(input + 8, 1, Msg->length, hFile);
 				fclose(hFile);
 			}
 
@@ -2224,7 +2224,7 @@ VOID ProcessMsgFwdUpdate(struct HTTPConnectionInfo * Session, char * MsgPtr, cha
 
 		if (User == NULL)
 			return;
-		
+
 		toforward = check_fwd_bit(Msg->fbbs, BBSNumber);
 		forwarded = check_fwd_bit(Msg->forw, BBSNumber);
 
@@ -2245,7 +2245,7 @@ VOID ProcessMsgFwdUpdate(struct HTTPConnectionInfo * Session, char * MsgPtr, cha
 		else
 		{
 			// Change to to forward
-			
+
 			set_fwd_bit(Msg->fbbs, BBSNumber);
 			User->ForwardingInfo->MsgCount++;
 			clear_fwd_bit(Msg->forw, BBSNumber);
@@ -2304,15 +2304,15 @@ VOID SendFwdDetails(struct HTTPConnectionInfo * Session, char * Reply, int * Rep
 	SetMultiStringValue(FWDInfo->ConnectScript, FWD);
 	SetMultiStringValue(FWDInfo->Haddresses, HRB);
 	SetMultiStringValue(FWDInfo->HaddressesP, HRP);
-		
+
 	Len = sprintf(Reply, FwdDetailTemplate, User->Call,
 		CountMessagestoForward (User), Key,
-		TO, AT, TIMES , FWD, HRB, HRP, 
-		(FWDInfo->BBSHA) ? FWDInfo->BBSHA : "", 
+		TO, AT, TIMES , FWD, HRB, HRP,
+		(FWDInfo->BBSHA) ? FWDInfo->BBSHA : "",
 		(FWDInfo->Enabled) ? CHKD  : UNC,
 		FWDInfo->FwdInterval,
 		(FWDInfo->ReverseFlag) ? CHKD  : UNC,
-		FWDInfo->RevFwdInterval, 
+		FWDInfo->RevFwdInterval,
 		(FWDInfo->SendNew) ? CHKD  : UNC,
 		FWDInfo->MaxFBBBlockSize,
 		(FWDInfo->PersonalOnly) ? CHKD  : UNC,
@@ -2345,7 +2345,7 @@ VOID SendConfigPage(char * Reply, int * ReplyLen, char * Key)
 	SetMultiStringValue(HoldAt, HA);
 	SetMultiStringValue(SendWPAddrs, WPTO);
 
-	
+
 	Len = sprintf(Reply, ConfigTemplate,
 		BBSName, Key, Key, Key, Key, Key, Key, Key, Key, Key,
 		BBSName, SYSOPCall, HRoute,
@@ -2355,9 +2355,9 @@ VOID SendConfigPage(char * Reply, int * ReplyLen, char * Key)
 		(RefuseBulls) ? CHKD  : UNC,
 		(EnableUI) ? CHKD  : UNC,
 		MailForInterval,
-		(DontHoldNewUsers) ? CHKD  : UNC, 
-		(AllowAnon) ? CHKD  : UNC, 
-		(DontNeedHomeBBS) ? CHKD  : UNC, 
+		(DontHoldNewUsers) ? CHKD  : UNC,
+		(AllowAnon) ? CHKD  : UNC,
+		(DontNeedHomeBBS) ? CHKD  : UNC,
 		(UserCantKillT) ? UNC : CHKD,		// Reverse logic
 		(ForwardToMe) ? CHKD  : UNC,
 		POP3InPort, SMTPInPort, NNTPInPort,
@@ -2415,7 +2415,7 @@ VOID SendHouseKeeping(char * Reply, int * ReplyLen, char * Key)
 			}
 		}
 
-		*ReplyLen = sprintf(Reply, HousekeepingTemplate, 
+		*ReplyLen = sprintf(Reply, HousekeepingTemplate,
 			 BBSName, Key, Key, Key, Key, Key, Key, Key, Key, Key,
 			MaintTime, MaxMsgno, BidLifetime, LogAge, UserLifetime,
 			(DeletetoRecycleBin) ? CHKD  : UNC,
@@ -2436,7 +2436,7 @@ VOID SendWelcomePage(char * Reply, int * ReplyLen, char * Key)
 	int Len;
 
 	Len = SendHeader(Reply, Key);
-		
+
 	Len += sprintf(&Reply[Len], Welcome, Key, WelcomeMsg, NewWelcomeMsg, ExpertWelcomeMsg,
 			Prompt, NewPrompt, ExpertPrompt, SignoffMsg);
 	*ReplyLen = Len;
@@ -2451,7 +2451,7 @@ VOID SendFwdMainPage(char * Reply, int * RLen, char * Key)
 	*RLen = sprintf(Reply, FwdTemplate, Key, Key, BBSName,
 		Key, Key, Key, Key, Key, Key, Key, Key,
 		Key, MaxTXSize, MaxRXSize, MaxAge,
-		(WarnNoRoute) ? CHKD  : UNC, 
+		(WarnNoRoute) ? CHKD  : UNC,
 		(Localtime) ? CHKD  : UNC, ALIASES);
 }
 
@@ -2489,14 +2489,14 @@ VOID SendUIPage(char * Reply, int * ReplyLen, char * Key)
 		while (PortNo[--n] == ' ');
 
 		PortNo[n + 1] = 0;
-	
+
 		while (n++ < 38)
 			strcat(PortNo, "&nbsp;");
 
 		Len += sprintf(&Reply[Len], UILine,
 				(UIEnabled[i])?CHKD:UNC, i,
 				 PortNo,
-				 (UIDigi[i])?UIDigi[i]:"", i, 
+				 (UIDigi[i])?UIDigi[i]:"", i,
 			 	 (UIMF[i])?CHKD:UNC, i,
 				 (UIHDDR[i])?CHKD:UNC, i,
 				 (UINull[i])?CHKD:UNC, i);
@@ -2512,7 +2512,7 @@ VOID SendStatusPage(char * Reply, int * ReplyLen, char * Key)
 	int Len;
 	char msg[1024];
 	CIRCUIT * conn;
-	int i,n, SYSOPMsgs = 0, HeldMsgs = 0; 
+	int i,n, SYSOPMsgs = 0, HeldMsgs = 0;
 	char Name[80];
 
 	SMTPMsgs = 0;
@@ -2573,14 +2573,14 @@ VOID SendStatusPage(char * Reply, int * ReplyLen, char * Key)
 		}
 	}
 
-	Len += sprintf(&Reply[Len], StreamEnd, 
+	Len += sprintf(&Reply[Len], StreamEnd,
 		NumberofMessages, SYSOPMsgs, HeldMsgs, SMTPMsgs);
 
 	// If there are any active multicast transfers, display them.
 
 	Len += MulticastStatusHTML(&Reply[Len]);
 
-	Len += sprintf(&Reply[Len], StatusTail, 
+	Len += sprintf(&Reply[Len], StatusTail,
 		NumberofMessages, SYSOPMsgs, HeldMsgs, SMTPMsgs);
 
 	*ReplyLen = Len;
@@ -2605,7 +2605,7 @@ VOID SendUserSelectPage(char * Reply, int * ReplyLen, char * Key)
 	struct UserInfo * USER;
 	int i = 0, n;
 	int Len = 0;
-	struct UserInfo * users[10000]; 
+	struct UserInfo * users[10000];
 
 	// Get array of addresses
 
@@ -2616,7 +2616,7 @@ VOID SendUserSelectPage(char * Reply, int * ReplyLen, char * Key)
 	}
 
 	qsort((void *)users, i, 4, compare );
-		
+
 	for (n = 0; n < NumberofUsers; n++)
 	{
 		USER = users[n];
@@ -2658,7 +2658,7 @@ int SendUserDetails(struct HTTPConnectionInfo * Session, char * Reply, char * Ke
 
 	for (n = 0; n < 4; n++)
 	{
-		MsgsReceived +=	User->Total.MsgsReceived[n] - User->Last.MsgsReceived[n];	
+		MsgsReceived +=	User->Total.MsgsReceived[n] - User->Last.MsgsReceived[n];
 		MsgsSent += User->Total.MsgsSent[n] - User->Last.MsgsSent[n];
 		BytesForwardedIn += User->Total.BytesForwardedIn[n] - User->Last.BytesForwardedIn[n];
 		BytesForwardedOut += User->Total.BytesForwardedOut[n] - User->Last.BytesForwardedOut[n];
@@ -2666,7 +2666,7 @@ int SendUserDetails(struct HTTPConnectionInfo * Session, char * Reply, char * Ke
 		MsgsRejectedOut += User->Total.MsgsRejectedOut[n] - User->Last.MsgsRejectedOut[n];
 	}
 
-	
+
 	for (s = 0; s < 16; s++)
 	{
 		if (RMSSSIDBits & (1 << s))
@@ -2679,7 +2679,7 @@ int SendUserDetails(struct HTTPConnectionInfo * Session, char * Reply, char * Ke
 	}
 
 	memset(HiddenPass, '*', strlen(User->CMSPass));
-	
+
 	Len = sprintf(Reply, UserDetailTemplate, Key, User->Call,
 		(flags & F_BBS)?CHKD:UNC,
 		(flags & F_EMAIL)?CHKD:UNC,
@@ -2698,7 +2698,7 @@ int SendUserDetails(struct HTTPConnectionInfo * Session, char * Reply, char * Ke
 
 		ConnectsIn, MsgsReceived, MsgsRejectedIn,
 		ConnectsOut, MsgsSent, MsgsRejectedOut,
-		BytesForwardedIn, FormatDateAndTime(User->TimeLastConnected, FALSE), 
+		BytesForwardedIn, FormatDateAndTime(User->TimeLastConnected, FALSE),
 		BytesForwardedOut, User->lastmsg,
 		User->Name,
 		User->pass,
@@ -2721,8 +2721,8 @@ static DWORD WINAPI InstanceThread(LPVOID lpvParam)
 // the main loop to continue executing, potentially creating more threads of
 // of this procedure to run concurrently, depending on the number of incoming
 // client connections.
-{ 
-   DWORD cbBytesRead = 0, cbReplyBytes = 0, cbWritten = 0; 
+{
+   DWORD cbBytesRead = 0, cbReplyBytes = 0, cbWritten = 0;
    BOOL fSuccess = FALSE;
    HANDLE hPipe  = NULL;
    char Buffer[100001];
@@ -2739,22 +2739,22 @@ static DWORD WINAPI InstanceThread(LPVOID lpvParam)
 
 //	Debugprintf("InstanceThread created, receiving and processing messages.");
 
-// The thread's parameter is a handle to a pipe object instance. 
- 
-   hPipe = (HANDLE) lpvParam; 
+// The thread's parameter is a handle to a pipe object instance.
+
+   hPipe = (HANDLE) lpvParam;
 
    // Read client requests from the pipe. This simplistic code only allows messages
    // up to BUFSIZE characters in length.
- 
+
    n = ReadFile(hPipe, &Session, sizeof (struct HTTPConnectionInfo), &n, NULL);
    fSuccess = ReadFile(hPipe, Buffer, 100000, &InputLen, NULL);
 
 	if (!fSuccess || InputLen == 0)
-	{   
+	{
 		if (GetLastError() == ERROR_BROKEN_PIPE)
-			Debugprintf("InstanceThread: client disconnected.", GetLastError()); 
+			Debugprintf("InstanceThread: client disconnected.", GetLastError());
 		else
-			Debugprintf("InstanceThread ReadFile failed, GLE=%d.", GetLastError()); 
+			Debugprintf("InstanceThread ReadFile failed, GLE=%d.", GetLastError());
 	}
 	else
 	{
@@ -2774,10 +2774,10 @@ static DWORD WINAPI InstanceThread(LPVOID lpvParam)
 		ProcessMailHTTPMessage(&Session, Method, Context, MsgPtr, OutBuffer, &OutputLen);
 
 		WriteFile(hPipe, &Session, sizeof (struct HTTPConnectionInfo), &n, NULL);
-		WriteFile(hPipe, OutBuffer, OutputLen, &cbWritten, NULL); 
+		WriteFile(hPipe, OutBuffer, OutputLen, &cbWritten, NULL);
 
-		FlushFileBuffers(hPipe); 
-		DisconnectNamedPipe(hPipe); 
+		FlushFileBuffers(hPipe);
+		DisconnectNamedPipe(hPipe);
 		CloseHandle(hPipe);
 	}
 	return 1;
@@ -2785,68 +2785,68 @@ static DWORD WINAPI InstanceThread(LPVOID lpvParam)
 
 static DWORD WINAPI PipeThreadProc(LPVOID lpvParam)
 {
-	BOOL   fConnected = FALSE; 
-	DWORD  dwThreadId = 0; 
-	HANDLE hPipe = INVALID_HANDLE_VALUE, hThread = NULL; 
- 
-// The main loop creates an instance of the named pipe and 
-// then waits for a client to connect to it. When the client 
-// connects, a thread is created to handle communications 
+	BOOL   fConnected = FALSE;
+	DWORD  dwThreadId = 0;
+	HANDLE hPipe = INVALID_HANDLE_VALUE, hThread = NULL;
+
+// The main loop creates an instance of the named pipe and
+// then waits for a client to connect to it. When the client
+// connects, a thread is created to handle communications
 // with that client, and this loop is free to wait for the
 // next client connect request. It is an infinite loop.
- 
-	for (;;) 
-	{ 
-      hPipe = CreateNamedPipe( 
-          PipeFileName,             // pipe name 
-          PIPE_ACCESS_DUPLEX,       // read/write access 
-          PIPE_TYPE_BYTE |       // message type pipe 
-          PIPE_WAIT,                // blocking mode 
-          PIPE_UNLIMITED_INSTANCES, // max. instances  
-          4096,                  // output buffer size 
-          4096,                  // input buffer size 
-          0,                        // client time-out 
-          NULL);                    // default security attribute 
 
-      if (hPipe == INVALID_HANDLE_VALUE) 
+	for (;;)
+	{
+      hPipe = CreateNamedPipe(
+          PipeFileName,             // pipe name
+          PIPE_ACCESS_DUPLEX,       // read/write access
+          PIPE_TYPE_BYTE |       // message type pipe
+          PIPE_WAIT,                // blocking mode
+          PIPE_UNLIMITED_INSTANCES, // max. instances
+          4096,                  // output buffer size
+          4096,                  // input buffer size
+          0,                        // client time-out
+          NULL);                    // default security attribute
+
+      if (hPipe == INVALID_HANDLE_VALUE)
       {
-          Debugprintf("CreateNamedPipe failed, GLE=%d.\n", GetLastError()); 
+          Debugprintf("CreateNamedPipe failed, GLE=%d.\n", GetLastError());
           return -1;
       }
- 
-      // Wait for the client to connect; if it succeeds, 
-      // the function returns a nonzero value. If the function
-      // returns zero, GetLastError returns ERROR_PIPE_CONNECTED. 
- 
-      fConnected = ConnectNamedPipe(hPipe, NULL) ? 
-         TRUE : (GetLastError() == ERROR_PIPE_CONNECTED); 
- 
-      if (fConnected) 
-	  {
-         // Create a thread for this client. 
-   
-		 hThread = CreateThread( 
-            NULL,              // no security attribute 
-            0,                 // default stack size 
-            InstanceThread,    // thread proc
-            (LPVOID) hPipe,    // thread parameter 
-            0,                 // not suspended 
-            &dwThreadId);      // returns thread ID 
 
-         if (hThread == NULL) 
+      // Wait for the client to connect; if it succeeds,
+      // the function returns a nonzero value. If the function
+      // returns zero, GetLastError returns ERROR_PIPE_CONNECTED.
+
+      fConnected = ConnectNamedPipe(hPipe, NULL) ?
+         TRUE : (GetLastError() == ERROR_PIPE_CONNECTED);
+
+      if (fConnected)
+	  {
+         // Create a thread for this client.
+
+		 hThread = CreateThread(
+            NULL,              // no security attribute
+            0,                 // default stack size
+            InstanceThread,    // thread proc
+            (LPVOID) hPipe,    // thread parameter
+            0,                 // not suspended
+            &dwThreadId);      // returns thread ID
+
+         if (hThread == NULL)
          {
-            Debugprintf("CreateThread failed, GLE=%d.\n", GetLastError()); 
+            Debugprintf("CreateThread failed, GLE=%d.\n", GetLastError());
             return -1;
          }
-         else CloseHandle(hThread); 
-       } 
-      else 
-        // The client could not connect, so close the pipe. 
-         CloseHandle(hPipe); 
-   } 
+         else CloseHandle(hThread);
+       }
+      else
+        // The client could not connect, so close the pipe.
+         CloseHandle(hPipe);
+   }
 
-   return 0; 
-} 
+   return 0;
+}
 
 BOOL CreatePipeThread()
 {

@@ -15,7 +15,7 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with LinBPQ/BPQ32.  If not, see http://www.gnu.org/licenses
-*/	
+*/
 
 //
 //	DLL to provide interface to allow G8BPQ switch to use MultoPSK ALE400 Mode
@@ -109,7 +109,7 @@ static HANDLE STDOUT=0;
 
 //SOCKET sock;
 
-static SOCKADDR_IN sinx; 
+static SOCKADDR_IN sinx;
 static SOCKADDR_IN rxaddr;
 static SOCKADDR_IN destaddr[MAXBPQPORTS+1];
 
@@ -135,7 +135,7 @@ static struct timeval timeout;
 static BOOL CALLBACK EnumTNCWindowsProc(HWND hwnd, LPARAM  lParam)
 {
 	char wtext[200];
-	struct TNCINFO * TNC = (struct TNCINFO *)lParam; 
+	struct TNCINFO * TNC = (struct TNCINFO *)lParam;
 	UINT ProcessId;
 	char FN[MAX_PATH] = "";
 
@@ -151,7 +151,7 @@ static BOOL CALLBACK EnumTNCWindowsProc(HWND hwnd, LPARAM  lParam)
 		TNC->PID = ProcessId;
 		return FALSE;
 	}
-	
+
 	return (TRUE);
 }
 
@@ -175,7 +175,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 	for (Stream = 0; Stream <= TNC->MPSKInfo->MaxSessions; Stream++)
 	{
 		STREAM = &TNC->Streams[Stream];
-	
+
 		if (TNC->PortRecord->ATTACHEDSESSIONS[Stream] && TNC->Streams[Stream].Attached == 0)
 		{
 			char Cmd[80];
@@ -196,7 +196,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 			Rig_Command(-1, Cmd);
 
 			len = sprintf(Cmd, "%cSTOP_BEACON_ARQ_FAE\x1b", '\x1a');
-	
+
 			if (TNC->MPSKInfo->TX)
 				TNC->CmdSet = TNC->CmdSave = _strdup(Cmd);		// Savde till not transmitting
 			else
@@ -216,7 +216,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 			if (TNC->CONNECTED == FALSE && TNC->CONNECTING == FALSE)
 			{
 				//	See if time to reconnect
-		
+
 				time( &ltime );
 				if (ltime-lasttime[port] >9 )
 				{
@@ -224,12 +224,12 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 					lasttime[port]=ltime;
 				}
 			}
-		
+
 			FD_ZERO(&readfs);
-			
+
 			if (TNC->CONNECTED) FD_SET(TNC->TCPSock,&readfs);
 
-			
+
 			FD_ZERO(&writefs);
 
 			if (TNC->CONNECTING) FD_SET(TNC->TCPSock,&writefs);	// Need notification of Connect
@@ -239,7 +239,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 
 
 			FD_ZERO(&errorfs);
-		
+
 			if (TNC->CONNECTING ||TNC->CONNECTED) FD_SET(TNC->TCPSock,&errorfs);
 
 			if (select(3,&readfs,&writefs,&errorfs,&timeout) > 0)
@@ -249,8 +249,8 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 				if (FD_ISSET(TNC->TCPSock,&readfs))
 				{
 					// data available
-			
-					ProcessReceivedData(port);			
+
+					ProcessReceivedData(port);
 				}
 
 				if (FD_ISSET(TNC->TCPSock,&writefs))
@@ -263,7 +263,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 						TNC->CONNECTING = FALSE;
 
 						// If required, send signon
-				
+
 						send(TNC->TCPSock,"\x1a", 1, 0);
 						send(TNC->TCPSock,"DIGITAL MODE ?", 14, 0);
 						send(TNC->TCPSock,"\x1b", 1, 0);
@@ -281,13 +281,13 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 						memcpy(txbuff,buffptr+2,txlen);
 
 						bytes=send(TNC->TCPSock,(const char FAR *)&txbuff,txlen,0);
-					
+
 						ReleaseBuffer(buffptr);
 
 					}
 
 				}
-					
+
 				if (FD_ISSET(TNC->TCPSock,&errorfs))
 				{
 
@@ -302,7 +302,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 
 					CONNECTING[port]=FALSE;
 					CONNECTED[port]=FALSE;
-				
+
 				}
 
 			}
@@ -320,7 +320,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 			if (STREAM->Connecting)
 			{
 				STREAM->Connecting--;
-			
+
 				if (STREAM->Connecting == 0)
 				{
 					// Report Connect Failed, and drop back to command mode
@@ -332,7 +332,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 						buffptr[1] = sprintf((UCHAR *)&buffptr[2], "MPSK} Failure with %s\r", STREAM->RemoteCall);
 						C_Q_ADD(&STREAM->PACTORtoBPQ_Q, buffptr);
 					}
-	
+
 					STREAM->Connected = FALSE;		// Back to Command Mode
 					STREAM->DiscWhenAllSent = 10;
 
@@ -341,7 +341,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 					TidyClose(TNC, Stream);
 				}
 			}
-			
+
 			if (STREAM->Attached)
 				CheckForDetach(TNC, Stream, STREAM, TidyClose, ForcedClose, CloseComplete);
 
@@ -354,7 +354,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 			}
 
 			// if Busy, send buffer status poll
-	
+
 			if (STREAM->PACTORtoBPQ_Q == 0)
 			{
 				if (STREAM->DiscWhenAllSent)
@@ -367,7 +367,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 			else
 			{
 				int datalen;
-			
+
 				buffptr=Q_REM(&STREAM->PACTORtoBPQ_Q);
 
 				datalen=buffptr[1];
@@ -376,13 +376,13 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 				buff[7] = 0xf0;
 				memcpy(&buff[8],buffptr+2,datalen);		// Data goes to +7, but we have an extra byte
 				datalen+=8;
-				
+
 				PutLengthinBuffer(buff, datalen);
 	//			buff[5]=(datalen & 0xff);
 	//			buff[6]=(datalen >> 8);
-		
+
 				ReleaseBuffer(buffptr);
-	
+
 				return (1);
 			}
 		}
@@ -391,32 +391,32 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 		{
 			struct _MESSAGE * buffptr;
 
-			SOCKET Sock;	
+			SOCKET Sock;
 			buffptr = Q_REM(&TNC->PortRecord->UI_Q);
 
 			Sock = TNCInfo[MasterPort[port]]->TCPSock;
-	
+
 			ReleaseBuffer((UINT *)buffptr);
 		}
-			
-	
+
+
 		return (0);
 
 
 
 	case 2:				// send
 
-		
+
 		if (!TNCInfo[MasterPort[port]]->CONNECTED) return 0;		// Don't try if not connected to TNC
 
 		Stream = buff[4];
-		
-		STREAM = &TNC->Streams[Stream]; 
 
-//		txlen=(buff[6]<<8) + buff[5] - 8;	
+		STREAM = &TNC->Streams[Stream];
+
+//		txlen=(buff[6]<<8) + buff[5] - 8;
 
 		txlen = GetLengthfromBuffer(buff) - 8;
-						
+
 		if (STREAM->Connected)
 		{
 			SendData(TNC, &buff[8], txlen);
@@ -460,7 +460,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 			if (STREAM->Connecting && _memicmp(&buff[8], "ABORT", 5) == 0)
 			{
 				len = sprintf(Command,"%cSTOP_SELECTIVE_CALL_ARQ_FAE\x1b", '\x1a');
-	
+
 				if (TNC->MPSKInfo->TX)
 					TNC->CmdSet = TNC->CmdSave = _strdup(Command);		// Save till not transmitting
 				else
@@ -473,9 +473,9 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 			if (_memicmp(&buff[8], "MODE", 4) == 0)
 			{
 				buff[7 + txlen] = 0;		// Remove CR
-				
+
 				len = sprintf(Command,"%cDIGITAL MODE %s\x1b", '\x1a', &buff[13]);
-	
+
 				if (TNC->MPSKInfo->TX)
 					TNC->CmdSet = TNC->CmdSave = _strdup(Command);		// Save till not transmitting
 				else
@@ -496,7 +496,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 				while(s <= TNC->MPSKInfo->MaxSessions)
 				{
 					if (s != Stream)
-					{		
+					{
 						if (TNC->PortRecord->ATTACHEDSESSIONS[s])
 						{
 							buffptr[1] = sprintf((UCHAR *)&buffptr[2], "MPSK} Error - In use\r");
@@ -508,7 +508,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 				}
 				buffptr[1] = sprintf((UCHAR *)&buffptr[2], "MPSK} Ok - Not in use\r");
 				C_Q_ADD(&STREAM->PACTORtoBPQ_Q, buffptr);
-			
+
 				return 1;
 			}
 
@@ -534,7 +534,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 					TNC->CmdSet = TNC->CmdSave = _strdup(Command);		// Save till not transmitting
 				else
 					send(TNC->TCPSock, Command, len, 0);
-		
+
 				STREAM->Connecting = TNC->MPSKInfo->ConnTimeOut;	// It doesn't report failure
 
 //				sprintf(Status, "%s Connecting to %s", TNC->Streams[0].MyCall, TNC->Streams[0].RemoteCall);
@@ -548,7 +548,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 			_strupr(&buff[8]);
 			buff[7 + txlen] = 0;
 			len = sprintf(Command,"%c%s\x1b", '\x1a', &buff[8]);
-		
+
 			if (TNC->MPSKInfo->TX)
 				TNC->CmdSet = TNC->CmdSave = _strdup(Command);		// Save till not transmitting
 			else
@@ -560,7 +560,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 
 		return (0);
 
-	case 3:	
+	case 3:
 
 		Stream = (int)buff;
 
@@ -568,11 +568,11 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 
 		STREAM = &TNC->Streams[Stream];
 
-		if (STREAM->FramesOutstanding > 8)	
+		if (STREAM->FramesOutstanding > 8)
 			return (1 | TNCOK << 8 | STREAM->Disconnecting << 15);
 
 		return TNCOK << 8 | STREAM->Disconnecting << 15;		// OK, but lock attach if disconnecting
-	
+
 		break;
 
 	case 4:				// reinit
@@ -635,18 +635,18 @@ static KillTNC(struct TNCINFO * TNC)
 
 static RestartTNC(struct TNCINFO * TNC)
 {
-	STARTUPINFO  SInfo;			// pointer to STARTUPINFO 
-    PROCESS_INFORMATION PInfo; 	// pointer to PROCESS_INFORMATION 
+	STARTUPINFO  SInfo;			// pointer to STARTUPINFO
+    PROCESS_INFORMATION PInfo; 	// pointer to PROCESS_INFORMATION
 	char HomeDir[MAX_PATH];
 	int i, ret;
 
 	SInfo.cb=sizeof(SInfo);
-	SInfo.lpReserved=NULL; 
-	SInfo.lpDesktop=NULL; 
-	SInfo.lpTitle=NULL; 
-	SInfo.dwFlags=0; 
-	SInfo.cbReserved2=0; 
-  	SInfo.lpReserved2=NULL; 
+	SInfo.lpReserved=NULL;
+	SInfo.lpDesktop=NULL;
+	SInfo.lpTitle=NULL;
+	SInfo.dwFlags=0;
+	SInfo.cbReserved2=0;
+  	SInfo.lpReserved2=NULL;
 
 	if (TNC->ProgramPath)
 	{
@@ -727,8 +727,8 @@ UINT MPSKExtInit(EXTPORTDATA * PortEntry)
 	TNC->Hardware = H_MPSK;
 
 	MPSKChannel[port] = PortEntry->PORTCONTROL.CHANNELNUM-65;
-	
-	PortEntry->MAXHOSTMODESESSIONS = 1;	
+
+	PortEntry->MAXHOSTMODESESSIONS = 1;
 
 	i=sprintf(Msg,"MPSK Host %s Port %d \n",
 		TNC->HostName, TNC->TCPPort);
@@ -752,7 +752,7 @@ UINT MPSKExtInit(EXTPORTDATA * PortEntry)
 	}
 
 	BPQPort[PortEntry->PORTCONTROL.CHANNELNUM-65][MasterPort[port]] = port;
-			
+
 #ifndef LINBPQ
 	if (MasterPort[port] == port)
 	{
@@ -811,14 +811,14 @@ static int ProcessLine(char * buf, int Port)
 
 	TNC->InitScript = malloc(1000);
 	TNC->InitScript[0] = 0;
-	
+
 		if (p_ipad == NULL)
 			p_ipad = strtok(NULL, " \t\n\r");
 
 		if (p_ipad == NULL) return (FALSE);
-	
+
 		p_port = strtok(NULL, " \t\n\r");
-			
+
 		if (p_port == NULL) return (FALSE);
 
 		TNC->TCPPort = atoi(p_port);
@@ -867,18 +867,18 @@ static int ProcessLine(char * buf, int Port)
 			if (_memicmp(buf, "UPDATEMAP", 9) == 0)
 				TNC->PktUpdateMap = TRUE;
 			else
-			if (_memicmp(buf, "ALEBEACON", 9) == 0) // Send Beacon after each session 
+			if (_memicmp(buf, "ALEBEACON", 9) == 0) // Send Beacon after each session
 				TNC->MPSKInfo->Beacon = TRUE;
 			else
-			if (_memicmp(buf, "DEFAULTMODE", 11) == 0) // Send Beacon after each session 
+			if (_memicmp(buf, "DEFAULTMODE", 11) == 0) // Send Beacon after each session
 				strcpy(TNC->MPSKInfo->DefaultMode, &buf[12]);
 			else
-				
+
 			strcat (TNC->InitScript, buf);
 		}
 
 
-	return (TRUE);	
+	return (TRUE);
 }
 
 static int ConnecttoMPSK(int port)
@@ -897,7 +897,7 @@ static VOID ConnecttoMPSKThread(int port)
 	struct hostent * HostEnt;
 	struct TNCINFO * TNC = TNCInfo[port];
 
-	Sleep(5000);		// Allow init to complete 
+	Sleep(5000);		// Allow init to complete
 
 	TNC->destaddr.sin_addr.s_addr = inet_addr(TNC->HostName);
 
@@ -906,7 +906,7 @@ static VOID ConnecttoMPSKThread(int port)
 		//	Resolve name to address
 
 		 HostEnt = gethostbyname (TNC->HostName);
-		 
+
 		 if (!HostEnt) return;			// Resolve failed
 
 		 memcpy(&TNC->destaddr.sin_addr.s_addr,HostEnt->h_addr,4);
@@ -926,9 +926,9 @@ static VOID ConnecttoMPSKThread(int port)
 		i=sprintf(Msg, "Socket Failed for MPSK socket - error code = %d\n", WSAGetLastError());
 		WritetoConsole(Msg);
 
-  	 	return; 
+  	 	return;
 	}
- 
+
 	sinx.sin_family = AF_INET;
 	sinx.sin_addr.s_addr = INADDR_ANY;
 	sinx.sin_port = 0;
@@ -954,7 +954,7 @@ static VOID ConnecttoMPSKThread(int port)
 
 			TNC->Alerted = TRUE;
 		}
-		
+
 		TNC->CONNECTING = FALSE;
 		return;
 	}
@@ -983,9 +983,9 @@ static int ProcessReceivedData(int port)
 	{
 //		i=sprintf(ErrMsg, "Read Failed for MPSK socket - error code = %d\r\n", WSAGetLastError());
 //		WritetoConsole(ErrMsg);
-				
+
 		closesocket(TNC->TCPSock);
-					
+
 		TNC->CONNECTED = FALSE;
 		if (TNC->Streams[0].Attached)
 			TNC->Streams[0].ReportDISC = TRUE;
@@ -1008,7 +1008,7 @@ static int ProcessReceivedData(int port)
 	}
 
 	//	Have some data
-	
+
 	ProcessMPSKPacket(TNC, Message, bytes);			// Data may be for another port
 
 	return (0);
@@ -1043,7 +1043,7 @@ VOID ProcessMPSKPacket(struct TNCINFO * TNC, char * Message, int Len)
 Data
 
 End of TX] ARQ FAE CQ[End of TX] ARQ FAE CQ[End of TX] call "THIS I[End of TX] end of link to GM8BPQ[End of TX] sounding "THIS WAS"[End of TX] ARQ FAE CQ[End of TX] ARQ FAE CQ[End of TX] ARQ FAE CQ[End of TX] ARQ FAE CQFAE BEACON OH5RM Kouvola KP30JR
-[End of TX] ARQ FAE selective callGM8BPQ DE OH5RM 
+[End of TX] ARQ FAE selective callGM8BPQ DE OH5RM
 
 [Connection made with OH5RM]
 
@@ -1098,7 +1098,7 @@ S" to GM8BPQ
 		case 29:				// Data Char
 
 			Len--;
-		DataEsc:		
+		DataEsc:
 			if (Len)
 			{
 				TNC->DataBuffer[TNC->DataLen++] = *MPTR;
@@ -1108,7 +1108,7 @@ S" to GM8BPQ
 			}
 
 			TNC->CmdEsc = 29;
-	
+
 			if (TNC->DataLen)
 				ProcessMSPKData(TNC);
 
@@ -1118,7 +1118,7 @@ S" to GM8BPQ
 		case 30:
 
 			Len --;
-		CmdEsc:			
+		CmdEsc:
 			while (Len)
 			{
 				if (*MPTR == 31)	// End of String
@@ -1127,12 +1127,12 @@ S" to GM8BPQ
 					TNC->CmdLen = 0;
 
 					// Process any data left in buffer
-					
+
 					MPTR++;
 					Len--;
 					goto OuterLoop;
 				}
-			
+
 				TNC->CmdBuffer[TNC->CmdLen++] = *MPTR;
 				MPTR++;
 				Len--;
@@ -1140,11 +1140,11 @@ S" to GM8BPQ
 
 			TNC->CmdEsc = 30;
 			return;					// Nothing left
-	
+
 		case 23:					// Server Comment
 
 			Len --;
-		CommentEsc:			
+		CommentEsc:
 			while (Len)
 			{
 				if (*MPTR == 24)	// End of String
@@ -1160,7 +1160,7 @@ S" to GM8BPQ
 					Len--;
 					goto OuterLoop;
 				}
-			
+
 				TNC->CmdBuffer[TNC->CmdLen++] = *MPTR;
 				MPTR++;
 				Len--;
@@ -1192,9 +1192,9 @@ VOID ProcessMSPKCmd(struct TNCINFO * TNC)
 		if (strcmp(TNC->CmdBuffer, "SWITCH=RX") == 0)
 		{
 			TNC->MPSKInfo->TX = FALSE;
-			
+
 			// See if a command was queued while busy
-			
+
 			if (TNC->CmdSet)
 			{
 				send(TNC->TCPSock, TNC->CmdSet, strlen(TNC->CmdSet), 0);
@@ -1276,7 +1276,7 @@ VOID ProcessMSPKData(struct TNCINFO * TNC)
 			// Disconnect
 
 			TNC->DataLen = 0;
-		
+
 			if (STREAM->DiscWhenAllSent)
 				return;						// Already notified
 
@@ -1293,7 +1293,7 @@ VOID ProcessMSPKData(struct TNCINFO * TNC)
 
 				C_Q_ADD(&STREAM->PACTORtoBPQ_Q, buffptr);
 				STREAM->DiscWhenAllSent = 10;
-			
+
 				return;
 			}
 
@@ -1316,7 +1316,7 @@ VOID ProcessMSPKData(struct TNCINFO * TNC)
 
 		if (TNC->DataBuffer[TNC->DataLen - 1] == 0xc0)
 			return;			// Last char is an escape, so wait for the escaped char to arrive
-		
+
 		if (buffptr)
 		{
 			if (memchr(TNC->DataBuffer, 0xc0, TNC->DataLen))
@@ -1357,10 +1357,10 @@ DataLoop:
 		Len -= 22;
 		goto DataLoop;
 
-	}		
+	}
 
 	ptr = strchr(TNC->DataBuffer, '[');
-	
+
 	if (ptr)
 	{
 		// Start of a significant Message
@@ -1396,7 +1396,7 @@ DataLoop:
 
 				STREAM->Connected = TRUE;
 				STREAM->Connecting = FALSE;
-				STREAM->ConnectTime = time(NULL); 
+				STREAM->ConnectTime = time(NULL);
 				STREAM->BytesRXed = STREAM->BytesTXed = 0;
 
 				buffptr = GetBuff();
@@ -1404,20 +1404,20 @@ DataLoop:
 				{
 					buffptr[1]  = sprintf((UCHAR *)&buffptr[2], "*** Connected to %s\r", CallFrom);
 					C_Q_ADD(&STREAM->PACTORtoBPQ_Q, buffptr);
-				}				
+				}
 			}
 			else
 			{
 					// Incoming. Look for a free Stream
 
 					STREAM->Connected = TRUE;
-					STREAM->ConnectTime = time(NULL); 
+					STREAM->ConnectTime = time(NULL);
 					STREAM->BytesRXed = STREAM->BytesTXed = 0;
 
 					UpdateMH(TNC, CallFrom, '+', 'I');
-	
+
 					ProcessIncommingConnect(TNC, CallFrom, Stream, FALSE);
-	
+
 					if (HFCTEXTLEN)
 					{
 						if (HFCTEXTLEN > 1)
@@ -1445,11 +1445,11 @@ DataLoop:
 	}
 
 	// Doesnt contain [ - just discard
-		
+
 	TNC->DataLen = 0;
 	Debugprintf(TNC->DataBuffer);
 	return;
-	
+
 }
 
 
@@ -1470,7 +1470,7 @@ DataLoop:
 	case 'd':			// Disconnected
 
 
-	
+
 	case 'C':
 
         //   Connect. Can be Incoming or Outgoing
@@ -1514,7 +1514,7 @@ VOID SendData(struct TNCINFO * TNC, char * Msg, int MsgLen)
 
 		*ptr++ = c;
 	}
-	
+
 	send(sock, NewMsg, MsgLen * 2 + ExtraLen, 0);
 
 	free(NewMsg);
@@ -1546,13 +1546,13 @@ VOID CloseComplete(struct TNCINFO * TNC, int Stream)
 	Rig_Command(-1, Cmd);
 
 	Cmd[0] = 0;
-	
+
 	if (TNC->MPSKInfo->DefaultMode[0])
 		sprintf(Cmd, "%cDIGITAL MODE %s\x1b", '\x1a', TNC->MPSKInfo->DefaultMode);
 
 	if (TNC->MPSKInfo->Beacon)
 		sprintf(Cmd, "%s%cBEACON_ARQ_FAE\x1b", Cmd, '\x1a');
-	
+
 	Len = strlen(Cmd);
 
 	if(Len)

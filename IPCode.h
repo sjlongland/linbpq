@@ -9,7 +9,7 @@
 
 unsigned long _beginthread( void *, unsigned stack_size, void * arglist);
 
-#pragma pack(1) 
+#pragma pack(1)
 
 typedef struct _ETHMSG
 {
@@ -36,7 +36,7 @@ typedef struct _BUFFHEADER
 //	 MAY BE UP TO 56 BYTES OF DIGIS
 
 	UCHAR	CTL;
-	UCHAR	PID; 
+	UCHAR	PID;
 
 }BUFFHEADER, *PBUFFHEADER;
 
@@ -44,7 +44,7 @@ typedef struct _BUFFHEADER
 typedef struct _AXARP
 {
 	struct _BUFFHEADER MSGHDDR;
-	
+
 	USHORT	HWTYPE;      //    DB      0,3             ; AX.25
 	USHORT	PID;			//	DB      0,0CCH          ; PID
 
@@ -122,18 +122,18 @@ typedef struct _ARPDATA
 	BOOL	LOCKED;					// Locked entry from config file
 	struct _MESSAGE * ARP_Q;		// CHAIN OF DATAGRAMS WAITING FOR RESOLUTION
 	struct _ROUTEENTRY * ARPROUTE;	// Route Entry for this ARP entry
- 
+
 } ARPDATA, *PARPDATA;
 
 typedef struct _ROUTEENTRY
 {
-	ULONG	NETWORK;	// NETWORK 
+	ULONG	NETWORK;	// NETWORK
 	ULONG	SUBNET;		// SUBNET MASK
 	ULONG	GATEWAY;	// GATEWAY IP ADDRESS
 	ULONG	Encap;		// Encap if a Tunnelled 44 address
 	int		FRAMECOUNT; // FRAMES SENT TO THIS NETWORK
 	UCHAR	TYPE;		// TYPE (NETROM/VC/DG/ETH)
-	UCHAR	METRIC;		// FOR RIP 
+	UCHAR	METRIC;		// FOR RIP
 	UCHAR	ROUTEINFO;  // TYPE (RIP44, LEARNED, SYSOP Config, ETC)
 	UCHAR	ROUTECHANGED;// CHANGED RECENTLY FLAG
 	int		RIPTIMOUT;  // FOR REMOVING ACTIVE ENTRIES
@@ -194,7 +194,7 @@ static HANDLE hInstance;
 //unsigned long _beginthread( void( *start_address )( void *), unsigned stack_size, char * arglist);
 
 Dll BOOL APIENTRY Init_IP();
-Dll BOOL APIENTRY Poll_IP();  
+Dll BOOL APIENTRY Poll_IP();
 VOID ProcessEthIPMsg(PETHMSG Buffer);
 VOID ProcessAXARPMsg(PAXARP arpptr);
 VOID ProcessIPMsg(PIPMSG IPptr, UCHAR * MACADDR, char Type, UCHAR Port);

@@ -15,7 +15,7 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with LinBPQ/BPQ32.  If not, see http://www.gnu.org/licenses
-*/	
+*/
 
 // Mail and Chat Server for BPQ32 Packet Switch
 //
@@ -183,8 +183,8 @@ VOID SendMsgUI(struct MsgInfo * Msg)
 
 	//12345 B 2053 TEST@ALL F6FBB 920325 This is the subject
 
-	struct tm *tm = gmtime(&Msg->datecreated);	
-	
+	struct tm *tm = gmtime(&Msg->datecreated);
+
 	len = sprintf_s(msg, sizeof(msg),"%-6d %c %6d %-13s %-6s %02d%02d%02d %s\r",
 		Msg->number, Msg->type, Msg->length, Msg->to,
 		Msg->from, tm->tm_year-100, tm->tm_mon+1, tm->tm_mday, Msg->title);
@@ -193,7 +193,7 @@ VOID SendMsgUI(struct MsgInfo * Msg)
 	{
 		if ((Mask & 1) && UIHDDR[i])
 			Send_AX_Datagram(msg, len, i, AXDEST, TRUE);
-		
+
 		Mask>>=1;
 	}
 }
@@ -212,7 +212,7 @@ VOID SendHeaders(int Number, int Port)
 	while (Number <= LatestMsg)
 	{
 		Msg = FindMessageByNumber(Number);
-	
+
 		if (Msg)
 		{
 			if (len > (200 - strlen(Msg->title)))
@@ -221,8 +221,8 @@ VOID SendHeaders(int Number, int Port)
 				len=0;
 			}
 
-			tm = gmtime(&Msg->datecreated);	
-	
+			tm = gmtime(&Msg->datecreated);
+
 			len += sprintf(&msg[len], "%-6d %c %6d %-13s %-6s %02d%02d%02d %s\r",
 				Msg->number, Msg->type, Msg->length, Msg->to,
 				Msg->from, tm->tm_year-100, tm->tm_mon+1, tm->tm_mday, Msg->title);
@@ -256,7 +256,7 @@ VOID SendDummyUI(int num)
 	{
 		if (Mask & 1)
 			Send_AX_Datagram(msg, len, i, AXDEST, TRUE);
-		
+
 		Mask>>=1;
 	}
 }
@@ -267,7 +267,7 @@ VOID SendLatestUI(int Port)
 	int len, i;
 	int Mask = UIPortMask;
 	int NumPorts = GetNumberofPorts();
-	
+
 	len = sprintf_s(msg, sizeof(msg),"%-6d !!\r", LatestMsg);
 
 	if (Port)
@@ -280,7 +280,7 @@ VOID SendLatestUI(int Port)
 	{
 		if ((Mask & 1) && UIHDDR[i])
 			Send_AX_Datagram(msg, len, i, AXDEST, TRUE);
-		
+
 		Mask>>=1;
 	}
 }
@@ -306,7 +306,7 @@ static VOID Send_AX_Datagram(UCHAR * Msg, DWORD Len, UCHAR Port, UCHAR * HWADDR,
 		UCHAR * ptr;
 
 		memcpy(&AXPTR->CTL, UIDigiAX[Port], DigiLen);
-		
+
 		ptr = (UCHAR *)AXPTR;
 		ptr += DigiLen;
 		AXPTR = (PMESSAGEX)ptr;
@@ -344,7 +344,7 @@ VOID UnQueueRaw(UINT Param)
 			SendRaw(AXMSG->PORT, (char *)&AXMSG->DEST, AXMSG->LENGTH);
 			free(AXMSG);
 		}
-	
+
 		FreeSemaphore(&DGSemaphore);
 
 		Sleep(5000);
@@ -365,7 +365,7 @@ VOID ProcessUItoFBB(char * msg, int len, int Port)
 
 	int Number, Sum, Sent = 0;
 	char cksum[3];
-	
+
 	if (msg[0] == '?')
 	{
 		memcpy(cksum, &msg[10], 2);
@@ -379,10 +379,10 @@ VOID ProcessUItoFBB(char * msg, int len, int Port)
 			SendLatestUI(Port);
 			return;
 		}
-		
+
 		SendHeaders(Number+1, Port);
 	}
-	
+
 	return;
 }
 
@@ -394,11 +394,11 @@ UCHAR * AdjustForDigis(PMESSAGEX * buff, int * len)
 	if ((buff1->ORIGIN[6] & 1) == 1)
 	{
 		// End of Call Set
-	
+
 		return 0;				// No Digis
 	}
 
-	ptr1 = &buff1->ORIGIN[6];		// End of add 
+	ptr1 = &buff1->ORIGIN[6];		// End of add
 	ptr = (UCHAR *)*buff;
 
 	while((*ptr1 & 1) == 0)			// End of address bit
@@ -415,7 +415,7 @@ VOID SeeifBBSUIFrame(PMESSAGEX buff, int len)
 	UCHAR * Digis;
 	UCHAR From[7], To[7];
 	int Port = buff->PORT;
-	
+
 	if (Port > 128)
 		return;									// Only look at received frames
 
@@ -427,12 +427,12 @@ VOID SeeifBBSUIFrame(PMESSAGEX buff, int len)
 	if (Digis)
 	{
 		// Make sure all are actioned
-	
+
 	DigiLoop:
-	
+
 		if ((Digis[6] & 0x80) == 0)
 			return;								// Not repeated
-		
+
 		if ((Digis[6] & 1) == 0)				// Not end of list
 		{
 			Digis +=7;
@@ -519,7 +519,7 @@ VOID ExpandMailFor()
 	strcpy(NewP, OldP);
 }
 
-	
+
 VOID SendMailFor(char * Msg, BOOL HaveCalls)
 {
 	int Mask = UIPortMask;
@@ -530,7 +530,7 @@ VOID SendMailFor(char * Msg, BOOL HaveCalls)
 		strcat(Msg, "None ");
 
 	Sleep(1000);
-	
+
 	for (i=1; i <= NumPorts; i++)
 	{
 		if (Mask & 1)
@@ -568,7 +568,7 @@ VOID SendMailForThread(VOID * Param)
 			user = UserRecPtr[i];
 
 			CountMessagesTo(user, &Unread);
-	
+
 			if (Unread)
 			{
 				if (strlen(MailForMessage) > 240)

@@ -9,7 +9,7 @@ Define symbol DYNLOADBPQ before including this file to use the dynamic form.
 
 If you are writing an External Driver, rather than an application,
 you must use Dynamic Linking, and you must also define symbol EXTDLL, which will
-make the code use GetProcAddress rather than LoadLibrary. Without this the reference 
+make the code use GetProcAddress rather than LoadLibrary. Without this the reference
 count on BPQ32.dll gets messed up, and the code will not unload cleanly.
 
 */
@@ -229,7 +229,7 @@ int APIENTRY DeleteTrayMenuItem(HWND hWnd);
 BOOL APIENTRY StartMinimizedFlag();
 
 // Log a message to the bpq32 console.
- 
+
 int APIENTRY WritetoConsole(char * buff);
 
 // CheckTimer should be called regularly to ensure BPQ32 detects if an application crashes
@@ -248,7 +248,7 @@ UINT APIENTRY GETMONDECODE();
 VOID APIENTRY RelBuff(VOID * Msg);
 //VOID *APIENTRY GetBuff();
 
-VOID APIENTRY CreateOneTimePassword(char * Password, char * KeyPhrase, int TimeOffset); 
+VOID APIENTRY CreateOneTimePassword(char * Password, char * KeyPhrase, int TimeOffset);
 
 BOOL APIENTRY CheckOneTimePassword(char * Password, char * KeyPhrase);
 
@@ -468,7 +468,7 @@ int (FAR WINAPI * SetupTrayIcon)();
 BOOL (FAR WINAPI * GetStartMinimizedFlag)();
 
 // Log a message to the bpq32 console.
- 
+
 //int APIENTRY WritetoConsole();
 int (FAR WINAPI * WritetoConsole)(char * buff);
 
@@ -496,7 +496,7 @@ BOOL GetAPI()
 	{
 		err=GetLastError();
 		wsprintf(Msg,"Error loading bpq32.dll - Error code %d",err);
-		
+
 		MessageBox(NULL,Msg,"BPQDEMO",MB_ICONSTOP);
 
 		return(FALSE);
@@ -559,12 +559,12 @@ BOOL GetAPI()
 	SetApplCall = (BOOL (__stdcall *)(int Appl, char * NewCall))GetProcAddress(ExtDriver,"_SetApplCall@8");
 	SetApplAlias = (BOOL (__stdcall *)(int Appl, char * NewCall))GetProcAddress(ExtDriver,"_SetApplAlias@8");
 	SetApplQual = (BOOL (__stdcall *)(int Appl, int NewQual))GetProcAddress(ExtDriver,"_SetApplQual@8");
-	
+
 	GetMinimizetoTrayFlag = (BOOL (__stdcall *)())GetProcAddress(ExtDriver,"_GetMinimizetoTrayFlag@0");
 	AddTrayMenuItem = (int (__stdcall *)(HWND hWnd, char * Label))GetProcAddress(ExtDriver,"_AddTrayMenuItem@8");
 	DeleteTrayMenuItem = (int (__stdcall *)(HWND hWnd))GetProcAddress(ExtDriver,"_DeleteTrayMenuItem@4");
 	SetupTrayIcon = (BOOL (__stdcall *)())GetProcAddress(ExtDriver,"_SetupTrayIcon@0");
-	
+
 	GetStartMinimizedFlag = (BOOL (__stdcall *)())GetProcAddress(ExtDriver,"_GetStartMinimizedFlag@0");
 	WritetoConsole = (int (__stdcall *)(char *))GetProcAddress(ExtDriver,"_WritetoConsole@4");
 	CheckTimer = (int (__stdcall *)(char *))GetProcAddress(ExtDriver,"_CheckTimer@0");

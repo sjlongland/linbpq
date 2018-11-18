@@ -15,7 +15,7 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with LinBPQ/BPQ32.  If not, see http://www.gnu.org/licenses
-*/	
+*/
 
 //
 //	Module to provide HDLC Card (DRSI, Baycom etc) support for
@@ -25,7 +25,7 @@ along with LinBPQ/BPQ32.  If not, see http://www.gnu.org/licenses
 //	Win95 - Uses BPQHDLC.VXD to drive card
 //  NT -Uses BPQHDLC.DRV to drive card
 //
-#define _CRT_SECURE_NO_DEPRECATE 
+#define _CRT_SECURE_NO_DEPRECATE
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -65,8 +65,8 @@ typedef struct _BPQHDLC_ADDCHANNEL_INPUT {
 	UCHAR	Channel;
 
 	ULONG	ASIOC;			// A CHAN ADDRESSES
-	ULONG	SIO;			// OUR ADDRESSES (COULD BE A OR B) 
-	ULONG	SIOC;			// Our Control Channel 
+	ULONG	SIO;			// OUR ADDRESSES (COULD BE A OR B)
+	ULONG	SIOC;			// Our Control Channel
 	ULONG	BSIOC;			//  B CHAN CONTROL
 
 	VOID * OtherChannel;		// Kernel Channel record for first channel if this is 2nd channel
@@ -77,7 +77,7 @@ typedef struct _BPQHDLC_ADDCHANNEL_INPUT {
 	int RXBRG;
 
 	UCHAR WR10;				// NRZ/NRZI FLAG
- 
+
 	USHORT TXDELAY;			//TX KEYUP DELAY TIMER
 	UCHAR PERSISTANCE;
 
@@ -175,9 +175,9 @@ int HDLCTX2K(PHDLCDATA  PORTVEC,UCHAR * buff)
 		return (0);
 
 	txlen=(buff[6]<<8) + buff[5];
-	
+
 	memcpy(buff,&PORTVEC->DRIVERPORTTABLE,4);
-	
+
 	fResult = DeviceIoControl(
 			hDevice,   // device handle
 			(Win98) ? 'S' : IOCTL_BPQHDLC_SEND,	   // control code
@@ -248,9 +248,9 @@ int HDLCTX98(PHDLCDATA PORTVEC,UCHAR * buff)
 		return (0);
 
 	txlen=(buff[6]<<8) + buff[5];
-	
+
 	memcpy(buff,&PORTVEC->DRIVERPORTTABLE,4);
-	
+
 	fResult = DeviceIoControl(
 			hDevice,   // device handle
 			'S',		   // control code
@@ -284,7 +284,7 @@ VOID HDLCRX(PHDLCDATA PORTVEC)
 		return;
 
 	Len = IntHDLCRX(PORTVEC, (UCHAR *)Message);
-	
+
 	if (Len == 0)
 	{
 		ReleaseBuffer((UINT *)Message);
@@ -317,7 +317,7 @@ int HDLCTXCHECK(PHDLCDATA PORTVEC)
 VOID HDLCTX(PHDLCDATA PORTVEC,UCHAR * Buffer)
 {
 	struct _LINKTABLE * LINK;
-	
+
 	LINK = (struct _LINKTABLE *)Buffer[(BUFFLEN-4)/4];
 
 	if (LINK)
@@ -333,7 +333,7 @@ VOID HDLCTX(PHDLCDATA PORTVEC,UCHAR * Buffer)
 		HDLCTX98(PORTVEC, Buffer);
 	else
 		HDLCTX2K(PORTVEC, Buffer);
-	
+
 	C_Q_ADD(&TRACE_Q, (UINT *)Buffer);
 
 }
@@ -351,7 +351,7 @@ int HDLCINIT(HDLCDATA * PORTVEC)
 	_get_winminor(&WinMinor);
 
 #pragma warning(pop)
-	
+
 	if (WinVer >= 5)		// Win 2000 or above
 		return Init2K(PORTVEC);
 	else
@@ -369,7 +369,7 @@ int Init98(HDLCDATA * PORTVEC)
 	int err;
 
 	Win98 = TRUE;
-	
+
 	OutputDebugString("Init HDLC 98\n");
 
 	//
@@ -390,10 +390,10 @@ int Init98(HDLCDATA * PORTVEC)
 			hDevice=0;
 
 			err=GetLastError();
-	
+
 			sprintf(msg,"Error loading Driver \\\\.\\BPQHDLC.VXD - Error code %d\n",err);
 			OutputDebugString(msg);
-			
+
 			MessageBox(NULL,msg,"BPQ32",MB_ICONSTOP);
 
 			WritetoConsole("Initialisation Failed");
@@ -410,7 +410,7 @@ int Init98(HDLCDATA * PORTVEC)
 //			bOutput, 4, &cb,  // output parameters
 //			0);
 
-		srand( (unsigned)time( NULL ) );  //Prime random no generator	
+		srand( (unsigned)time( NULL ) );  //Prime random no generator
 	}
 
 	OutputDebugString("Calling Initialize\n");
@@ -434,7 +434,7 @@ int Init98(HDLCDATA * PORTVEC)
 	OutputDebugString("Initialize Returned\n");
 
 	return (TRUE);
-		
+
 }
 
 
@@ -491,7 +491,7 @@ int TOSHCLOCKFREQ =	57600;
 
 UCHAR SDLCCMD[]	= {
 	0,0,
-	2,0,			// BASE VECTOR 
+	2,0,			// BASE VECTOR
 	4,0x20,			// SDLC MODE
 	3,0xc8,			// 8BIT,  CRC ENABLE, RX DISABLED
 
@@ -520,7 +520,7 @@ UCHAR CIOPARAMS[] = {
 	0x23,0xFF,		// A DIRECTION - ALL IN
 
 	0x1D,0x0E2,		// C/T 2 MODE - CONT, EXT IN, EXT O, SQUARE
-	0x1C,0x0E2,		// C/T 1 MODE   		"" 
+	0x1C,0x0E2,		// C/T 1 MODE   		""
 
 	0x19,0x10,		// C/T 2 LSB - 16 = /32 FOR SQUARE WAVE
 	0x18,0,			//       MSB
@@ -544,10 +544,10 @@ UCHAR CIOPARAMS[] = {
 VOID WRITE_PORT_UCHAR(UINT Port, UINT Value)
 {
   	ULONG buff[3];
-	
+
 	buff[0] = Port;
 	buff[1] = Value;
-	
+
 	fResult = DeviceIoControl(
 			hDevice,   // device handle
 			IOCTL_BPQHDLC_IOWRITE,	   // control code
@@ -559,9 +559,9 @@ VOID WRITE_PORT_UCHAR(UINT Port, UINT Value)
 UCHAR READ_PORT_UCHAR(ULONG Port)
 {
 	ULONG buff[3];
-	
+
 	buff[0] = Port;
-	
+
 	fResult = DeviceIoControl(
 			hDevice,   // device handle
 			IOCTL_BPQHDLC_IOREAD,	   // control code
@@ -585,7 +585,7 @@ int Init2K(HDLCDATA * PORTVEC)
 		//
 		//	Open HDLC Driver
 		//
-		
+
 		hDevice  = CreateFile(
                     "\\\\.\\BPQHDLC",           // Open the Device "file"
                     GENERIC_WRITE,
@@ -601,7 +601,7 @@ int Init2K(HDLCDATA * PORTVEC)
 			hDevice=0;
 
 			err=GetLastError();
-	
+
 			sprintf(msg,"Error Opening Driver \\device\\BPQHDLC - Error code %d\n", err);
 			OutputDebugString(msg);
 
@@ -637,17 +637,17 @@ PHDLCDATA See_if_First_On_Card(PHDLCDATA PORTVEC)
 			//	ENSURE ENTRIES ARE FOR DIFFERENT CHANNELS
 
 			if (PORTVEC->PORTCONTROL.CHANNELNUM == PreviousPort->PORTCONTROL.CHANNELNUM)
-		
+
 				//	CHANNEL DEFINITION ERROR
 
 				return (PHDLCDATA) -1;
 			else
 				return PreviousPort;
 		}
-	
+
 		PreviousPort = (PHDLCDATA)PreviousPort->PORTCONTROL.PORTPOINTER;
 	}
-	
+
 	return NULL;			// FLAG NOT FOUND
 
 
@@ -665,11 +665,11 @@ VOID INITPART2(PHDLCDATA PORTVEC, USHORT SCCOffset, PHDLCDATA PreviousPort)
 
 //	SET UP ADDRESS LIST - THIS PATH FOR CARDS WITH 'NORMAL'
 //	ADDRESSING - C/D=A0, A/B=A1, SO ORDER IS BCTRL BDATA ACTRL ADATA
-//	OR DE, WHICH USES WORD ADDRESSES C/D=A1, A/B=A2 
+//	OR DE, WHICH USES WORD ADDRESSES C/D=A1, A/B=A2
 
 	PORTVEC->BSIOC = SCCBase;			// B CHAN ADDR
 	PORTVEC->ASIOC = SCCBase+2;		// A CHAN ADDR
- 
+
 //	SEE WHICH CHANNEL TO USE
 
 	if (PORTVEC->PORTCONTROL.CHANNELNUM == 'A')
@@ -858,7 +858,7 @@ VOID CHECKCHAN(PHDLCDATA PORTVEC, USHORT CDOffset)
 VOID BINITPART2(PHDLCDATA PORTVEC, USHORT SCCOffset, PHDLCDATA PreviousPort)
 {
 	// ORDER IS 0		1		2		3		4		5		6		7
-	//			ADATA	BDATA	CDATA	DDATA	ACTRL	BCTRL	CCTRL	DCTRL 
+	//			ADATA	BDATA	CDATA	DDATA	ACTRL	BCTRL	CCTRL	DCTRL
 
 	//	Before entering here IOBASE and Chan have been updated if Chan were C or D
 
@@ -870,11 +870,11 @@ VOID BINITPART2(PHDLCDATA PORTVEC, USHORT SCCOffset, PHDLCDATA PreviousPort)
 
 //	SET UP ADDRESS LIST - THIS PATH FOR CARDS WITH 'NORMAL'
 //	ADDRESSING - C/D=A0, A/B=A1, SO ORDER IS BCTRL BDATA ACTRL ADATA
-//	OR DE, WHICH USES WORD ADDRESSES C/D=A1, A/B=A2 
+//	OR DE, WHICH USES WORD ADDRESSES C/D=A1, A/B=A2
 
 	PORTVEC->ASIOC = SCCBase+4;		// A CHAN ADDR
 	PORTVEC->BSIOC = SCCBase+5;		// B CHAN ADDR
- 
+
 //	SEE WHICH CHANNEL TO USE
 
 	if (PORTVEC->PORTCONTROL.CHANNELNUM == 'A')
@@ -968,7 +968,7 @@ VOID BINITPART2(PHDLCDATA PORTVEC, USHORT SCCOffset, PHDLCDATA PreviousPort)
 //	IF 7910/3105 PORTS, SET TXC=BRG, RXC=DPLL
 
 //	IT SEEMS THE 3RD PORT IS MORE LIKELY TO BE USED WITH A SIMPLE
-//	MODEM WITHOUT CLOCK GERERATION (EG BAYCOM MODEM), SO SET ALL 
+//	MODEM WITHOUT CLOCK GERERATION (EG BAYCOM MODEM), SO SET ALL
 //	PORTS THE SAME
 
 	SIOCW(11);			// WR11
@@ -1053,12 +1053,12 @@ int INITPORT(PHDLCDATA PORTVEC)
 		case 10:				// RLC100
 		case 12:				// RLC400
 		case 20:				// PA0HZP OPTO-SCC
-			
+
 			CHECKCHAN(PORTVEC, 4);			// Channels are 4 apart
 			break;
 
 		case 18:				// Baycom
-			
+
 			CHECKCHAN(PORTVEC, 2);			//Channels are 2 apart
 			break;
 	}
@@ -1084,7 +1084,7 @@ int INITPORT(PHDLCDATA PORTVEC)
 	switch (PORTVEC->PORTCONTROL.PORTTYPE)
 	{
 	case 2:			// PC120
-		
+
 		PORTVEC->IOLEN = 8;					// I think! - Modem is at offfset 0, SCC at 4
 		INITPART2(PORTVEC, 4, PreviousPort);	// SCC ADDRESS 4 Above Base Address
 		if (PreviousPort == NULL) INITMODEM(PORTVEC);
@@ -1093,7 +1093,7 @@ int INITPORT(PHDLCDATA PORTVEC)
 		return 0;
 
 	case 4:			// DRSIINIT
-		
+
 		PORTVEC->IOLEN = 8;					// SCC at 0, CIO at 7
 		if (PreviousPort == NULL) INITCIO(PORTVEC);	// SET UP CIO FOR /32 UNLESS Already Done
 		INITPART2(PORTVEC, 0, PreviousPort);
@@ -1101,7 +1101,7 @@ int INITPORT(PHDLCDATA PORTVEC)
 		INITREST(PORTVEC, PreviousPort);
 
 		return TRUE;
-	
+
 	case 6:
 
 		WritetoConsole("TYPE=TOSH Not Supported\n");
@@ -1123,7 +1123,7 @@ int INITPORT(PHDLCDATA PORTVEC)
 		INITREST(PORTVEC, PreviousPort);
 
 		return 0;
-	
+
 	case 20:				// PA0HZP OPTO-SCC
 
 		PORTVEC->IOLEN = 4;						// 2 * SCC, but each SCC can be on it's own

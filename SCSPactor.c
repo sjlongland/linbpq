@@ -15,10 +15,10 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with LinBPQ/BPQ32.  If not, see http://www.gnu.org/licenses
-*/	
+*/
 
 //
-//	DLL to inteface SCS TNC in Pactor Mode to BPQ32 switch 
+//	DLL to inteface SCS TNC in Pactor Mode to BPQ32 switch
 //
 //	Uses BPQ EXTERNAL interface
 
@@ -33,19 +33,19 @@ along with LinBPQ/BPQ32.  If not, see http://www.gnu.org/licenses
 
 // Support up to 32 BPQ Ports
 
-// Version 1.1.1.14 August 2010 
+// Version 1.1.1.14 August 2010
 
 // Drop RTS as well as DTR on close
 
-// Version 1.2.1.1 August 2010 
+// Version 1.2.1.1 August 2010
 
 // Save Minimized State
 
-// Version 1.2.1.2 August 2010 
+// Version 1.2.1.2 August 2010
 
 // Implement scan bandwidth change
 
-// Version 1.2.1.3 September 2010 
+// Version 1.2.1.3 September 2010
 
 // Don't connect if channel is busy
 // Add WL2K reporting
@@ -124,7 +124,7 @@ int	KissEncode(UCHAR * inbuff, UCHAR * outbuff, int len);
 int CheckMode(struct TNCINFO * TNC);
 VOID WritetoTrace(struct TNCINFO * TNC, char * Msg, int Len);
 
-#define	FEND	0xC0	// KISS CONTROL CODES 
+#define	FEND	0xC0	// KISS CONTROL CODES
 #define	FESC	0xDB
 #define	TFEND	0xDC
 #define	TFESC	0xDD
@@ -157,12 +157,12 @@ static BOOL OpenLogFile(int Flags)
 		struct tm * tm;
 
 		T = time(NULL);
-		tm = gmtime(&T);	
+		tm = gmtime(&T);
 
 		sprintf(FN,"%s/Logs/SCSLog_%02d%02d_%d.txt", LogDirectory, tm->tm_mon + 1, tm->tm_mday, Flags);
 
 		LogHandle[Flags] = fopen(FN, "ab");
-	
+
 		return (LogHandle[Flags] != NULL);
 	}
 	return 0;
@@ -174,8 +174,8 @@ static void WriteLogLine(int Flags, char * Msg, int MsgLen)
 	{
 		if (LogHandle[Flags])
 		{
-			fwrite(Msg, 1, MsgLen, LogHandle[Flags]); 
-			fwrite("\r\n", 1, 2, LogHandle[Flags]); 
+			fwrite(Msg, 1, MsgLen, LogHandle[Flags]);
+			fwrite("\r\n", 1, 2, LogHandle[Flags]);
 		}
 	}
 }
@@ -193,13 +193,13 @@ static int ProcessLine(char * buf, int Port)
 	char errbuf[256];
 
 	BPQport = Port;
-	
+
 	TNC = TNCInfo[BPQport] = malloc(sizeof(struct TNCINFO));
 	memset(TNC, 0, sizeof(struct TNCINFO));
 
 	TNC->InitScript = malloc(1000);
 	TNC->InitScript[0] = 0;
-	
+
 	goto ConfigLine;
 
 
@@ -222,7 +222,7 @@ ConfigLine:
 			*ptr++ = 13;
 			*ptr = 0;
 		}
-		
+
 		if (_memicmp(buf, "DEBUGLOG", 8) == 0)	// Write Debug Log
 			WRITELOG = atoi(&buf[8]);
 		else
@@ -233,10 +233,10 @@ ConfigLine:
 			if (p_cmd && p_cmd[0] != ';' && p_cmd[0] != '#')
 				TNC->ApplCmd=_strdup(_strupr(p_cmd));
 		}
-		else			
+		else
 		if (_memicmp(buf, "PACKETCHANNELS", 14) == 0)	// Packet Channels
 			TNC->PacketChannels = atoi(&buf[14]);
-		
+
 		else
 		if (_memicmp(buf, "BUSYHOLD", 8) == 0)		// Hold Time for Busy Detect
 			TNC->BusyHold = atoi(&buf[8]);
@@ -292,7 +292,7 @@ ConfigLine:
 			struct tm * tm;
 
 			T = time(NULL);
-			tm = gmtime(&T);	
+			tm = gmtime(&T);
 
 			sprintf(Cmd,"DATE %02d%02d%02d\r",  tm->tm_mday, tm->tm_mon + 1, tm->tm_year - 100);
 
@@ -305,7 +305,7 @@ ConfigLine:
 			struct tm * tm;
 
 			T = time(NULL);
-			tm = gmtime(&T);	
+			tm = gmtime(&T);
 
 			sprintf(Cmd,"TIME %02d%02d%02d\r",  tm->tm_hour, tm->tm_min, tm->tm_sec);
 
@@ -314,9 +314,9 @@ ConfigLine:
 		else
 			strcat (TNC->InitScript, buf);
 	}
-	
+
 	return (TRUE);
-	
+
 }
 
 struct TNCINFO * CreateTTYInfo(int port, int speed);
@@ -363,7 +363,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 
 	if (TNC == NULL)
 		return 0;
-	
+
 	if (TNC->hDevice == 0)
 	{
 		// Clear anything from UI_Q
@@ -385,7 +385,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 			return 0;
 
 		TNC->ReopenTimer = 0;
-		
+
 		OpenCOMMPort(TNC, TNC->PortRecord->PORTCONTROL.SerialPortName, TNC->PortRecord->PORTCONTROL.BAUDRATE, TRUE);
 
 		if (TNC->hDevice == 0)
@@ -407,12 +407,12 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 			else
 			{
 				// set custom divisor to get 829440 baud
-	
+
 				sstruct.custom_divisor = 29;
 				sstruct.flags |= ASYNC_SPD_CUST;
 
 				// set serial_struct
-		
+
 				if (ioctl(TNC->hDevice, TIOCSSERIAL, &sstruct) < 0)
 					Debugprintf("Error: Dragon could not set custom comm baud divisor\n");
 				else
@@ -425,7 +425,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 ok:
 	switch (fn)
 	{
-	case 7:			
+	case 7:
 
 		// 100 mS Timer. May now be needed, as Poll can be called more frequently in some circumstances
 
@@ -446,16 +446,16 @@ ok:
 				return -1;
 			}
 		}
-	
+
 		if (TNC->EnterExit)
 			return 0;						// Switching to Term mode to change bandwidth
-		
+
 		for (Stream = 0; Stream <= MaxStreams; Stream++)
 		{
 			if (TNC->Streams[Stream].PACTORtoBPQ_Q !=0)
 			{
 				int datalen;
-			
+
 				buffptr=Q_REM(&TNC->Streams[Stream].PACTORtoBPQ_Q);
 
 				datalen=buffptr[1];
@@ -469,13 +469,13 @@ ok:
 
 	//			buff[5]=(datalen & 0xff);
 	//			buff[6]=(datalen >> 8);
-				
+
 				ReleaseBuffer(buffptr);
-	
+
 				return (1);
 			}
 		}
-	
+
 		return 0;
 
 	case 2:				// send
@@ -494,7 +494,7 @@ ok:
 			memcpy(buffptr+2, "No Connection to PACTOR TNC\r", 36);
 
 			C_Q_ADD(&TNC->Streams[Stream].PACTORtoBPQ_Q, buffptr);
-			
+
 			return 0;
 		}
 
@@ -502,17 +502,17 @@ ok:
 
 		buffptr[1] = txlen;
 		memcpy(buffptr+2, &buff[8], txlen);
-		
+
 		C_Q_ADD(&TNC->Streams[Stream].BPQtoPACTOR_Q, buffptr);
 
 		TNC->Streams[Stream].FramesOutstanding++;
-		
+
 		return (0);
 
 	case 3:				// CHECK IF OK TO SEND. Also used to check if TNC is responding
 
 		Stream = (int)buff;
-	
+
 		STREAM = &TNC->Streams[Stream];
 
 		if (Stream == 0)
@@ -522,7 +522,7 @@ ok:
 		}
 		else
 		{
-			if (STREAM->FramesOutstanding > 3 || TNC->Buffers < 200)	
+			if (STREAM->FramesOutstanding > 3 || TNC->Buffers < 200)
 				return (1 | TNC->HostMode << 8 | STREAM->Disconnecting << 15);		}
 
 		return TNC->HostMode << 8 | STREAM->Disconnecting << 15;		// OK, but lock attach if disconnecting
@@ -567,7 +567,7 @@ ok:
 		Sleep(25);
 
 		CloseCOMPort(TNCInfo[port]->hDevice);
-				
+
 		return (0);
 
 	case 6:				// Scan Interface
@@ -582,7 +582,7 @@ ok:
 			{
 				// If been in Sync a long time, or if using applcalls and
 				// Scan had been locked too long just let it change
-				
+
 				if (TNC->UseAPPLCallsforPactor)
 				{
 					if (TNC->PTCStatus == 6)	// Sync
@@ -611,15 +611,15 @@ ok:
 				return TRUE;
 			}
 			return 0;		// Don't lock scan if TNC isn't responding
-		
+
 
 		case 2:		// Check  Permission
 			return TNC->OKToChangeFreq;
 
 		case 3:		// Release  Permission
-		
+
 			TNC->WantToChangeFreq = FALSE;
-			
+
 			if (TNC->DontReleasePermission)			// Disable connects during this interval?
 			{
 				TNC->DontReleasePermission = FALSE;
@@ -640,7 +640,7 @@ ok:
 			if (PLevel == 0 && (Scan->HFPacketMode || Scan->RPacketMode))
 			{
 				// Switch to Packet for this Interval
-				
+
 				if (TNC->RIG->RIG_DEBUG)
 					Debugprintf("SCS Switching to Packet, %d", TNC->HFPacket);
 
@@ -650,7 +650,7 @@ ok:
 				return 0;
 			}
 
-			if (PLevel > '0' && PLevel < '5')		// 1 - 4 
+			if (PLevel > '0' && PLevel < '5')		// 1 - 4
 			{
 				if (TNC->Bandwidth != PLevel)
 				{
@@ -683,7 +683,7 @@ ok:
 			if (Scan->RPacketMode)
 				if (TNC->RobustTime)
 					SwitchToPacket(TNC);			// Always start in packet, switch to pactor after RobustTime ticks
-			
+
 			if (PLevel == '0')
 				TNC->DontReleasePermission = TRUE;	// Dont allow connects in this interval
 			else
@@ -766,7 +766,7 @@ UINT SCSExtInit(EXTPORTDATA *  PortEntry)
 
 		return (int) ExtProc;
 	}
-	
+
 	TNC->Port = port;
 	TNC->Hardware = H_SCS;
 
@@ -784,7 +784,7 @@ UINT SCSExtInit(EXTPORTDATA *  PortEntry)
 		TNC->MaxLevel = 3;
 
 	// Set up DED addresses for streams (first stream (Pactor) = DED 31
-	
+
 	TNC->Streams[0].DEDStream = 31;
 
 	for (Stream = 1; Stream <= MaxStreams; Stream++)
@@ -797,7 +797,7 @@ UINT SCSExtInit(EXTPORTDATA *  PortEntry)
 
 	PortEntry->MAXHOSTMODESESSIONS = TNC->PacketChannels + 1;
 	PortEntry->PERMITGATEWAY = TRUE;					// Can change ax.25 call on each stream
-	PortEntry->SCANCAPABILITIES = CONLOCK;				// Scan Control 3 stage/conlock 
+	PortEntry->SCANCAPABILITIES = CONLOCK;				// Scan Control 3 stage/conlock
 
 	TNC->PortRecord = PortEntry;
 
@@ -807,7 +807,7 @@ UINT SCSExtInit(EXTPORTDATA *  PortEntry)
 		memcpy(TNC->NodeCall, MYNODECALL, 10);
 	else
 		ConvFromAX25(&PortEntry->PORTCONTROL.PORTCALL[0], TNC->NodeCall);
-		
+
 	PortEntry->PORTCONTROL.PROTOCOL = 10;
 	PortEntry->PORTCONTROL.PORTQUALITY = 0;
 
@@ -825,7 +825,7 @@ UINT SCSExtInit(EXTPORTDATA *  PortEntry)
 	// get NODECALL for RP tests
 
 	memcpy(NodeCall, MYNODECALL, 10);
-		
+
 	ptr=strchr(NodeCall, ' ');
 	if (ptr) *(ptr) = 0;					// Null Terminate
 
@@ -836,7 +836,7 @@ UINT SCSExtInit(EXTPORTDATA *  PortEntry)
 
 	strcpy(TempScript, "QUIT\r");				// In case in pac: mode
 	strcat(TempScript, "TONES 4\r");			// Tones may be changed but I want this as standard
-	strcat(TempScript, "MAXERR 30\r");			// Max retries 
+	strcat(TempScript, "MAXERR 30\r");			// Max retries
 	strcat(TempScript, "MODE 0\r");				// ASCII mode, no PTC II compression (Forwarding will use FBB Compression)
 	strcat(TempScript, "MAXSUM 20\r");			// Max count for memory ARQ
 	strcat(TempScript, "CWID 0 2\r");			// CW ID disabled
@@ -864,10 +864,10 @@ UINT SCSExtInit(EXTPORTDATA *  PortEntry)
 	strcat(TNC->InitScript, "LISTEN 0\r");      //     Pactor Listen disabled
 	strcat(TNC->InitScript, "MAIL 0\r");      //       Disable internal mailbox reporting
 	strcat(TNC->InitScript, "REMOTE 0\r");      //     Disable remote control
-	strcat(TNC->InitScript, "PAC CBELL 0\r");      //  
-	strcat(TNC->InitScript, "PAC CMSG 0\r");      //  
+	strcat(TNC->InitScript, "PAC CBELL 0\r");      //
+	strcat(TNC->InitScript, "PAC CMSG 0\r");      //
 	strcat(TNC->InitScript, "PAC PRBOX 0\r");      //  	Turn off Packet Radio Mailbox
-	
+
 	//  Automatic Status must be enabled for BPQ32
 	//  Pactor must use Host Mode Chanel 31
 	//  PDuplex must be set. The Node code relies on automatic IRS/ISS changeover
@@ -897,31 +897,31 @@ UINT SCSExtInit(EXTPORTDATA *  PortEntry)
 #ifndef LINBPQ
 
 	CreatePactorWindow(TNC, ClassName, WindowTitle, RigControlRow, PacWndProc, 500, 500, ForcedClose);
- 
+
 	CreateWindowEx(0, "STATIC", "Comms State", WS_CHILD | WS_VISIBLE, 10,6,120,20, TNC->hDlg, NULL, hInstance, NULL);
 	TNC->xIDC_COMMSSTATE = CreateWindowEx(0, "STATIC", "", WS_CHILD | WS_VISIBLE, 116,6,386,20, TNC->hDlg, NULL, hInstance, NULL);
-	
+
 	CreateWindowEx(0, "STATIC", "TNC State", WS_CHILD | WS_VISIBLE, 10,28,106,20, TNC->hDlg, NULL, hInstance, NULL);
 	TNC->xIDC_TNCSTATE = CreateWindowEx(0, "STATIC", "", WS_CHILD | WS_VISIBLE, 116,28,520,20, TNC->hDlg, NULL, hInstance, NULL);
 
 	CreateWindowEx(0, "STATIC", "Mode", WS_CHILD | WS_VISIBLE, 10,50,80,20, TNC->hDlg, NULL, hInstance, NULL);
 	TNC->xIDC_MODE = CreateWindowEx(0, "STATIC", "", WS_CHILD | WS_VISIBLE, 116,50,200,20, TNC->hDlg, NULL, hInstance, NULL);
- 
+
 	CreateWindowEx(0, "STATIC", "Status", WS_CHILD | WS_VISIBLE, 10,72,110,20, TNC->hDlg, NULL, hInstance, NULL);
 	TNC->xIDC_STATE = CreateWindowEx(0, "STATIC", "", WS_CHILD | WS_VISIBLE, 116,72,144,20, TNC->hDlg, NULL, hInstance, NULL);
 
  	CreateWindowEx(0, "STATIC", "TX/RX State", WS_CHILD | WS_VISIBLE,10,94,80,20, TNC->hDlg, NULL, hInstance, NULL);
 	TNC->xIDC_TXRX = CreateWindowEx(0, "STATIC", "", WS_CHILD | WS_VISIBLE,116,94,374,20 , TNC->hDlg, NULL, hInstance, NULL);
- 
+
 	CreateWindowEx(0, "STATIC", "Buffers", WS_CHILD | WS_VISIBLE,10,116,80,20, TNC->hDlg, NULL, hInstance, NULL);
 	TNC->xIDC_BUFFERS = CreateWindowEx(0, "STATIC", "", WS_CHILD | WS_VISIBLE,116,116,374,20 , TNC->hDlg, NULL, hInstance, NULL);
-	
+
 	CreateWindowEx(0, "STATIC", "Traffic", WS_CHILD | WS_VISIBLE,10,138,80,20, TNC->hDlg, NULL, hInstance, NULL);
 	TNC->xIDC_TRAFFIC = CreateWindowEx(0, "STATIC", "RX 0 TX 0 ACKED 0", WS_CHILD | WS_VISIBLE,116,138,374,20 , TNC->hDlg, NULL, hInstance, NULL);
 
 	TNC->xIDC_PACTORLEVEL = CreateWindowEx(0, "STATIC", "Mode", WS_CHILD | WS_VISIBLE,10,160,430,20, TNC->hDlg, NULL, hInstance, NULL);
 
-	TNC->hMonitor= CreateWindowEx(0, "LISTBOX", "", WS_CHILD |  WS_VISIBLE  | LBS_NOINTEGRALHEIGHT | 
+	TNC->hMonitor= CreateWindowEx(0, "LISTBOX", "", WS_CHILD |  WS_VISIBLE  | LBS_NOINTEGRALHEIGHT |
             LBS_DISABLENOSCROLL | WS_HSCROLL | WS_VSCROLL,
 			0,RigControlRow + 44,250,300, TNC->hDlg, NULL, hInstance, NULL);
 
@@ -948,12 +948,12 @@ UINT SCSExtInit(EXTPORTDATA *  PortEntry)
 		else
 		{
 			// set custom divisor to get 829440 baud
-	
+
 			sstruct.custom_divisor = 29;
 			sstruct.flags |= ASYNC_SPD_CUST;
 
 			// set serial_struct
-		
+
 			if (ioctl(TNC->hDevice, TIOCSSERIAL, &sstruct) < 0)
 				Debugprintf("Error: Dragon could not set custom comm baud divisor\n");
 			else
@@ -984,7 +984,7 @@ void SCSCheckRX(struct TNCINFO * TNC)
 
 	if (Len == 0)
 		return;
-	
+
 	TNC->RXLen += Len;
 
 	Length = TNC->RXLen;
@@ -999,7 +999,7 @@ void SCSCheckRX(struct TNCINFO * TNC)
 	// we haen't checked CRC. All I can think of is to check the CRC and if it is ok, assume frame is
 	// complete. If CRC is duff, we will eventually time out and get a retry. The retry code
 	// can clear the RC buffer
-			
+
 	if (TNC->RXBuffer[0] != 170)
 	{
 		// Char Mode Frame I think we need to see cmd: on end
@@ -1030,7 +1030,7 @@ void SCSCheckRX(struct TNCINFO * TNC)
 		CloseLogFile(TNC->Port);
 
 		TNC->RXLen = 0;		// Ready for next frame
-					
+
 		if (TNC->HostMode == 0)
 		{
 			// We think TNC is in Terminal Mode
@@ -1051,7 +1051,7 @@ void SCSCheckRX(struct TNCINFO * TNC)
 	if (TNC->RXBuffer[2] == 170)
 	{
 		// Retransmit Request
-	
+
 		TNC->RXLen = 0;
 		return;				// Ignore for now
 	}
@@ -1157,7 +1157,7 @@ VOID SCSPoll(int Port)
 	if (TNC->MinLevelTimer)
 	{
 		TNC->MinLevelTimer--;
-	
+
 		if (TNC->MinLevelTimer == 0)
 		{
 			// Failed to reach min level in 15 secs
@@ -1176,7 +1176,7 @@ VOID SCSPoll(int Port)
 					ReleaseBuffer(Q_REM(&STREAM->BPQtoPACTOR_Q));
 
 				STREAM->NeedDisc = 15;				// 1 secs
-				
+
 				buffptr = GetBuff();
 				if (buffptr == 0) return;			// No buffers, so ignore
 
@@ -1191,11 +1191,11 @@ VOID SCSPoll(int Port)
 	if (TNC->SwitchToPactor)
 	{
 		TNC->SwitchToPactor--;
-	
+
 		if (TNC->SwitchToPactor == 0)
 			SwitchToPactor(TNC);
 	}
-		
+
 	for (Stream = 0; Stream <= MaxStreams; Stream++)
 	{
 		if (TNC->PortRecord->ATTACHEDSESSIONS[Stream] && TNC->Streams[Stream].Attached == 0)
@@ -1221,13 +1221,13 @@ VOID SCSPoll(int Port)
 			calllen = ConvFromAX25(TNC->PortRecord->ATTACHEDSESSIONS[Stream]->L4USER, STREAM->MyCall);
 
 			STREAM->MyCall[calllen] = 0;
-				
+
 			STREAM->CmdSet = STREAM->CmdSave = malloc(100);
 
 			if (Stream == 0)
 			{
 				// Release Scan Lock if it is held
-				
+
 				if (TNC->DontReleasePermission)
 				{
 					TNC->DontReleasePermission = FALSE;
@@ -1244,10 +1244,10 @@ VOID SCSPoll(int Port)
 				SetWindowText(TNC->xIDC_TNCSTATE, TNC->WEB_TNCSTATE);
 
 				// Stop Scanner
-		
+
 				sprintf(Status, "%d SCANSTOP", TNC->Port);
 				TNC->SwitchToPactor = 0;						// Cancel any RP to Pactor switch
-		
+
 				Rig_Command(-1, Status);
 			}
 			else
@@ -1261,7 +1261,7 @@ VOID SCSPoll(int Port)
 	if (TNC->Timeout)
 	{
 		TNC->Timeout--;
-		
+
 		if (TNC->Timeout)			// Still waiting
 			return;
 
@@ -1300,7 +1300,7 @@ VOID SCSPoll(int Port)
 
 		TNC->HostMode = 0;
 		TNC->ReinitState = 0;
-		
+
 		for (Stream = 0; Stream <= MaxStreams; Stream++)
 		{
 			if (TNC->PortRecord->ATTACHEDSESSIONS[Stream])		// Connected
@@ -1401,16 +1401,16 @@ VOID SCSPoll(int Port)
 			int len;
 
 			start = TNC->Streams[Stream].CmdSet;
-			
+
 			if (*(start) == 250)			// 2nd part of long KISS packet
 			{
 				len = start[1];
-				
+
 				Poll[2] = 250;				// KISS Channel
 				Poll[3] = 0;				// Data
 				Poll[4] = len - 1;
 				memcpy(&Poll[5], &start[2], len);
-		
+
 				CRCStuffAndSend(TNC, Poll, len + 5);
 
 				free(TNC->Streams[Stream].CmdSave);
@@ -1439,9 +1439,9 @@ VOID SCSPoll(int Port)
 					Poll[3] = 0;				// Data
 					Poll[4] = len - 1;
 					memcpy(&Poll[5], &start[1], len);
-		
+
 					CRCStuffAndSend(TNC, Poll, len + 5);
-	
+
 					return;
 				}
 
@@ -1455,9 +1455,9 @@ VOID SCSPoll(int Port)
 					Poll[3] = 1;				// Command
 					Poll[4] = len - 1;
 					memcpy(&Poll[5], &start[1], len);
-		
+
 					CRCStuffAndSend(TNC, Poll, len + 5);
-	
+
 					return;
 				}
 
@@ -1465,7 +1465,7 @@ VOID SCSPoll(int Port)
 				Poll[3] = 1;			// Command
 				Poll[4] = len - 1;
 				memcpy(&Poll[5], start, len);
-		
+
 
 				OpenLogFile(TNC->Port);
 				WriteLogLine(TNC->Port, &Poll[5], len);
@@ -1478,7 +1478,7 @@ VOID SCSPoll(int Port)
 		}
 	}
 	// if Freq Change needed, check if ok to do it.
-	
+
 	if (TNC->TNCOK)
 	{
 		if (TNC->WantToChangeFreq)
@@ -1489,7 +1489,7 @@ VOID SCSPoll(int Port)
 			Poll[5] = '%';
 			Poll[6] = 'W';
 			Poll[7] = '0';
-		
+
 			CRCStuffAndSend(TNC, Poll, 8);
 
 			TNC->InternalCmd = TRUE;
@@ -1506,7 +1506,7 @@ VOID SCSPoll(int Port)
 			Poll[5] = '%';
 			Poll[6] = 'W';
 			Poll[7] = '1';
-		
+
 			CRCStuffAndSend(TNC, Poll, 8);
 
 			TNC->InternalCmd = TRUE;
@@ -1523,7 +1523,7 @@ VOID SCSPoll(int Port)
 	{
 		int datalen;
 		UINT * buffptr;
-			
+
 		buffptr=Q_REM(&TNC->BPQtoRadio_Q);
 
 		datalen=buffptr[1];
@@ -1531,11 +1531,11 @@ VOID SCSPoll(int Port)
 		Poll[2] = 253;		// Radio Channel
 		Poll[3] = 0;		// Data?
 		Poll[4] = datalen - 1;
-	
+
 		memcpy(&Poll[5], buffptr+2, datalen);
-		
+
 		ReleaseBuffer(buffptr);
-		
+
 		CRCStuffAndSend(TNC, Poll, datalen + 5);
 
 		if (TNC->RIG->RIG_DEBUG)
@@ -1557,16 +1557,16 @@ VOID SCSPoll(int Port)
 		char * Buffer;
 		char ICall[16];
 		char CCMD[80] = "C";
-		char Call[12] = "           ";	
+		char Call[12] = "           ";
 		struct _MESSAGE * buffptr;
-			
+
 		buffptr = Q_REM(&TNC->PortRecord->UI_Q);
-		
+
 		datalen = buffptr->LENGTH - 7;
 		Buffer = &buffptr->DEST[0];		// Raw Frame
-		
+
 		Buffer[datalen] = 0;
-							
+
 		// Buffer has an ax.25 header, which we need to pick out and set as channel 0 Connect address
 		// before sending the beacon
 
@@ -1594,7 +1594,7 @@ VOID SCSPoll(int Port)
 				// We need to save the extra first, as CRC will overwrite the first two bytes
 
 				UCHAR * ptr = TNC->Streams[0].CmdSet = TNC->Streams[0].CmdSave = zalloc(400);
-		
+
 				(*ptr++) = 250;			// KISS Channel
 				(*ptr++) = EncLen - 256;
 				memcpy(ptr, &Poll[5 + 256], EncLen - 256);
@@ -1602,12 +1602,12 @@ VOID SCSPoll(int Port)
 				// Send first 256
 
 				Poll[4] = 255;			//need Len - 1
-				CRCStuffAndSend(TNC, Poll, 261);	
+				CRCStuffAndSend(TNC, Poll, 261);
 			}
 			else
 			{
 				Poll[4] = EncLen - 1;	//need Len - 1
-				CRCStuffAndSend(TNC, Poll, EncLen + 5);	
+				CRCStuffAndSend(TNC, Poll, EncLen + 5);
 			}
 
 			ReleaseBuffer((UINT *)buffptr);
@@ -1621,7 +1621,7 @@ VOID SCSPoll(int Port)
 
 		ConvFromAX25(Buffer + 7, ICall);		// Origin
 		strlop(ICall, ' ');
-	
+
 		ConvFromAX25(Buffer, &Call[1]);			// Dest
 		strlop(&Call[1], ' ');
 		strcat(CCMD, Call);
@@ -1667,7 +1667,7 @@ VOID SCSPoll(int Port)
 
 
 		// Check status Periodically
-		
+
 	if (TNC->TNCOK)
 	{
 		if (TNC->IntCmdDelay == 6)
@@ -1679,7 +1679,7 @@ VOID SCSPoll(int Port)
 			Poll[6] = '3';
 
 			CRCStuffAndSend(TNC, Poll, 7);
-						
+
 			TNC->InternalCmd = TRUE;
 			TNC->IntCmdDelay--;
 
@@ -1741,7 +1741,7 @@ VOID SCSPoll(int Port)
 
 			if (TNC->MinLevelTimer && Stream == 0)
 				continue;
-			
+
 			buffptr=Q_REM(&TNC->Streams[Stream].BPQtoPACTOR_Q);
 
 			datalen=buffptr[1];
@@ -1753,7 +1753,7 @@ VOID SCSPoll(int Port)
 			{
 				if (TNC->SwallowSignon && Stream == 0)
 				{
-					TNC->SwallowSignon = FALSE;	
+					TNC->SwallowSignon = FALSE;
 					if (strstr(Buffer, "Connected"))	// Discard *** connected
 					{
 						ReleaseBuffer(buffptr);
@@ -1766,14 +1766,14 @@ VOID SCSPoll(int Port)
 
 				Poll[4] = datalen - 1;
 				memcpy(&Poll[5], buffptr+2, datalen);
-				
+
 				WritetoTrace(TNC, Buffer, datalen);
-	
+
 				ReleaseBuffer(buffptr);
 				OpenLogFile(TNC->Port);
 				WriteLogLine(TNC->Port, &Poll[5], datalen);
 				CloseLogFile(TNC->Port);
-		
+
 				CRCStuffAndSend(TNC, Poll, datalen + 5);
 
 				TNC->Streams[Stream].InternalCmd = TNC->Streams[Stream].Connected;
@@ -1783,7 +1783,7 @@ VOID SCSPoll(int Port)
 
 				return;
 			}
-			
+
 			// Command. Do some sanity checking and look for things to process locally
 
 			Poll[3] = 1;			// Command
@@ -1794,7 +1794,7 @@ VOID SCSPoll(int Port)
 			if (_memicmp(Buffer, "DD", 2) == 0)
 			{
 				// Send DD (Dirty Disconnect)
-					
+
 				// Uses "Hidden" feature where you can send any normal mode command
 				// in host mode by preceeding with a #
 
@@ -1803,10 +1803,10 @@ VOID SCSPoll(int Port)
 				Poll[4] = 2;
 				sprintf(&Poll[5], "#DD\r");
 				CRCStuffAndSend(TNC, Poll, 8);
-			
+
 				// It looks like there isn't a response
 
-				TNC->Timeout = 0;	
+				TNC->Timeout = 0;
 
 				OpenLogFile(TNC->Port);
 				WriteLogLine(TNC->Port, &Poll[5], 4);
@@ -1844,7 +1844,7 @@ VOID SCSPoll(int Port)
 					Switchmode(TNC, Buffer[8] - '0');
 					TNC->Bandwidth = Buffer[8]; // so scanner knows where we are
 
-					buffptr[1] = sprintf((UCHAR *)&buffptr[2], "Ok\r");		
+					buffptr[1] = sprintf((UCHAR *)&buffptr[2], "Ok\r");
 					C_Q_ADD(&TNC->Streams[Stream].PACTORtoBPQ_Q, buffptr);
 
 					return;
@@ -1854,7 +1854,7 @@ VOID SCSPoll(int Port)
 				{
 					CheckMode(TNC);
 
-					buffptr[1] = sprintf((UCHAR *)&buffptr[2], "%s\r", &TNC->RXBuffer[2]);		
+					buffptr[1] = sprintf((UCHAR *)&buffptr[2], "%s\r", &TNC->RXBuffer[2]);
 					C_Q_ADD(&TNC->Streams[Stream].PACTORtoBPQ_Q, buffptr);
 
 					return;
@@ -1903,7 +1903,7 @@ VOID SCSPoll(int Port)
 					{
 						// Port Selector for Packet Connect convert to 2:CALL
 
-						Buffer[0] = Buffer[1];		
+						Buffer[0] = Buffer[1];
 						Buffer[1] = ':';
 						memmove(&Buffer[2], &Buffer[3], datalen--);
 						Buffer += 2;
@@ -1915,7 +1915,7 @@ VOID SCSPoll(int Port)
 
 					if (Stream == 0)
 					{
-						// Send Call, Mode Command followed by connect 
+						// Send Call, Mode Command followed by connect
 
 						TNC->Streams[0].CmdSet = TNC->Streams[0].CmdSave = malloc(100);
 
@@ -1930,9 +1930,9 @@ VOID SCSPoll(int Port)
 						}
 
 						ReleaseBuffer(buffptr);
-					
+
 						// See if Busy
-				
+
 						if (InterlockedCheckBusy(TNC))
 						{
 							// Channel Busy. Unless override set, wait
@@ -1969,9 +1969,9 @@ VOID SCSPoll(int Port)
 
 			Poll[4] = datalen - 1;
 			memcpy(&Poll[5], buffptr+2, datalen);
-		
+
 			ReleaseBuffer(buffptr);
-		
+
 			OpenLogFile(TNC->Port);
 			WriteLogLine(TNC->Port, &Poll[5], datalen);
 			CloseLogFile(TNC->Port);
@@ -2031,7 +2031,7 @@ VOID DoTNCReinit(struct TNCINFO * TNC)
 	if (TNC->ReinitState == 0)
 	{
 		// Just Starting - Send a TNC Mode Command to see if in Terminal or Host Mode
-	
+
 		TNC->TNCOK = FALSE;
 		sprintf(TNC->WEB_COMMSSTATE,"%s Initialising TNC", TNC->PortRecord->PORTCONTROL.SerialPortName);
 		SetWindowText(TNC->xIDC_COMMSSTATE, TNC->WEB_COMMSSTATE);
@@ -2058,7 +2058,7 @@ VOID DoTNCReinit(struct TNCINFO * TNC)
 		int len;
 
 		start = TNC->InitPtr;
-		
+
 		if (*(start) == 0)			// End of Script
 		{
 			// Put into Host Mode
@@ -2083,7 +2083,7 @@ VOID DoTNCReinit(struct TNCINFO * TNC)
 
 			return;
 		}
-		
+
 		end = strchr(start, 13);
 		len = ++end - start;
 		TNC->InitPtr = end;
@@ -2127,7 +2127,7 @@ VOID DoTermModeTimeout(struct TNCINFO * TNC)
 	if (TNC->ReinitState == 3)
 	{
 		// Entering Host Mode
-	
+
 		// Assume ok
 
 		TNC->HostMode = TRUE;
@@ -2141,7 +2141,7 @@ BOOL CheckRXText(struct TNCINFO * TNC)
 {
 	int Length;
 
-	// only try to read number of bytes in queue 
+	// only try to read number of bytes in queue
 
 	if (TNC->RXLen == 500)
 		TNC->RXLen = 0;
@@ -2150,7 +2150,7 @@ BOOL CheckRXText(struct TNCINFO * TNC)
 
 	if (Length == 0)
 		return FALSE;					// Nothing doing
-	
+
 	TNC->RXLen += Length;
 
 	Length = TNC->RXLen;
@@ -2170,13 +2170,13 @@ BOOL CheckRXText(struct TNCINFO * TNC)
 	CloseLogFile(TNC->Port);
 
 	TNC->RXBuffer[TNC->RXLen] = 0;
-	
+
 	if (TNC->RIG->RIG_DEBUG)
 		Debugprintf(TNC->RXBuffer);
 
 	TNC->RXLen = 0;		// Ready for next frame
 
-	return TRUE;				
+	return TRUE;
 }
 
 BOOL CheckRXHost(struct TNCINFO * TNC, char * UnstuffBuffer)
@@ -2184,7 +2184,7 @@ BOOL CheckRXHost(struct TNCINFO * TNC, char * UnstuffBuffer)
 	int Length;
 	unsigned short crc;
 
-	// only try to read number of bytes in queue 
+	// only try to read number of bytes in queue
 
 	if (TNC->RXLen == 500)
 		TNC->RXLen = 0;
@@ -2193,7 +2193,7 @@ BOOL CheckRXHost(struct TNCINFO * TNC, char * UnstuffBuffer)
 
 	if (Length == 0)
 		return FALSE;					// Nothing doing
-	
+
 	TNC->RXLen += Length;
 
 	Length = TNC->RXLen;
@@ -2204,7 +2204,7 @@ BOOL CheckRXHost(struct TNCINFO * TNC, char * UnstuffBuffer)
 	if (TNC->RXBuffer[2] == 170)
 	{
 		// Retransmit Request
-	
+
 		TNC->RXLen = 0;
 		return FALSE;				// Ignore for now
 	}
@@ -2242,7 +2242,7 @@ int Sleeptime = 250;
 int CheckMode(struct TNCINFO * TNC)
 {
 	int n;
-	char UnstuffBuffer[500];	
+	char UnstuffBuffer[500];
 
 	UCHAR * Poll = TNC->TXBuffer;
 
@@ -2270,7 +2270,7 @@ int CheckMode(struct TNCINFO * TNC)
 
 
 	sprintf(Poll, "MYL\r");
-	
+
 	OpenLogFile(TNC->Port);
 	WriteLogLine(TNC->Port, Poll, 3);
 	CloseLogFile(TNC->Port);
@@ -2314,7 +2314,7 @@ int CheckMode(struct TNCINFO * TNC)
 int Switchmode(struct TNCINFO * TNC, int Mode)
 {
 	int n;
-	char UnstuffBuffer[500];	
+	char UnstuffBuffer[500];
 
 	UCHAR * Poll = TNC->TXBuffer;
 
@@ -2355,10 +2355,10 @@ int Switchmode(struct TNCINFO * TNC, int Mode)
 	Poll[4] = 5;
 	sprintf(&Poll[5], "#MYL %d\r", Mode);
 	CRCStuffAndSend(TNC, Poll, 11);
-			
+
 	// It looks like there isn't a response
 
-	TNC->Timeout = 0;	
+	TNC->Timeout = 0;
 
 	OpenLogFile(TNC->Port);
 	WriteLogLine(TNC->Port, &Poll[5], 6);
@@ -2526,10 +2526,10 @@ VOID ProcessIncomingCall(struct TNCINFO * TNC, struct STREAMINFO * STREAM, int S
 	TRANSPORTENTRY * SESS;
 	struct WL2KInfo * WL2K = TNC->WL2K;
 	UCHAR * ptr;
-	UCHAR Buffer[80];	
+	UCHAR Buffer[80];
 	UINT * buffptr;
 	BOOL PactorCall = FALSE;
-	
+
 	char * Call = STREAM->RemoteCall;
 
 	if (Stream > 0 && Stream < 30)
@@ -2549,14 +2549,14 @@ VOID ProcessIncomingCall(struct TNCINFO * TNC, struct STREAMINFO * STREAM, int S
 
 		strcpy(DestCall, STREAM->MyCall);
 		Debugprintf("PTC Packet Incoming Call - MYCALL = *%s*", DestCall);
-					
+
 		for (App = 0; App < 32; App++)
 		{
 			APPL=&APPLCALLTABLE[App];
 			memcpy(Appl, APPL->APPLCALL_TEXT, 10);
 
 			ptr=strchr(Appl, ' ');
-								
+
 			if (ptr)
 				*ptr = 0;
 
@@ -2567,7 +2567,7 @@ VOID ProcessIncomingCall(struct TNCINFO * TNC, struct STREAMINFO * STREAM, int S
 		if (App < 32)
 		{
 			char AppName[13];
-			
+
 			memcpy(AppName, &ApplPtr[App * sizeof(CMDX)], 12);
 			AppName[12] = 0;
 
@@ -2593,9 +2593,9 @@ VOID ProcessIncomingCall(struct TNCINFO * TNC, struct STREAMINFO * STREAM, int S
 			else
 			{
 				char Msg[] = "Application not available\r\n";
-					
+
 				// Send a Message, then a disconenct
-					
+
 				buffptr = GetBuff();
 
 				if (buffptr == 0) return;			// No buffers, so ignore
@@ -2605,12 +2605,12 @@ VOID ProcessIncomingCall(struct TNCINFO * TNC, struct STREAMINFO * STREAM, int S
 				C_Q_ADD(&STREAM->BPQtoPACTOR_Q, buffptr);
 
 				STREAM->NeedDisc = 100;	// 10 secs
-			}							
-			return;			
-		}				
-		
+			}
+			return;
+		}
+
 		// Not to a known appl - drop through to Node
-		
+
 		if (CTEXTLEN)
 		{
 			int Len = CTEXTLEN, CTPaclen = 100;
@@ -2640,7 +2640,7 @@ VOID ProcessIncomingCall(struct TNCINFO * TNC, struct STREAMINFO * STREAM, int S
 	}
 
 	//Connect on HF port. May be Pactor or RP on some models
-	
+
 	if (STREAM->DEDStream == 31)
 		PactorCall = TRUE;
 
@@ -2662,7 +2662,7 @@ VOID ProcessIncomingCall(struct TNCINFO * TNC, struct STREAMINFO * STREAM, int S
 	}
 
 	if (WL2K)
-		strcpy(SESS->RMSCall, WL2K->RMSCall);						
+		strcpy(SESS->RMSCall, WL2K->RMSCall);
 
 	SESS->Mode = PleveltoMode[TNC->Streams[Stream].PTCStatus1];
 
@@ -2670,21 +2670,21 @@ VOID ProcessIncomingCall(struct TNCINFO * TNC, struct STREAMINFO * STREAM, int S
 
 	if (PactorCall && TNC->MinLevel > 1)
 		TNC->MinLevelTimer = 150;		// Check we have reached right level
-					
+
 	// If an autoconnect APPL is defined, send it
 
 	// See which application the connect is for
-	
+
 	strcpy(DestCall, STREAM->MyCall);
 
 	if (PactorCall)
-		Debugprintf("Pactor Incoming Call - MYCALL = *%s*", DestCall);					
-	else					
-		Debugprintf("HF Packet/RP Incoming Call - MYCALL = *%s*", DestCall);					
+		Debugprintf("Pactor Incoming Call - MYCALL = *%s*", DestCall);
+	else
+		Debugprintf("HF Packet/RP Incoming Call - MYCALL = *%s*", DestCall);
 
 	if ( ((PactorCall && TNC->UseAPPLCallsforPactor) || (PactorCall == 0 && TNC->UseAPPLCalls))
 		&& strcmp(DestCall, TNC->NodeCall) != 0)		// Not Connect to Node Call
-	{		
+	{
 		for (App = 0; App < 32; App++)
 		{
 			APPL=&APPLCALLTABLE[App];
@@ -2693,7 +2693,7 @@ VOID ProcessIncomingCall(struct TNCINFO * TNC, struct STREAMINFO * STREAM, int S
 
 			if (ptr)
 				*ptr = 0;
-	
+
 			if (_stricmp(DestCall, Appl) == 0)
 				break;
 		}
@@ -2725,9 +2725,9 @@ VOID ProcessIncomingCall(struct TNCINFO * TNC, struct STREAMINFO * STREAM, int S
 			else
 			{
 				char Msg[] = "Application not available\r\n";
-					
+
 				// Send a Message, then a disconenct
-					
+
 				buffptr = GetBuff();
 				if (buffptr == 0) return;			// No buffers, so ignore
 
@@ -2737,11 +2737,11 @@ VOID ProcessIncomingCall(struct TNCINFO * TNC, struct STREAMINFO * STREAM, int S
 
 				STREAM->NeedDisc = 100;	// 10 secs
 			}
-			return;		
+			return;
 		}
 
 		// Not to a known appl - drop through to Node
-				
+
 	}
 
 	if (!PactorCall && TNC->UseAPPLCalls)
@@ -2749,7 +2749,7 @@ VOID ProcessIncomingCall(struct TNCINFO * TNC, struct STREAMINFO * STREAM, int S
 
 	Debugprintf("Pactor Call is %s Freq Specific Appl is %s Freq is %s",
 	DestCall, FreqAppl, TNC->RIG->Valchar);
-						
+
 	if (FreqAppl[0])			// Frequency specific APPL overrides TNC APPL
 	{
 		buffptr = GetBuff();
@@ -2762,8 +2762,8 @@ VOID ProcessIncomingCall(struct TNCINFO * TNC, struct STREAMINFO * STREAM, int S
 		TNC->SwallowSignon = TRUE;
 		return;
 	}
-						
-	if (TNC->ApplCmd)	
+
+	if (TNC->ApplCmd)
 	{
 		buffptr = GetBuff();
 		if (buffptr == 0) return;			// No buffers, so ignore
@@ -2775,9 +2775,9 @@ VOID ProcessIncomingCall(struct TNCINFO * TNC, struct STREAMINFO * STREAM, int S
 		TNC->SwallowSignon = TRUE;
 		return;
 	}
-		
+
 DontUseAPPLCmd:
-			
+
 	if (FULL_CTEXT && CTEXTLEN && HFCTEXTLEN == 0)
 	{
 		int Len = CTEXTLEN, CTPaclen = 100;
@@ -2822,7 +2822,7 @@ VOID ProcessDEDFrame(struct TNCINFO * TNC, UCHAR * Msg, int framelen)
 	if (TNC->TNCOK == FALSE)
 	{
 		// Just come up
-		
+
 		TNC->TNCOK = TRUE;
 		sprintf(TNC->WEB_COMMSSTATE,"%s TNC link OK", TNC->PortRecord->PORTCONTROL.SerialPortName);
 		SetWindowText(TNC->xIDC_COMMSSTATE, TNC->WEB_COMMSSTATE);
@@ -2851,7 +2851,7 @@ VOID ProcessDEDFrame(struct TNCINFO * TNC, UCHAR * Msg, int framelen)
 
 
 	//	See if Poll Reply or Data
-	
+
 	if (Msg[3] == 0)
 	{
 		// Success - Nothing Follows
@@ -2885,11 +2885,11 @@ VOID ProcessDEDFrame(struct TNCINFO * TNC, UCHAR * Msg, int framelen)
 		{
 			if (TNC->TXBuffer[10] == '0')	// JHOST0
 			{
-				TNC->Timeout = 1;			// 
+				TNC->Timeout = 1;			//
 				return;
 			}
 		}
-		
+
 		if (TNC->Streams[Stream].Connected)
 			return;
 
@@ -2920,8 +2920,8 @@ VOID ProcessDEDFrame(struct TNCINFO * TNC, UCHAR * Msg, int framelen)
 			UCHAR Chan = Msg[4] - 1;
 
 			if (Chan == 255)			// Nothing doing
-				return;	
-		
+				return;
+
 			if (Msg[5] != 0)
 			{
 				// More than one to poll - save the list of channels to poll
@@ -2953,7 +2953,7 @@ VOID ProcessDEDFrame(struct TNCINFO * TNC, UCHAR * Msg, int framelen)
 		}
 
 		Buffer = &Msg[4];
-		
+
 		ptr = strchr(Buffer, 0);
 
 		if (ptr == 0)
@@ -2973,7 +2973,7 @@ VOID ProcessDEDFrame(struct TNCINFO * TNC, UCHAR * Msg, int framelen)
 		{
 			char LastCmd = TNC->TXBuffer[5];
 			struct STREAMINFO * STREAM = &TNC->Streams[Stream];
-			
+
 			// See if a response to internal command
 
 			if (TNC->RIG->RIG_DEBUG)
@@ -3003,7 +3003,7 @@ VOID ProcessDEDFrame(struct TNCINFO * TNC, UCHAR * Msg, int framelen)
 					int s1, s2, s3, s4, s5, s6, num;
 
 					num = sscanf(Buffer, "%d %d %d %d %d %d", &s1, &s2, &s3, &s4, &s5, &s6);
-			
+
 					TNC->Streams[Stream].FramesOutstanding = s3;
 					return;
 				}
@@ -3020,7 +3020,7 @@ VOID ProcessDEDFrame(struct TNCINFO * TNC, UCHAR * Msg, int framelen)
 				}
 
 				if (LastCmd == '%')		// % Commands
-				{					
+				{
 					if (TNC->TXBuffer[6]== 'T')	// TX count Status
 					{
 						sprintf(TNC->WEB_TRAFFIC, "RX %d TX %d ACKED %s", TNC->Streams[Stream].BytesRXed, TNC->Streams[Stream].BytesTXed, Buffer);
@@ -3038,7 +3038,7 @@ VOID ProcessDEDFrame(struct TNCINFO * TNC, UCHAR * Msg, int framelen)
 						else
 						{
 							TNC->OKToChangeFreq = -1;
-							if (TNC->SyncSupported == FALSE && TNC->UseAPPLCallsforPactor && TNC->TimeScanLocked == 0)	
+							if (TNC->SyncSupported == FALSE && TNC->UseAPPLCallsforPactor && TNC->TimeScanLocked == 0)
 								TNC->TimeScanLocked = time(NULL);
 						}
 					}
@@ -3048,7 +3048,7 @@ VOID ProcessDEDFrame(struct TNCINFO * TNC, UCHAR * Msg, int framelen)
 		}
 
 		if (Msg[3] == 3)					// Status
-		{			
+		{
 			struct STREAMINFO * STREAM = &TNC->Streams[Stream];
 
 			if (strstr(Buffer, "DISCONNECTED") || strstr(Buffer, "LINK FAILURE"))
@@ -3059,14 +3059,14 @@ VOID ProcessDEDFrame(struct TNCINFO * TNC, UCHAR * Msg, int framelen)
 				if (STREAM->Connecting && STREAM->Disconnecting == FALSE)
 				{
 					// Connect Failed
-			
+
 					buffptr = GetBuff();
 					if (buffptr == 0) return;			// No buffers, so ignore
 
 					buffptr[1]  = sprintf((UCHAR *)&buffptr[2], "*** Failure with %s\r", TNC->Streams[Stream].RemoteCall);
 
 					C_Q_ADD(&STREAM->PACTORtoBPQ_Q, buffptr);
-	
+
 					STREAM->Connecting = FALSE;
 					STREAM->Connected = FALSE;				// In case!
 					STREAM->FramesOutstanding = 0;
@@ -3079,7 +3079,7 @@ VOID ProcessDEDFrame(struct TNCINFO * TNC, UCHAR * Msg, int framelen)
 
 					return;
 				}
-					
+
 				// Must Have been connected or disconnecting - Release Session
 
 				STREAM->Connecting = FALSE;
@@ -3106,15 +3106,15 @@ VOID ProcessDEDFrame(struct TNCINFO * TNC, UCHAR * Msg, int framelen)
 				if (Call[1] == ':')
 					Call +=2;
 
-				ptr = strchr(Call, ' ');	
+				ptr = strchr(Call, ' ');
 				if (ptr) *ptr = 0;
 
-				ptr = strchr(Call, 13);	
+				ptr = strchr(Call, 13);
 				if (ptr) *ptr = 0;
 
 				STREAM->Connected = TRUE;			// Subsequent data to data channel
 				STREAM->Connecting = FALSE;
-				STREAM->ConnectTime = time(NULL); 
+				STREAM->ConnectTime = time(NULL);
 				STREAM->BytesRXed = STREAM->BytesTXed = 0;
 
 				//	Stop Scanner
@@ -3141,7 +3141,7 @@ VOID ProcessDEDFrame(struct TNCINFO * TNC, UCHAR * Msg, int framelen)
 					if (ExcludeList[0])
 					{
 						UCHAR AXCALL[7];
-						
+
 						ConvToAX25(MHCall, AXCALL);			//Permitted calls are stored in ax.25 format
 
 						if (CheckExcludeList(AXCALL) == FALSE)
@@ -3153,7 +3153,7 @@ VOID ProcessDEDFrame(struct TNCINFO * TNC, UCHAR * Msg, int framelen)
 							return;
 						}
 					}
-			
+
 					// Check that we think we are in the right mode
 
 					if (Stream == 0 && TNC->Dragon == 0)	// Dragon runs both at the same time
@@ -3196,7 +3196,7 @@ VOID ProcessDEDFrame(struct TNCINFO * TNC, UCHAR * Msg, int framelen)
 				else
 				{
 					// Connect Complete
-			
+
 					buffptr = GetBuff();
 					if (buffptr == 0) return;			// No buffers, so ignore
 
@@ -3249,7 +3249,7 @@ VOID ProcessDEDFrame(struct TNCINFO * TNC, UCHAR * Msg, int framelen)
 				char Status[80];
 
 				if (ptr1) memcpy(DestCall, &ptr1[3], 10);
-				
+
 				ptr1 = strchr(DestCall, ' ');
 				if (ptr1) *(ptr1) = 0;					// Null Terminate
 
@@ -3284,12 +3284,12 @@ VOID ProcessDEDFrame(struct TNCINFO * TNC, UCHAR * Msg, int framelen)
 								sprintf(Status, "%d SCANSTART 30", TNC->Port);
 								Rig_Command(-1, Status);
 								TNC->SwitchToPactor = 0;		// Stay in RP
-				
+
 								strcpy(STREAM->MyCall, DestCall);
 								STREAM->CmdSet = STREAM->CmdSave = malloc(100);
 								sprintf(STREAM->CmdSet, "I%s\r", DestCall);
 								TNC->InternalCmd = TRUE;
-								
+
 								break;
 							}
 						}
@@ -3331,11 +3331,11 @@ VOID ProcessDEDFrame(struct TNCINFO * TNC, UCHAR * Msg, int framelen)
 	{
 		char StatusMsg[60];
 		int Status, ISS, Offset;
-		
+
 		if (Msg[2] == 0xfe)						// Status Poll Response
 		{
 			int PactorLevel = Msg[6] & 7;		// Pactor Level 1-4
-			
+
 			if (TNC->MinLevelTimer)
 			{
 				if (PactorLevel >= TNC->MinLevel)
@@ -3348,7 +3348,7 @@ VOID ProcessDEDFrame(struct TNCINFO * TNC, UCHAR * Msg, int framelen)
 			}
 
 			Status = Msg[5];
-			
+
 			TNC->Streams[0].PTCStatus0 = Status;
 			TNC->Streams[0].PTCStatus1 = PactorLevel;		// Pactor Level 1-4
 			TNC->Streams[0].PTCStatus2 = Msg[7];			// Speed Level
@@ -3357,7 +3357,7 @@ VOID ProcessDEDFrame(struct TNCINFO * TNC, UCHAR * Msg, int framelen)
 			if (Offset > 128)
 				Offset -= 128;
 
-			TNC->Streams[0].PTCStatus3 = Offset; 
+			TNC->Streams[0].PTCStatus3 = Offset;
 
 			TNC->Mode = (Status >> 4) & 7;
 			ISS = Status & 8;
@@ -3373,7 +3373,7 @@ VOID ProcessDEDFrame(struct TNCINFO * TNC, UCHAR * Msg, int framelen)
 
 					if (TNC->RIG->RIG_DEBUG)
 						Debugprintf("SCS New SYNC Detected");
-	
+
 					TNC->TimeEnteredSYNCMode = time(NULL);
 					TNC->SyncSupported = TRUE;
 				}
@@ -3383,7 +3383,7 @@ VOID ProcessDEDFrame(struct TNCINFO * TNC, UCHAR * Msg, int framelen)
 					{
 						if (TNC->RIG->RIG_DEBUG)
 							Debugprintf("SCS left SYNC, now %s", status[Status]);
-	
+
 						TNC->TimeEnteredSYNCMode = 0;
 					}
 				}
@@ -3391,16 +3391,16 @@ VOID ProcessDEDFrame(struct TNCINFO * TNC, UCHAR * Msg, int framelen)
 			}
 			sprintf(StatusMsg, "%x %x %x %x", TNC->Streams[0].PTCStatus0,
 				TNC->Streams[0].PTCStatus1, TNC->Streams[0].PTCStatus2, TNC->Streams[0].PTCStatus3);
-			
+
 			if (ISS)
 			{
 				SetWindowText(TNC->xIDC_TXRX, "Sender");
-				strcpy(TNC->WEB_TXRX, "Sender"); 
+				strcpy(TNC->WEB_TXRX, "Sender");
 			}
 			else
 			{
 				SetWindowText(TNC->xIDC_TXRX, "Receiver");
-				strcpy(TNC->WEB_TXRX, "Receiver"); 
+				strcpy(TNC->WEB_TXRX, "Receiver");
 			}
 
 			SetWindowText(TNC->xIDC_STATE, status[Status]);
@@ -3423,7 +3423,7 @@ VOID ProcessDEDFrame(struct TNCINFO * TNC, UCHAR * Msg, int framelen)
 
 			return;
 		}
-	
+
 		if (Msg[2] == 248)	// Log Message
 		{
 			// Monitor Data - Length format
@@ -3445,7 +3445,7 @@ VOID ProcessDEDFrame(struct TNCINFO * TNC, UCHAR * Msg, int framelen)
 		if (Msg[2] == 253)						// Rig Port Response
 		{
 			// Queue for Rig Control Driver
-			
+
 			int datalen = Msg[4] + 1;
 			UINT * buffptr;
 
@@ -3453,7 +3453,7 @@ VOID ProcessDEDFrame(struct TNCINFO * TNC, UCHAR * Msg, int framelen)
 
 			if (TNC->RIG->PORT == NULL || TNC->RIG->PORT->PTC == NULL)
 				return;
-			
+
 			buffptr = GetBuff();
 
 			if (buffptr)
@@ -3467,18 +3467,18 @@ VOID ProcessDEDFrame(struct TNCINFO * TNC, UCHAR * Msg, int framelen)
 					Debugprintf("%02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x",
 						Msg[5], Msg[6], Msg[7], Msg[8], Msg[9], Msg[10], Msg[11], Msg[12],
 						Msg[13], Msg[14], Msg[15], Msg[16], Msg[17], Msg[18], Msg[19], Msg[20]);
-		
+
 				}
 			}
 			return;
 		}
 
 		// Connected Data
-		
+
 		buffptr = GetBuff();
 
 		if (buffptr == NULL) return;			// No buffers, so ignore
-			
+
 		buffptr[1] = Msg[4] + 1;				// Length
 		TNC->Streams[Stream].BytesRXed += buffptr[1];
 		memcpy(&buffptr[2], &Msg[5], buffptr[1]);
@@ -3502,9 +3502,9 @@ int GetPTCRadioCommand(struct TNCINFO * TNC, char * Block)
 	buffptr = Q_REM(&TNC->RadiotoBPQ_Q);
 
 	Length = buffptr[1];
-		
+
 	memcpy(Block, buffptr + 2, Length);
-		
+
 	ReleaseBuffer(buffptr);
 
 //	Debugprintf("SCS Rig Command Queued");
@@ -3529,15 +3529,15 @@ int SendPTCRadioCommand(struct TNCINFO * TNC, char * Block, int Length)
 	if (buffptr == 0) return (0);			// No buffers, so ignore
 
 	buffptr[1] = Length;
-		
+
 	memcpy(buffptr+2, Block, Length);
-		
+
 	C_Q_ADD(&TNC->BPQtoRadio_Q, buffptr);
 
    return 0;
 
 }
-#pragma pack(1) 
+#pragma pack(1)
 
 typedef struct _MESSAGEY
 {
@@ -3554,9 +3554,9 @@ typedef struct _MESSAGEY
 //	 MAY BE UP TO 56 BYTES OF DIGIS
 
 	UCHAR	CTL;
-	UCHAR	PID; 
+	UCHAR	PID;
 
-	union 
+	union
 	{                   /*  array named screen */
 		UCHAR L2DATA[256];
 		struct _L3MESSAGE L3MSG;
@@ -3570,7 +3570,7 @@ typedef struct _MESSAGEY
 
 }MESSAGEY;
 
-#pragma pack() 
+#pragma pack()
 
 static MESSAGEY Monframe;		// I frames come in two parts.
 
@@ -3600,7 +3600,7 @@ static VOID DoMonitor(struct TNCINFO * TNC, UCHAR * Msg, int Len)
 
 	Monframe.LENGTH = 23;				// Control Frame
 	Monframe.PORT = TNC->Port;
-	
+
 	AdjMsg = &Monframe;					// Adjusted for digis
 	ptr = strstr(Msg, "fm ");
 
@@ -3653,31 +3653,31 @@ DigiLoop:
 
 	if (memcmp(&ptr[4], "SABM", 4) == 0)
 		AdjMsg->CTL = 0x2f;
-	else  
+	else
 	if (memcmp(&ptr[4], "DISC", 4) == 0)
 		AdjMsg->CTL = 0x43;
-	else 
+	else
 	if (memcmp(&ptr[4], "UA", 2) == 0)
 		AdjMsg->CTL = 0x63;
-	else  
+	else
 	if (memcmp(&ptr[4], "DM", 2) == 0)
 		AdjMsg->CTL = 0x0f;
-	else 
+	else
 	if (memcmp(&ptr[4], "UI", 2) == 0)
 		AdjMsg->CTL = 0x03;
-	else 
+	else
 	if (memcmp(&ptr[4], "RR", 2) == 0)
 		AdjMsg->CTL = 0x1 | (ptr[6] << 5);
-	else 
+	else
 	if (memcmp(&ptr[4], "RNR", 3) == 0)
 		AdjMsg->CTL = 0x5 | (ptr[7] << 5);
-	else 
+	else
 	if (memcmp(&ptr[4], "REJ", 3) == 0)
 		AdjMsg->CTL = 0x9 | (ptr[7] << 5);
-	else 
+	else
 	if (memcmp(&ptr[4], "FRMR", 4) == 0)
 		AdjMsg->CTL = 0x87;
-	else  
+	else
 	if (ptr[4] == 'I')
 	{
 		AdjMsg->CTL = (ptr[5] << 5) | (ptr[6] & 7) << 1 ;
@@ -3689,7 +3689,7 @@ DigiLoop:
 		Monframe.DEST[6] |= 0x80;				// SET COMMAND
 	}
 
-	if (strchr(&ptr[4], '-'))	
+	if (strchr(&ptr[4], '-'))
 	{
 		AdjMsg->CTL |= 0x10;
 		Monframe.ORIGIN[6] |= 0x80;				// SET COMMAND
@@ -3697,9 +3697,9 @@ DigiLoop:
 
 	if (Msg[0] == 5)							// More to come
 	{
-		ptr = strstr(ptr, "pid ");	
+		ptr = strstr(ptr, "pid ");
 		sscanf(&ptr[3], "%x", (int *)&AdjMsg->PID);
-		return;	
+		return;
 	}
 
 	time(&Monframe.Timestamp);
@@ -3726,12 +3726,12 @@ VOID ForcedClose(struct TNCINFO * TNC, int Stream)
 	// Try thst first. If it still doesn't disconnect maybe try restart
 
 	unsigned char Resp[500] = "";
-	char * Poll = &TNC->TXBuffer[0]; 
+	char * Poll = &TNC->TXBuffer[0];
 
 	Debugprintf("Failed to disconnect TNC - trying a forced disconnect");
 
 	// Try Normal Mode DD (Dirty Disconnect)
-					
+
 	// Uses "Hidden" feature where you can send any normal mode command
 	// in host mode by preceeding with a #
 
@@ -3740,10 +3740,10 @@ VOID ForcedClose(struct TNCINFO * TNC, int Stream)
 	Poll[4] = 2;
 	sprintf(&Poll[5], "#DD\r");		// Node \r isn't sent but is there for log
 	CRCStuffAndSend(TNC, Poll, 8);
-			
+
 	// It looks like there isn't a response
 
-	TNC->Timeout = 0;	
+	TNC->Timeout = 0;
 
 	OpenLogFile(TNC->Port);
 	WriteLogLine(TNC->Port, &Poll[5], 4);
@@ -3791,7 +3791,7 @@ VOID ForcedClose(struct TNCINFO * TNC, int Stream)
 	Poll[6] = '3';
 
 	CRCStuffAndSend(TNC, Poll, 7);
-	
+
 	n = 0;
 	while (CheckRXHost(TNC, Resp) == FALSE)
 	{
@@ -3801,7 +3801,7 @@ VOID ForcedClose(struct TNCINFO * TNC, int Stream)
 	}
 
 	Debugprintf("PTC Status Now %x %x %x %x %x %x %x %x",
-		Resp[0], Resp[1], Resp[2], Resp[3], Resp[4], Resp[5], Resp[6], Resp[7]); 
+		Resp[0], Resp[1], Resp[2], Resp[3], Resp[4], Resp[5], Resp[6], Resp[7]);
 
 	TNC->Timeout = 0;
 
@@ -3917,7 +3917,7 @@ VOID PTCReleasePort(struct TNCINFO * TNC)
 
 	STREAM->CmdSet = STREAM->CmdSave = zalloc(100);
 
-	if (TNC->UseAPPLCallsforPactor && TNC->RIG && TNC->RIG != &TNC->DummyRig 
+	if (TNC->UseAPPLCallsforPactor && TNC->RIG && TNC->RIG != &TNC->DummyRig
 			&& TNC->RIG->FreqPtr[0]->APPLCALL[0])
 		sprintf(STREAM->CmdSet, "I%s\r", TNC->RIG->FreqPtr[0]->APPLCALL);
 	else

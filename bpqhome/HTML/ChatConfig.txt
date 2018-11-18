@@ -69,9 +69,9 @@ Map Popup Text<br>
 <br>
 
 <div style="position: absolute; left: 150px; top: 470px;">
-<input name="Save" value="Save" type="submit"> 
-<input name="UpdateMap" value="Update Map" type="submit"> 
-<input name="Restart" value="Restart Links" type="submit"> 
+<input name="Save" value="Save" type="submit">
+<input name="UpdateMap" value="Update Map" type="submit">
+<input name="Restart" value="Restart Links" type="submit">
 <input name="Cancel" value="Cancel"
 type="submit"></div>
 </form>

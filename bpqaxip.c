@@ -15,18 +15,18 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with LinBPQ/BPQ32.  If not, see http://www.gnu.org/licenses
-*/	
+*/
 
 //
-//	DLL to provide AXIP support for G8BPQ switch in a 
+//	DLL to provide AXIP support for G8BPQ switch in a
 //	32bit environment,
 //
 //	Uses BPQ EXTERNAL interface
 //
 
-//	Version 1.1 August 2001				   
+//	Version 1.1 August 2001
 //
-//		Send to all matching entries in map table 
+//		Send to all matching entries in map table
 //		(Mainly for NODES braodcasts to multiple stations)
 //
 
@@ -69,7 +69,7 @@ along with LinBPQ/BPQ32.  If not, see http://www.gnu.org/licenses
 //		Allow multiple listening UDP ports
 //		Kick off resolver on EXTRESTART
 //		Remove redundant DYNAMIC processing
- 
+
 //  Version 1.10 October 2006
 //
 //		Add "Minimize to Tray" option
@@ -78,7 +78,7 @@ along with LinBPQ/BPQ32.  If not, see http://www.gnu.org/licenses
 //  Version 1.11 October 2007
 //
 //		Sort MHeard and discard last entry if full
-//		Add Commands to re-read config file and manually add an ARP entry 
+//		Add Commands to re-read config file and manually add an ARP entry
 
 //  Version 1.12 February 2008
 //
@@ -171,16 +171,16 @@ along with LinBPQ/BPQ32.  If not, see http://www.gnu.org/licenses
 #define MAXGETHOSTSTRUCT        1024
 #endif
 
-#define BUFFLEN	360	
+#define BUFFLEN	360
 
 //	BUFFLEN-4 = L2 POINTER (FOR CLEARING TIMEOUT WHEN ACKMODE USED)
 //	BUFFLEN-8 = TIMESTAMP
 //	BUFFLEN-12 = BUFFER ALLOCATED FLAG (ADDR OF ALLOCATING ROUTINE)
-	
+
 #define MAXDATA	BUFFLEN-16
 
 
-#define	FEND	0xC0	// KISS CONTROL CODES 
+#define	FEND	0xC0	// KISS CONTROL CODES
 #define	FESC	0xDB
 #define	TFEND	0xDC
 #define	TFESC	0xDD
@@ -243,8 +243,8 @@ VOID SaveMDIWindowPos(HWND hWnd, char * RegKey, char * Value, BOOL Minimized);
 
 union
 {
-	struct sockaddr_in sinx; 
-	struct sockaddr_in6 sinx6; 
+	struct sockaddr_in sinx;
+	struct sockaddr_in6 sinx6;
 } sinx;
 /*
 union
@@ -256,7 +256,7 @@ union
 
 #define IP_AXIP 93				   // IP Protocol for AXIP
 
-#pragma pack(1) 
+#pragma pack(1)
 
 struct iphdr {
 //	unsigned int version:4;        // Version of IP
@@ -266,7 +266,7 @@ struct iphdr {
 	unsigned short total_len;      // total length of the packet
 	unsigned short ident;          // unique identifier
 	unsigned short frag_and_flags; // flags
-	unsigned char  ttl; 
+	unsigned char  ttl;
 	unsigned char proto;           // protocol (TCP, UDP etc)
 	unsigned short checksum;       // IP checksum
 
@@ -331,7 +331,7 @@ VOID SaveAXIPWindowPos(int port)
 	char Key[80];
 
 	PORT = Portlist[port];
-		
+
 	if (PORT == NULL)
 		return;
 
@@ -379,7 +379,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 			len = recvfrom(PORT->sock,rxbuff,500,0,(struct sockaddr *)&RXaddr.rxaddr,&addrlen);
 
 			if (len == -1)
-			{		
+			{
 				err = WSAGetLastError();
 			}
 			else
@@ -394,7 +394,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 					{
 						if (PORT->MHEnabled)
 							Update_MH_KeepAlive(PORT, RXaddr.rxaddr.sin_addr,'I',93);
-	
+
 						return 0;
 					}
 					crc = compute_crc(&rxbuff[20], len);
@@ -402,7 +402,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 					if (crc == 0xf0b8)		// Good CRC
 					{
 						len-=2;			// Remove CRC
-					
+
 						if (len > MAXDATA)
 						{
 							sprintf(errmsg,"BPQAXIP Invalid Msg Len=%d Source=%s",len,inet_ntoa(RXaddr.rxaddr.sin_addr));
@@ -413,12 +413,12 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 
 						memcpy(&buff[7],&rxbuff[20],len);
 						len+=7;
-		
+
 						PutLengthinBuffer(buff, len);		// Neded for arm5 portability
 
 //						buff[5]=(len & 0xff);
 //						buff[6]=(len >> 8);
-		
+
 						//
 						//	Do MH Proccessing if enabled
 						//
@@ -458,7 +458,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 					//
 					//	CRC Error
 					//
-						
+
 					sprintf(errmsg,"BPQAXIP Invalid CRC=%d Source=%s",crc,inet_ntoa(RXaddr.rxaddr.sin_addr));
 						OutputDebugString(errmsg);
 
@@ -468,7 +468,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 				//
 				//	Bad Length
 				//
-	
+
 				return (0);
 			}
 		}
@@ -479,9 +479,9 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 				len = recvfrom(PORT->udpsock[i],rxbuff,500,0,(struct sockaddr *)&RXaddr.rxaddr, &addrlen6);
 			else
 				len = recvfrom(PORT->udpsock[i],rxbuff,500,0,(struct sockaddr *)&RXaddr.rxaddr, &addrlen);
-	
+
 			if (len == -1)
-			{		
+			{
 				err = WSAGetLastError();
 			}
 			else
@@ -490,10 +490,10 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 				{
 					if (PORT->MHEnabled)
 						Update_MH_KeepAlive(PORT, RXaddr.rxaddr.sin_addr, 'U', PORT->udpport[i]);
-	
+
 					continue;
 				}
-				
+
 				crc = compute_crc(&rxbuff[0], len);
 
 				if (crc == 0xf0b8)		// Good CRC
@@ -510,7 +510,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 
 					memcpy(&buff[7],&rxbuff[0],len);
 					len+=7;
-					
+
 					PutLengthinBuffer(buff, len);
 
 					//
@@ -519,14 +519,14 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 
 					if (PORT->MHEnabled)
 						if (PORT->IPv6[i])
-							Update_MH_List(PORT, (UCHAR *)&RXaddr.rxaddr6.sin6_addr, &buff[14], 'U', PORT->udpport[i], TRUE);	
+							Update_MH_List(PORT, (UCHAR *)&RXaddr.rxaddr6.sin6_addr, &buff[14], 'U', PORT->udpport[i], TRUE);
 						else
-							Update_MH_List(PORT, (UCHAR *)&RXaddr.rxaddr.sin_addr.s_addr, &buff[14], 'U', PORT->udpport[i], FALSE);	
+							Update_MH_List(PORT, (UCHAR *)&RXaddr.rxaddr.sin_addr.s_addr, &buff[14], 'U', PORT->udpport[i], FALSE);
 
 					if (PORT->Checkifcanreply)
 					{
 						char call[7];
- 
+
 						memcpy(call, &buff[14], 7);
 						call[6] &= 0x7e;		// Mask End of Address bit
 
@@ -535,16 +535,16 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 						else
 						{
 							// Can't reply. If AutoConfig is set, add to table and accept, else reject
-		
+
 							if (PORT->AutoAddARP)
 								if (PORT->IPv6[i])
 								{
 									char Addr[80];
 									Format_Addr((UCHAR *)&RXaddr.rxaddr6.sin6_addr, Addr, TRUE);
-									return add_arp_entry(PORT, call, (UCHAR *)&RXaddr.rxaddr6.sin6_addr, 7, htons(RXaddr.rxaddr6.sin6_port), Addr, 0, PORT->AutoAddBC, TRUE, 0, PORT->udpport[i], TRUE);		
+									return add_arp_entry(PORT, call, (UCHAR *)&RXaddr.rxaddr6.sin6_addr, 7, htons(RXaddr.rxaddr6.sin6_port), Addr, 0, PORT->AutoAddBC, TRUE, 0, PORT->udpport[i], TRUE);
 								}
 								else
-									return add_arp_entry(PORT, call, (UCHAR *)&RXaddr.rxaddr.sin_addr.s_addr, 7, htons(RXaddr.rxaddr.sin_port), inet_ntoa(RXaddr.rxaddr.sin_addr), 0, PORT->AutoAddBC, TRUE, 0, PORT->udpport[i], FALSE);		
+									return add_arp_entry(PORT, call, (UCHAR *)&RXaddr.rxaddr.sin_addr.s_addr, 7, htons(RXaddr.rxaddr.sin_port), inet_ntoa(RXaddr.rxaddr.sin_addr), 0, PORT->AutoAddBC, TRUE, 0, PORT->udpport[i], FALSE);
 							else
 							{
 								char From[10];
@@ -558,7 +558,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 						return(1);
 				}
 
-				//	
+				//
 				//	CRC Error
 				//
 
@@ -594,7 +594,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 		}
 
 		return (0);
-		
+
 	case 2:				// send
 
 //		txlen=(buff[6]<<8) + buff[5] - 5;			// Len includes buffer header (7) but we add crc
@@ -692,7 +692,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 }
 
 VOID SendFrame(struct AXIPPORTINFO * PORT, struct arp_table_entry * arp_table, UCHAR * buff, int txlen)
-{				
+{
 	int txsock, i, SourceSocket;
 
 	if (arp_table->TCPMode)
@@ -730,11 +730,11 @@ VOID SendFrame(struct AXIPPORTINFO * PORT, struct arp_table_entry * arp_table, U
 			break;
 		}
 	}
-		
+
 	if (arp_table->error == 0)
 	{
 		int sent;
-		
+
 		if (arp_table->port == 0) txsock = PORT->sock; else txsock = SourceSocket;
 
 		if (arp_table->IPv6)
@@ -742,18 +742,18 @@ VOID SendFrame(struct AXIPPORTINFO * PORT, struct arp_table_entry * arp_table, U
 		else
 			if (arp_table->destaddr.sin_addr.s_addr)
 				sent = sendto(txsock, buff, txlen, 0, (struct sockaddr *)&arp_table->destaddr, sizeof(arp_table->destaddr));
-	
+
 //		if (sent != txlen)
 //			perror("Sendto");
 
 		// reset Keepalive Timer
-					
+
 		arp_table->keepalive=arp_table->keepaliveinit;
 	}
 }
 
 unsigned short int compute_crc_ccitt(unsigned char *buf, int len);
-unsigned short CCCITTChecksum(unsigned char* data, unsigned int length);	
+unsigned short CCCITTChecksum(unsigned char* data, unsigned int length);
 
 UINT AXIPExtInit(struct PORTCONTROL *  PortEntry)
 {
@@ -802,17 +802,17 @@ int InitAXIP(int Port)
 	}
 
 	time(&PORT->lasttime);			// Get initial time value
- 
+
 	_beginthread(OpenSockets, 0, PORT );
 
 	// Start TCP outward connect threads
 	//
 	//	Open MH window if needed
-	
+
 	if (PORT->MHEnabled)
 		CreateMHWindow(PORT);
 
-	return (TRUE);	
+	return (TRUE);
 }
 
 void OpenSockets(struct AXIPPORTINFO * PORT)
@@ -837,11 +837,11 @@ void OpenSockets(struct AXIPPORTINFO * PORT)
 		{
 			WritetoConsole("AXIP Failed to create RAW socket\n");
 			err = WSAGetLastError();
-  	 		return; 
+  	 		return;
 		}
 
 		ioctl (PORT->sock,FIONBIO,&param);
- 
+
 		setsockopt (PORT->sock,SOL_SOCKET,SO_BROADCAST,(const char FAR *)&bcopt,4);
 
 		sinx.sinx.sin_family = AF_INET;
@@ -863,7 +863,7 @@ void OpenSockets(struct AXIPPORTINFO * PORT)
 	for (i=0;i<PORT->NumberofUDPPorts;i++)
 	{
 		int ret;
-		
+
 		if (PORT->IPv6[i])
 			PORT->udpsock[i]=socket(AF_INET6,SOCK_DGRAM,0);
 		else
@@ -873,11 +873,11 @@ void OpenSockets(struct AXIPPORTINFO * PORT)
 		{
 			WritetoConsole("Failed to create UDP socket");
 			err = WSAGetLastError();
-			return; 
+			return;
 		}
 
 		ioctl (PORT->udpsock[i],FIONBIO,&param);
- 
+
 		setsockopt (PORT->udpsock[i],SOL_SOCKET,SO_BROADCAST,(const char FAR *)&bcopt,4);
 
 #ifndef WIN32
@@ -885,9 +885,9 @@ void OpenSockets(struct AXIPPORTINFO * PORT)
 		if (PORT->IPv6[i])
 			if (setsockopt(PORT->udpsock[i], IPPROTO_IPV6, IPV6_V6ONLY, &param, sizeof(param)) < 0)
 				perror("setting option IPV6_V6ONLY");
-  
+
 #endif
-	
+
 		if (PORT->IPv6[i])
 		{
 			sinx.sinx.sin_family = AF_INET6;
@@ -898,7 +898,7 @@ void OpenSockets(struct AXIPPORTINFO * PORT)
 			sinx.sinx.sin_family = AF_INET;
 			sinx.sinx.sin_addr.s_addr = INADDR_ANY;
 		}
-		
+
 		sinx.sinx.sin_port = htons(PORT->udpport[i]);
 
 		if (PORT->IPv6[i])
@@ -941,7 +941,7 @@ void OpenSockets(struct AXIPPORTINFO * PORT)
 			OpenListeningSocket(PORT, arp);
 		}
 	}
-}	
+}
 int OpenListeningSocket(struct AXIPPORTINFO * PORT, struct arp_table_entry * arp)
 {
 	char Msg[255];
@@ -970,7 +970,7 @@ int OpenListeningSocket(struct AXIPPORTINFO * PORT, struct arp_table_entry * arp
 	psin=&local_sin;
 	psin->sin_family = AF_INET;
 	psin->sin_addr.s_addr = htonl(INADDR_ANY);	// Local Host Only
-	
+
 	psin->sin_port = htons(arp->port);        /* Convert to network ordering */
 
 	if (bind(arp->TCPListenSock , (struct sockaddr FAR *) &local_sin, sizeof(local_sin)) == SOCKET_ERROR)
@@ -1007,7 +1007,7 @@ void CloseSockets(struct AXIPPORTINFO * PORT)
 	{
 		closesocket(PORT->udpsock[i]);
 	}
-	
+
 	// Close any open or listening TCP sockets
 
 	while (index < PORT->arp_table_len)
@@ -1039,7 +1039,7 @@ void CloseSockets(struct AXIPPORTINFO * PORT)
 	}
 
 	return ;
-}	
+}
 
 #ifndef LINBPQ
 
@@ -1053,7 +1053,7 @@ static LRESULT CALLBACK AXResWndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 	char outcall[10];
 	int index,displayline;
 	struct AXIPPORTINFO * PORT;
-	MINMAXINFO * mmi;	
+	MINMAXINFO * mmi;
 	int nScrollCode,nPos;
 	int i, Port;
 	char Flags[10];
@@ -1066,7 +1066,7 @@ static LRESULT CALLBACK AXResWndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 		PORT = Portlist[Port];
 		if (PORT == NULL)
 			continue;
-		
+
 		if (PORT->hResWnd == hWnd)
 			break;
 	}
@@ -1077,7 +1077,7 @@ static LRESULT CALLBACK AXResWndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 	i=1;
 
 	switch (message)
-	{ 
+	{
 	case WM_GETMINMAXINFO:
 
 		mmi = (MINMAXINFO *)lParam;
@@ -1090,9 +1090,9 @@ static LRESULT CALLBACK AXResWndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 
 
 	case WM_MDIACTIVATE:
-	{			 
+	{
 		// Set the system info menu when getting activated
-			 
+
 		if (lParam == (LPARAM) hWnd)
 		{
 			// Activate
@@ -1144,15 +1144,15 @@ static LRESULT CALLBACK AXResWndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 		if (wmId == BPQADDARP)
 		{
 			if (PORT->ConfigWnd == 0)
-			{		
+			{
 				PORT->ConfigWnd=CreateDialog(hInstance, ConfigClassName, 0, NULL);
-    
+
 				if (!PORT->ConfigWnd)
 				{
 					return (FALSE);
 				}
-				ShowWindow(PORT->ConfigWnd, SW_SHOW);  
-				UpdateWindow(PORT->ConfigWnd); 
+				ShowWindow(PORT->ConfigWnd, SW_SHOW);
+				UpdateWindow(PORT->ConfigWnd);
   			}
 
 			SetForegroundWindow(PORT->ConfigWnd);
@@ -1175,7 +1175,7 @@ static LRESULT CALLBACK AXResWndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 
 				break;
 
-			case  SC_MINIMIZE: 
+			case  SC_MINIMIZE:
 
 				PORT->ResMinimized = TRUE;
 
@@ -1186,11 +1186,11 @@ static LRESULT CALLBACK AXResWndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 
 
 	case WM_VSCROLL:
-		
-		nScrollCode = (int) LOWORD(wParam); // scroll bar value 
-		nPos = (short int) HIWORD(wParam);  // scroll box position 
 
-		//hwndScrollBar = (HWND) lParam;      // handle of scroll bar 
+		nScrollCode = (int) LOWORD(wParam); // scroll bar value
+		nPos = (short int) HIWORD(wParam);  // scroll box position
+
+		//hwndScrollBar = (HWND) lParam;      // handle of scroll bar
 
 		if (nScrollCode == SB_LINEUP || nScrollCode == SB_PAGEUP)
 		{
@@ -1220,9 +1220,9 @@ static LRESULT CALLBACK AXResWndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 	case WM_PAINT:
 
 		hdc = BeginPaint (hWnd, &ps);
-		
+
 		hOldFont = SelectObject( hdc, hFont) ;
-			
+
 		index = PORT->baseline;
 		displayline=0;
 
@@ -1231,7 +1231,7 @@ static LRESULT CALLBACK AXResWndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 			arp = &PORT->arp_table[index];
 
 			Flags[0] = 0;
-		
+
 			if (arp->BCFlag)
 				strcat(Flags, "B ");
 
@@ -1248,14 +1248,14 @@ static LRESULT CALLBACK AXResWndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 			}
 			else
 			{
-				if (arp->IPv6)	
+				if (arp->IPv6)
 					Format_Addr((unsigned char *)&arp->destaddr6.sin6_addr, PORT->hostaddr, TRUE);
 				else
 					Format_Addr((unsigned char *)&arp->destaddr.sin_addr, PORT->hostaddr, FALSE);
 			}
-				
+
 			CONVFROMAX25(arp->callsign,outcall);
-								
+
 			if (arp->port == arp->SourcePort)
 				i=sprintf(line,"%.10s = %.64s %d = %-.30s %s   ",
 					outcall,
@@ -1271,7 +1271,7 @@ static LRESULT CALLBACK AXResWndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 					arp->SourcePort,
 					PORT->hostaddr,
 					Flags);
-		
+
 			TextOut(hdc, 0, (displayline++)*14+2, line, i);
 
 			index++;
@@ -1279,13 +1279,13 @@ static LRESULT CALLBACK AXResWndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 
 		SelectObject( hdc, hOldFont ) ;
 		EndPaint (hWnd, &ps);
-	
-		break;        
+
+		break;
 
 	case WM_DESTROY:
 
 //		PostQuitMessage(0);
-			
+
 		break;
 
 
@@ -1316,7 +1316,7 @@ int FAR PASCAL ConfigWndProc(HWND hWnd,UINT message,WPARAM wParam,LPARAM lParam)
 		PORT = Portlist[i];
 		if (PORT == NULL)
 			continue;
-		
+
 		if (PORT->ConfigWnd == hWnd)
 			break;
 	}
@@ -1324,10 +1324,10 @@ int FAR PASCAL ConfigWndProc(HWND hWnd,UINT message,WPARAM wParam,LPARAM lParam)
 	switch (message)
 	{
 	case WM_CTLCOLORDLG:
-	
+
 		return (LONG)bgBrush;
 
-	case WM_COMMAND:	
+	case WM_COMMAND:
 
 		id = LOWORD(wParam);
         hwndChild = (HWND)(UINT)lParam;
@@ -1343,9 +1343,9 @@ int FAR PASCAL ConfigWndProc(HWND hWnd,UINT message,WPARAM wParam,LPARAM lParam)
 
 			for (i=0;i<7;i++)
 				call[i] = toupper(call[i]);
-			
-			UDPFlag=IsDlgButtonChecked(PORT->ConfigWnd,1004);		
-			BCFlag=IsDlgButtonChecked(PORT->ConfigWnd,1005);		
+
+			UDPFlag=IsDlgButtonChecked(PORT->ConfigWnd,1004);
+			BCFlag=IsDlgButtonChecked(PORT->ConfigWnd,1005);
 
 			if (UDPFlag)
 				port=GetDlgItemInt(PORT->ConfigWnd,1003,&OK3,FALSE);
@@ -1379,17 +1379,17 @@ int FAR PASCAL ConfigWndProc(HWND hWnd,UINT message,WPARAM wParam,LPARAM lParam)
 		break;
 
 //	case WM_CLOSE:
-	
+
 //		return(DestroyWindow(hWnd));
 
 	case WM_DESTROY:
 
 		PORT->ConfigWnd=0;
-	
+
 		return(0);
 
-	}		
-	
+	}
+
 	return (DefWindowProc(hWnd, message, wParam, lParam));
 
 }
@@ -1412,14 +1412,14 @@ static void CreateResolverWindow(struct AXIPPORTINFO * PORT)
 	int Top, Left, Width, Height;
 
 	sprintf(Key, "SOFTWARE\\G8BPQ\\BPQ32\\PACTOR\\PORT%d", PORT->Port);
-	
+
 	retCode = RegOpenKeyEx (REGTREE, Key, 0, KEY_QUERY_VALUE, &hKey);
 
 	if (retCode == ERROR_SUCCESS)
 	{
 		Vallen=80;
 
-		retCode = RegQueryValueEx(hKey,"ResSize",0,			
+		retCode = RegQueryValueEx(hKey,"ResSize",0,
 			(ULONG *)&Type,(UCHAR *)&Size,(ULONG *)&Vallen);
 
 		if (retCode == ERROR_SUCCESS)
@@ -1462,17 +1462,17 @@ static void CreateResolverWindow(struct AXIPPORTINFO * PORT)
 	wc.lpszClassName = "AXAppName";
 
 	RegisterClass(&wc);
-	
-	wc.style = CS_HREDRAW | CS_VREDRAW;                                      
+
+	wc.style = CS_HREDRAW | CS_VREDRAW;
 	wc.cbWndExtra = DLGWINDOWEXTRA;
 	wc.hInstance = hInstance;
 	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-	wc.lpfnWndProc = ConfigWndProc;       
+	wc.lpfnWndProc = ConfigWndProc;
 	wc.lpszClassName = ConfigClassName;
 	RegisterClass(&wc);
 
 	WindowParam = WS_OVERLAPPEDWINDOW | WS_VSCROLL;
-	
+
 	sprintf(WindowTitle,"AXIP Port %d Resolver", PORT->Port);
 
 	PORT->hResWnd = hResWnd = CreateMDIWindow("AXAppName", WindowTitle, WindowParam,
@@ -1497,13 +1497,13 @@ extern HWND hWndPopup;
 static void ResolveNames(struct AXIPPORTINFO * PORT)
 {
 	PORT->ResolveNamesThreadId = GetCurrentThreadId();		// Detect if another started
-	
+
 	while(TRUE)
 	{
 		ResolveDelay = 15 * 60;
 
 		for (PORT->ResolveIndex=0; PORT->ResolveIndex < PORT->arp_table_len; PORT->ResolveIndex++)
-		{	
+		{
 			struct arp_table_entry * arp = &PORT->arp_table[PORT->ResolveIndex];
 
 			if (arp->ResolveFlag)
@@ -1517,7 +1517,7 @@ static void ResolveNames(struct AXIPPORTINFO * PORT)
 
 				memset(&hints, 0, sizeof hints);
 				hints.ai_socktype = SOCK_DGRAM;
-			
+
 				if (UseV6)
 				{
 					hints.ai_family = AF_INET6;  // use IPv6
@@ -1539,7 +1539,7 @@ static void ResolveNames(struct AXIPPORTINFO * PORT)
 						arp->destaddr.sin_family = AF_INET;
 //						Debugprintf("AXIP %s = %d.%d.%d.%d", arp->hostname, (UCHAR)res->ai_addr->sa_data[2],
 //							(UCHAR)res->ai_addr->sa_data[3], (UCHAR)res->ai_addr->sa_data[4], (UCHAR)res->ai_addr->sa_data[5]);
-						
+
 					}
 					else
 					{
@@ -1554,7 +1554,7 @@ static void ResolveNames(struct AXIPPORTINFO * PORT)
 				}
 				else
 					PORT->arp_table[PORT->ResolveIndex].error = WSAGetLastError();
-				
+
 #ifndef LINBPQ
 				InvalidateRect(PORT->hResWnd,NULL,TRUE);
 #endif
@@ -1586,7 +1586,7 @@ LRESULT CALLBACK MHWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam
 	HGLOBAL	hMem;
 	struct AXIPPORTINFO * PORT;
 	int index,displayline;
-	MINMAXINFO * mmi;	
+	MINMAXINFO * mmi;
 	int nScrollCode,nPos;
 
 
@@ -1597,7 +1597,7 @@ LRESULT CALLBACK MHWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam
 		PORT = Portlist[i];
 		if (PORT == NULL)
 			continue;
-		
+
 		if (PORT->hMHWnd == hWnd)
 			break;
 	}
@@ -1606,7 +1606,7 @@ LRESULT CALLBACK MHWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam
 		return DefMDIChildProc(hWnd, message, wParam, lParam);
 
 	switch (message)
-	{ 
+	{
 	case WM_GETMINMAXINFO:
 
  		mmi = (MINMAXINFO *)lParam;
@@ -1617,9 +1617,9 @@ LRESULT CALLBACK MHWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam
 		break;
 
 	case WM_MDIACTIVATE:
-	{			 
+	{
 		// Set the system info menu when getting activated
-			 
+
 		if (lParam == (LPARAM) hWnd)
 		{
 			// Activate
@@ -1652,7 +1652,7 @@ LRESULT CALLBACK MHWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam
 			case BPQCOPY:
 
 				hMem=GlobalAlloc(GMEM_MOVEABLE | GMEM_DDESHARE, MaxMHEntries * 100);
-		
+
 				if (hMem != 0)
 				{
 					if (OpenClipboard(hWnd))
@@ -1671,7 +1671,7 @@ LRESULT CALLBACK MHWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam
 				return 0;
 
 			default:
-		
+
 			return DefMDIChildProc(hWnd, message, wParam, lParam);
 		}
 
@@ -1688,7 +1688,7 @@ LRESULT CALLBACK MHWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam
 				SendMessage(ClientWnd, WM_MDIRESTORE, (WPARAM)hWnd, 0);
 				break;
 
-			case  SC_MINIMIZE: 
+			case  SC_MINIMIZE:
 
 				PORT->MHMinimized = TRUE;
 				break;
@@ -1697,11 +1697,11 @@ LRESULT CALLBACK MHWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam
 		return DefMDIChildProc(hWnd, message, wParam, lParam);
 
 	case WM_VSCROLL:
-		
-		nScrollCode = (int) LOWORD(wParam); // scroll bar value 
-		nPos = (short int) HIWORD(wParam);  // scroll box position 
 
-		//hwndScrollBar = (HWND) lParam;      // handle of scroll bar 
+		nScrollCode = (int) LOWORD(wParam); // scroll bar value
+		nPos = (short int) HIWORD(wParam);  // scroll box position
+
+		//hwndScrollBar = (HWND) lParam;      // handle of scroll bar
 
 		if (nScrollCode == SB_LINEUP || nScrollCode == SB_PAGEUP)
 		{
@@ -1733,18 +1733,18 @@ LRESULT CALLBACK MHWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam
 
 		hdc = BeginPaint (hWnd, &ps);
 		hOldFont = SelectObject( hdc, hFont) ;
-			
+
 		index = PORT->mhbaseline;
 		displayline=0;
 
 		PORT->CurrentMHEntries = 0;
 
 		while (index < MaxMHEntries)
-		{	
+		{
 			if (PORT->MHTable[index].proto != 0)
 			{
 				char Addr[80];
-				
+
 				Format_Addr((unsigned char *)&PORT->MHTable[index].ipaddr6, Addr, PORT->MHTable[index].IPv6);
 
 				CONVFROMAX25(PORT->MHTable[index].callsign,outcall);
@@ -1769,20 +1769,20 @@ LRESULT CALLBACK MHWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam
 
 		SelectObject( hdc, hOldFont ) ;
 		EndPaint (hWnd, &ps);
-	
-		break;        
+
+		break;
 
 		case WM_DESTROY:
-					
+
 			PORT->MHEnabled=FALSE;
-			
+
 			break;
 
 		default:
 			return DefMDIChildProc(hWnd, message, wParam, lParam);
 
 	}
-			
+
 	return DefMDIChildProc(hWnd, message, wParam, lParam);
 }
 
@@ -1795,8 +1795,8 @@ BOOL CopyScreentoBuffer(char * buff, struct AXIPPORTINFO * PORT)
 
 	index = 0;
 
-	while (index < MaxMHEntries)	
-	{	
+	while (index < MaxMHEntries)
+	{
 		if (PORT->MHTable[index].proto != 0)
 		{
 			CONVFROMAX25(PORT->MHTable[index].callsign,outcall);
@@ -1820,7 +1820,7 @@ BOOL CopyScreentoBuffer(char * buff, struct AXIPPORTINFO * PORT)
 void CreateMHWindow(struct AXIPPORTINFO * PORT)
 {
 #ifndef LINBPQ
-	
+
 	WNDCLASS  wc;
 	char WindowTitle[100];
 	int retCode, Type, Vallen;
@@ -1832,14 +1832,14 @@ void CreateMHWindow(struct AXIPPORTINFO * PORT)
 	int Top, Left, Width, Height;
 
 	sprintf(Key, "SOFTWARE\\G8BPQ\\BPQ32\\PACTOR\\PORT%d", PORT->Port);
-	
+
 	retCode = RegOpenKeyEx (REGTREE, Key, 0, KEY_QUERY_VALUE, &hKey);
 
 	if (retCode == ERROR_SUCCESS)
 	{
 		Vallen=80;
 
-		retCode = RegQueryValueEx(hKey,"MHSize",0,			
+		retCode = RegQueryValueEx(hKey,"MHSize",0,
 			(ULONG *)&Type,(UCHAR *)&Size,(ULONG *)&Vallen);
 
 		if (retCode == ERROR_SUCCESS)
@@ -1885,11 +1885,11 @@ void CreateMHWindow(struct AXIPPORTINFO * PORT)
 	RegisterClass(&wc);
 
 	sprintf(WindowTitle,"AXIP Port %d MHEARD", PORT->Port);
-  
+
 	PORT->hMHWnd = hMHWnd = CreateMDIWindow("MHAppName", WindowTitle,
 			WS_OVERLAPPEDWINDOW | WS_VSCROLL,
 			Left - (OffsetW /2), Top - OffsetH, Width, Height, ClientWnd, hInstance, 1234);
- 
+
 	PORT->hMHMenu = CreatePopupMenu();
 	AppendMenu(PORT->hMHMenu, MF_STRING, BPQCOPY, "Copy");
 	AppendMenu(PORT->hMHMenu, MF_STRING, BPQCLEAR, "Clear");
@@ -1903,11 +1903,11 @@ void CreateMHWindow(struct AXIPPORTINFO * PORT)
 
 unsigned short int compute_crc(unsigned char *buf,int len)
 {
-	unsigned short fcs = 0xffff; 
+	unsigned short fcs = 0xffff;
 	int i;
 
-	for(i = 0; i < len; i++) 
-		fcs = (fcs >>8 ) ^ CRCTAB[(fcs ^ buf[i]) & 0xff]; 
+	for(i = 0; i < len; i++)
+		fcs = (fcs >>8 ) ^ CRCTAB[(fcs ^ buf[i]) & 0xff];
 
 	return fcs;
 }
@@ -1951,10 +1951,10 @@ static const unsigned short ccittTab[] = {
 unsigned short int compute_crc_ccitt(unsigned char *buf, int len)
 {
 	int i;
-	unsigned short fcs = 0; 
+	unsigned short fcs = 0;
 
-	for(i = 0; i < len; i++) 
-		fcs = (fcs >>8 ) ^ ccittTab[(fcs ^ buf[i]) & 0xff]; 
+	for(i = 0; i < len; i++)
+		fcs = (fcs >>8 ) ^ ccittTab[(fcs ^ buf[i]) & 0xff];
 
 	return fcs;
 }
@@ -1970,7 +1970,7 @@ unsigned short CCCITTChecksum(unsigned char* data, unsigned int length)
 {
 	int i;
 
-	fcs.m_crc16 = 0; 
+	fcs.m_crc16 = 0;
 
 	for (i = 0U; i < length; i++)
 		fcs.m_crc16 = (fcs.m_crc8[0U] << 8) ^ ccittTab[fcs.m_crc8[1U] ^ data[i]];
@@ -2053,7 +2053,7 @@ broadcast QST-0 NODES-0
 			ptr2 = strchr(ptr1, 13);
 
 			strcpy(errbuf,buf);			// save in case of error
-	
+
 			if (!ProcessLine(buf, PORT))
 			{
 				WritetoConsole("BPQAXIP - Bad config record");
@@ -2069,7 +2069,7 @@ broadcast QST-0 NODES-0
 		}
 		return TRUE;
 	}
-			
+
 	WritetoConsole("No Configuration info in bpq32.cfg");
 
 	return FALSE;
@@ -2105,7 +2105,7 @@ static int ProcessLine(char * buf, struct AXIPPORTINFO * PORT)
 		if (PORT->NumberofUDPPorts > MAXUDPPORTS) PORT->NumberofUDPPorts--;
 
 		p_udpport = strtok(NULL, " ,\t\n\r");
-			
+
 		if (p_udpport == NULL) return (FALSE);
 
 		PORT->udpport[PORT->NumberofUDPPorts] = atoi(p_udpport);
@@ -2143,7 +2143,7 @@ static int ProcessLine(char * buf, struct AXIPPORTINFO * PORT)
 		PORT->AutoAddBC = TRUE;
 		return (TRUE);
 	}
-	
+
 	if(_stricmp(ptr,"AUTOADDQUIET") == 0)
 	{
 		PORT->AutoAddARP = TRUE;
@@ -2154,7 +2154,7 @@ static int ProcessLine(char * buf, struct AXIPPORTINFO * PORT)
 	if(_stricmp(ptr,"MAP") == 0)
 	{
 		p_call = strtok(NULL, " \t\n\r");
-		
+
 		if (p_call == NULL) return (FALSE);
 
 		_strupr(p_call);
@@ -2166,9 +2166,9 @@ static int ProcessLine(char * buf, struct AXIPPORTINFO * PORT)
 		}
 
 		p_ipad = strtok(NULL, " \t\n\r");
-		
+
 		if (p_ipad == NULL) return (FALSE);
-	
+
 		p_UDP = strtok(NULL, " \t\n\r");
 
 		Interval=0;
@@ -2203,7 +2203,7 @@ static int ProcessLine(char * buf, struct AXIPPORTINFO * PORT)
 			if (_stricmp(p_UDP,"UDP") == 0)
 			{
 				p_udpport = strtok(NULL, " \t\n\r");
-			
+
 				if (p_udpport == NULL) return (FALSE);
 
 				port = atoi(p_udpport);
@@ -2214,7 +2214,7 @@ static int ProcessLine(char * buf, struct AXIPPORTINFO * PORT)
 			if (_stricmp(p_UDP,"SOURCEPORT") == 0)
 			{
 				p_udpport = strtok(NULL, " \t\n\r");
-			
+
 				if (p_udpport == NULL) return (FALSE);
 
 				SourcePort = atoi(p_udpport);
@@ -2225,7 +2225,7 @@ static int ProcessLine(char * buf, struct AXIPPORTINFO * PORT)
 			if (_stricmp(p_UDP,"TCP-Master") == 0)
 			{
 				p_udpport = strtok(NULL, " \t\n\r");
-			
+
 				if (p_udpport == NULL) return (FALSE);
 
 				port = atoi(p_udpport);
@@ -2239,7 +2239,7 @@ static int ProcessLine(char * buf, struct AXIPPORTINFO * PORT)
 			if (_stricmp(p_UDP,"TCP-Slave") == 0)
 			{
 				p_udpport = strtok(NULL, " \t\n\r");
-			
+
 				if (p_udpport == NULL) return (FALSE);
 
 				port = atoi(p_udpport);
@@ -2277,7 +2277,7 @@ static int ProcessLine(char * buf, struct AXIPPORTINFO * PORT)
 	if(_stricmp(ptr,"BROADCAST") == 0)
 	{
 		p_call = strtok(NULL, " \t\n\r");
-		
+
 		if (p_call == NULL) return (FALSE);
 
 		if (convtoax25(p_call,axcall,&calllen))
@@ -2295,14 +2295,14 @@ static int ProcessLine(char * buf, struct AXIPPORTINFO * PORT)
 	//
 	return (FALSE);
 }
-	
+
 int CONVFROMAX25(char * incall, char * outcall)
 {
 	int in,out=0;
 	unsigned char chr;
 //
 //	CONVERT AX25 FORMAT CALL IN incall TO NORMAL FORMAT IN out
-//	   RETURNS LENGTH 
+//	   RETURNS LENGTH
 //
 	memset(outcall,0x20,9);
 	outcall[9]=0;
@@ -2340,7 +2340,7 @@ BOOL convtoax25(unsigned char * callsign, unsigned char * ax25call,int * calllen
 	int i;
 
 	memset(ax25call,0x40,6);		// in case short
-	ax25call[6]=0x60;				// default SSID	
+	ax25call[6]=0x60;				// default SSID
 
 	for (i=0;i<7;i++)
 	{
@@ -2368,10 +2368,10 @@ BOOL convtoax25(unsigned char * callsign, unsigned char * ax25call,int * calllen
 			*calllen = 6;				// wildcard ssid
 			return (TRUE);
 		}
-		
+
 		ax25call[i] = callsign[i] << 1;
 	}
-	
+
 	//
 	//	Too many chars
 	//
@@ -2388,7 +2388,7 @@ BOOL add_arp_entry(struct AXIPPORTINFO * PORT, UCHAR * call, UCHAR * ip, int len
 		//
 		//	Table full
 		//
-		return (FALSE); 
+		return (FALSE);
 
 	arp = &PORT->arp_table[PORT->arp_table_len];
 
@@ -2442,7 +2442,7 @@ BOOL add_arp_entry(struct AXIPPORTINFO * PORT, UCHAR * call, UCHAR * ip, int len
 		}
 		arp->destaddr.sin_port = htons(arp->port);
 #ifndef LINBPQ
-			
+
 		SetScrollRange(PORT->hResWnd,SB_VERT, 0, PORT->arp_table_len, TRUE);
 		InvalidateRect(PORT->hResWnd, NULL, TRUE);
 #endif
@@ -2484,7 +2484,7 @@ int CheckKeepalives(struct AXIPPORTINFO * PORT)
 		{
 			arp = &PORT->arp_table[index];
 			arp->keepalive--;
-			
+
 			if (arp->keepalive == 0)
 			{
 			//
@@ -2496,11 +2496,11 @@ int CheckKeepalives(struct AXIPPORTINFO * PORT)
 				{
 					if (arp->port == 0) txsock = PORT->sock; else txsock = PORT->udpsock[0];
 
-					sendto(txsock,"Keepalive",9,0,(struct sockaddr *)&arp->destaddr,sizeof(arp->destaddr));			
+					sendto(txsock,"Keepalive",9,0,(struct sockaddr *)&arp->destaddr,sizeof(arp->destaddr));
 				}
 			}
 		}
-	
+
 	index++;
 
 	}
@@ -2509,8 +2509,8 @@ int CheckKeepalives(struct AXIPPORTINFO * PORT)
 
 	for (index = 0; index < MaxMHEntries; index++)
 	{
-		if (PORT->MHTable[index].Keepalive != 0) 
-			PORT->MHTable[index].Keepalive--;			
+		if (PORT->MHTable[index].Keepalive != 0)
+			PORT->MHTable[index].Keepalive--;
 	}
 
 	return (0);
@@ -2533,7 +2533,7 @@ BOOL CheckSourceisResolvable(struct AXIPPORTINFO * PORT, char * call, int Port, 
 
 			// Why not refreesh resolved addresses - if dynamic addr has changed
 			// this will give quicker response
-			
+
 			//if (arp->AutoAdded)
 			{
 				if (arp->IPv6)
@@ -2571,8 +2571,8 @@ int Update_MH_List(struct AXIPPORTINFO * PORT, UCHAR * ipad, char * call, char p
 	for (index = 0; index < MaxMHEntries; index++)
 	{
 		MH = &PORT->MHTable[index];
-		
-		if (MH->callsign[0] == 0) 
+
+		if (MH->callsign[0] == 0)
 		{
 			//	empty entry, so call not present. Move all down, and add to front
 
@@ -2603,7 +2603,7 @@ MoveEntries:
 	//
 	//	Move all preceeding entries down one, and put on front
 	//
-	
+
 	if (index > 0)
 		memmove(&PORT->MHTable[1],&PORT->MHTable[0],index*sizeof(struct MHTableEntry));
 
@@ -2630,7 +2630,7 @@ int Update_MH_KeepAlive(struct AXIPPORTINFO * PORT, struct in_addr ipad, char pr
 
 	for (index = 0; index < MaxMHEntries; index++)
 	{
-		if (PORT->MHTable[index].callsign[0] == 0) 
+		if (PORT->MHTable[index].callsign[0] == 0)
 
 			//	empty entry, so call not present.
 
@@ -2660,7 +2660,7 @@ int DumpFrameInHex(unsigned char * msg, int len)
 		sprintf(errmsg,"%04x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x ",
 			i, msg[i], msg[i+1],msg[i+2],msg[i+3],msg[i+4],msg[i+5],msg[i+6],msg[i+7],
 			msg[i+8],msg[i+9],msg[i+10],msg[i+11],msg[i+12],msg[i+13],msg[i+14],msg[i+15]);
-	
+
  			OutputDebugString(errmsg);
 	}
 
@@ -2690,7 +2690,7 @@ int GetMessageFromBuffer(struct AXIPPORTINFO * PORT, char * Buffer)
 				SOCKET sock;
 				BOOL bOptVal = TRUE;
 				struct sockaddr sin;
-		
+
 				addrlen = sizeof(struct sockaddr);
 
 				sock = accept(sockptr->TCPListenSock, &sin, &addrlen);
@@ -2705,13 +2705,13 @@ int GetMessageFromBuffer(struct AXIPPORTINFO * PORT, char * Buffer)
 					if (err == 10038 || err == 9)
 					{
 						// Not a socket
-	
+
 						closesocket(sockptr->TCPListenSock);
 						OpenListeningSocket(PORT, sockptr);
 
 						continue;
 					}
-					
+
 
 					Debugprintf("AXIP accept() failed Error %d", err);
 					continue;
@@ -2721,7 +2721,7 @@ int GetMessageFromBuffer(struct AXIPPORTINFO * PORT, char * Buffer)
 
 				if (setsockopt(sock, SOL_SOCKET, SO_KEEPALIVE, (char*)&bOptVal, 4) != SOCKET_ERROR)
 					Debugprintf("Set SO_KEEPALIVE: ON");
-	
+
 				sockptr->TCPSock = sock;
 				sockptr->TCPState = TCPConnected;
 			}
@@ -2865,7 +2865,7 @@ int	KissEncode(UCHAR * inbuff, UCHAR * outbuff, int len)
 	for (i=0;i<len;i++)
 	{
 		c=inbuff[i];
-		
+
 		switch (c)
 		{
 		case FEND:
@@ -2923,13 +2923,13 @@ VOID TCPConnectThread(struct arp_table_entry * arp)
 	int err, i;
 	u_long param=1;
 	BOOL bcopt=TRUE;
-	struct sockaddr_in sinx; 
+	struct sockaddr_in sinx;
 //	struct AXIPPORTINFO * PORT;
 
 	Sleep(15000);									// Delay startup a bit
 
 	while(arp->TCPMode == TCPMaster)
-	{		
+	{
 		if (arp->TCPState == 0)
 		{
 			arp->TCPSock=socket(AF_INET,SOCK_STREAM,0);
@@ -2938,12 +2938,12 @@ VOID TCPConnectThread(struct arp_table_entry * arp)
 			{
 				i=sprintf(Msg, "Socket Failed for AX/TCP socket - error code = %d\n", WSAGetLastError());
 				WritetoConsole(Msg);
-  	 			goto wait; 
+  	 			goto wait;
 			}
- 
+
 			setsockopt (arp->TCPSock, SOL_SOCKET, SO_REUSEADDR, (const char FAR *)&bcopt, 4);
 			setsockopt(arp->TCPSock, SOL_SOCKET, SO_KEEPALIVE, (char*)&bcopt, 4);
-	
+
 			sinx.sin_family = AF_INET;
 			sinx.sin_addr.s_addr = INADDR_ANY;
 			sinx.sin_port = 0;
@@ -2953,11 +2953,11 @@ VOID TCPConnectThread(struct arp_table_entry * arp)
 				//
 				//	Bind Failed
 				//
-	
+
 				i=sprintf(Msg, "Bind Failed for AX/TCP socket - error code = %d\n", WSAGetLastError());
 				WritetoConsole(Msg);
 
-  				goto wait; 
+  				goto wait;
 			}
 
 			arp->TCPState = TCPConnecting;
@@ -2987,13 +2987,13 @@ VOID TCPConnectThread(struct arp_table_entry * arp)
 			}
 		}
 wait:
-		Sleep (115000);				// 2 Mins 
+		Sleep (115000);				// 2 Mins
 	}
 
 	Debugprintf("TCP Connect Thread %x Closing", arp->TCPThreadID);
 
 	arp->TCPThreadID = 0;
-	
+
 	return;		// Not Used
 
 }
@@ -3030,15 +3030,15 @@ VOID Format_Addr(unsigned char * Addr, char * Output, BOOL IPV6)
 	}
 
 	// COnvert 16 bytes to 8 words
-	
+
 	for (i = 0; i < 16; i += 2)
 	    words[i / 2] = (src[i] << 8) | src[i + 1];
 
 	// Look for longest run of zeros
-	
+
 	best.base = -1;
 	cur.base = -1;
-	
+
 	for (i = 0; i < 8; i++)
 	{
 		if (words[i] == 0)
@@ -3055,26 +3055,26 @@ VOID Format_Addr(unsigned char * Addr, char * Output, BOOL IPV6)
 			if (cur.base != -1)
 			{
 				// See if this run is longer
-				
+
 				if (best.base == -1 || cur.len > best.len)
 					best = cur;
-				
+
 				cur.base = -1;	// Start again
 			}
 		}
 	}
-	
+
 	if (cur.base != -1)
 	{
 		if (best.base == -1 || cur.len > best.len)
 			best = cur;
 	}
-	
+
 	if (best.base != -1 && best.len < 2)
 	    best.base = -1;
-	
+
 	ptr = Output;
-	  
+
 	for (i = 0; i < 8; i++)
 	{
 		/* Are we inside the best run of 0x00's? */
@@ -3082,24 +3082,24 @@ VOID Format_Addr(unsigned char * Addr, char * Output, BOOL IPV6)
 		if (best.base != -1 && i >= best.base && i < (best.base + best.len))
 		{
 			// Just output one : for whole string of zeros
-			
+
 			*ptr++ = ':';
 			i = best.base + best.len - 1;	// skip rest of zeros
 			continue;
 		}
-	    
+
 		/* Are we following an initial run of 0x00s or any real hex? */
-		
+
 		if (i != 0)
 			*ptr++ = ':';
-		
+
 		ptr += sprintf (ptr, "%x", words[i]);
-	        
+
 		//	Was it a trailing run of 0x00's?
 	}
 
 	if (best.base != -1 && (best.base + best.len) == 8)
 		*ptr++ = ':';
-	
-	*ptr++ = '\0';	
+
+	*ptr++ = '\0';
 }

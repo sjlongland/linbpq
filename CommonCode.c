@@ -15,7 +15,7 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with LinBPQ/BPQ32.  If not, see http://www.gnu.org/licenses
-*/	
+*/
 
 
 
@@ -79,7 +79,7 @@ VOID PutLengthinBuffer(UCHAR * buff, int datalen)		// Neded for arm5 portability
 	sp = (short *)&buff[5];
 	*sp = datalen;
 #else
-	buff[5]=(datalen & 0xff);	// 
+	buff[5]=(datalen & 0xff);	//
 	buff[6]=(datalen >> 8);
 #endif
 }
@@ -89,9 +89,9 @@ int GetLengthfromBuffer(UCHAR * buff)				// Needed for arm5 portability
 #ifdef __BIG_ENDIAN__
 //	short * sp;					// MAC POWERPC etc
 //	return sp = (short *)&buff[5];
-	return (buff[5]<<8) + buff[6];	
+	return (buff[5]<<8) + buff[6];
 #else
-	return (buff[6]<<8) + buff[5];	
+	return (buff[6]<<8) + buff[5];
 #endif
 }
 
@@ -564,7 +564,7 @@ VOID CheckForDetach(struct TNCINFO * TNC, int Stream, struct STREAMINFO * STREAM
 				Duration = time(NULL) - STREAM->ConnectTime;
 
 				if (Duration == 0)
-					Duration = 1;				// Or will get divide by zero error 
+					Duration = 1;				// Or will get divide by zero error
 
 				sprintf(logmsg,"Port %2d %9s Bytes Sent %d  BPS %d Bytes Received %d BPS %d Time %d Seconds",
 					TNC->Port, STREAM->RemoteCall,
@@ -2303,7 +2303,7 @@ int ReadCOMBlockEx(HANDLE fd, char * Block, int MaxLength, BOOL * Error)
 BOOL WriteCOMBlock(HANDLE fd, char * Block, int BytesToWrite)
 {
 	//	Some systems seem to have a very small max write size
-	
+
 	int ToSend = BytesToWrite;
 	int Sent = 0, ret;
 
@@ -2318,11 +2318,11 @@ BOOL WriteCOMBlock(HANDLE fd, char * Block, int BytesToWrite)
 		{
 			if (errno != 11 && errno != 35)					// Would Block
 				return FALSE;
-	
+
 			usleep(10000);
 			ret = 0;
 		}
-						
+
 		Sent += ret;
 		ToSend -= ret;
 	}
@@ -2385,7 +2385,7 @@ FILE *file;
 int DoRoutes()
 {
 	char digis[30] = "";
-	char locked[3]; 
+	char locked[3];
 	int count, len;
 	char Normcall[10], Portcall[10];
 	char line[80];
@@ -2719,7 +2719,7 @@ Dll BOOL APIENTRY CheckOneTimePassword(char * Password, char * KeyPhrase)
 DllExport BOOL ConvToAX25Ex(unsigned char * callsign, unsigned char * ax25call)
 {
 	// Allows SSID's of 'T and 'R'
-	
+
 	int i;
 
 	memset(ax25call,0x40,6);		// in case short
@@ -2732,7 +2732,7 @@ DllExport BOOL ConvToAX25Ex(unsigned char * callsign, unsigned char * ax25call)
 			//
 			//	process ssid and return
 			//
-			
+
 			if (callsign[i+1] == 'T')
 			{
 				ax25call[6]=0x42;
@@ -3349,7 +3349,7 @@ int UIRemoveLF(char * Message, int len)
 	while (len-- > 0)
 	{
 		*ptr2 = *ptr1;
-	
+
 		if (*ptr1 == '\r')
 			if (*(ptr1+1) == '\n')
 			{
@@ -3387,7 +3387,7 @@ VOID UISend_AX_Datagram(UCHAR * Msg, DWORD Len, UCHAR Port, UCHAR * HWADDR, BOOL
 		UCHAR * ptr;
 
 		memcpy(&AXPTR->CTL, UIUIDigiAX[Port], DigiLen);
-		
+
 		ptr = (UCHAR *)AXPTR;
 		ptr += DigiLen;
 		AXPTR = (PMESSAGEX)ptr;
@@ -3422,12 +3422,12 @@ VOID SendUIBeacon(int Port)
 		FILE * hFile;
 
 		hFile = fopen(FN[Port], "rb");
-	
+
 		if (hFile == 0)
 			return;
 
-		Len = fread(UIMessage, 1, 1024, hFile); 
-		
+		Len = fread(UIMessage, 1, 1024, hFile);
+
 		fclose(hFile);
 
 	}
@@ -3491,7 +3491,7 @@ HWND hwndDisplay;
 #define IDC_PORTNAME                    1060
 
 extern HKEY REGTREE;
-HBRUSH bgBrush; 
+HBRUSH bgBrush;
 
 VOID SetupUI(int Port)
 {
@@ -3528,7 +3528,7 @@ VOID SetupUI(int Port)
 VOID SaveIntValue(config_setting_t * group, char * name, int value)
 {
 	config_setting_t *setting;
-	
+
 	setting = config_setting_add(group, name, CONFIG_TYPE_INT);
 	if(setting)
 		config_setting_set_int(setting, value);
@@ -3567,7 +3567,7 @@ VOID SaveUIConfig()
 	}
 
 	//	Get rid of old config before saving
-	
+
 	config_init(&cfg);
 
 	root = config_root_setting(&cfg);
@@ -3579,15 +3579,15 @@ VOID SaveUIConfig()
 	for (Port = 1; Port <= MaxPort; Port++)
 	{
 		char Key[20];
-		
-		sprintf(Key, "Port%d", Port); 
+
+		sprintf(Key, "Port%d", Port);
 		group = config_setting_add(UIGroup, Key, CONFIG_TYPE_GROUP);
 
 		SaveStringValue(group, "UIDEST", &UIUIDEST[Port][0]);
 		SaveStringValue(group, "FileName", &FN[Port][0]);
 		SaveStringValue(group, "Message", &Message[Port][0]);
 		SaveStringValue(group, "Digis", UIUIDigi[Port]);
-	
+
 		SaveIntValue(group, "Interval", Interval[Port]);
 		SaveIntValue(group, "SendFromFile", SendFromFile[Port]);
 	}
@@ -3650,8 +3650,8 @@ VOID GetUIConfig()
 	if (group)
 	{
 		for (Port = 1; Port <= MaxPort; Port++)
-		{	
-			sprintf(Key, "main.UIUtil.Port%d", Port); 
+		{
+			sprintf(Key, "main.UIUtil.Port%d", Port);
 
 			group = config_lookup (&cfg, Key);
 
@@ -3662,7 +3662,7 @@ VOID GetUIConfig()
 				GetStringValue(group, "Message", &Message[Port][0]);
 				GetStringValue(group, "Digis", Digis);
 				UIUIDigi[Port] = _strdup(Digis);
-	
+
 				Interval[Port] = GetIntValue(group, "Interval");
 				MinCounter[Port] = Interval[Port];
 
@@ -3674,7 +3674,7 @@ VOID GetUIConfig()
 	}
 
 #else
-	
+
 	int retCode, Vallen, Type, i;
 	char Key[80];
 	char Size[80];
@@ -3682,14 +3682,14 @@ VOID GetUIConfig()
 	RECT Rect;
 
 	wsprintf(Key, "SOFTWARE\\G8BPQ\\BPQ32\\UIUtil");
-	
+
 	retCode = RegOpenKeyEx (REGTREE, Key, 0, KEY_QUERY_VALUE, &hKey);
 
 	if (retCode == ERROR_SUCCESS)
 	{
 		Vallen=80;
 
-		retCode = RegQueryValueEx(hKey,"Size",0,			
+		retCode = RegQueryValueEx(hKey,"Size",0,
 			(ULONG *)&Type,(UCHAR *)&Size,(ULONG *)&Vallen);
 
 		if (retCode == ERROR_SUCCESS)
@@ -3709,26 +3709,26 @@ VOID GetUIConfig()
                               &hKey);
 
 		if (retCode == ERROR_SUCCESS)
-		{	
+		{
 			Vallen=0;
-			RegQueryValueEx(hKey,"Digis",0,			
+			RegQueryValueEx(hKey,"Digis",0,
 				(ULONG *)&Type, NULL, (ULONG *)&Vallen);
 
 			if (Vallen)
 			{
 				UIUIDigi[i] = malloc(Vallen);
-				RegQueryValueEx(hKey,"Digis",0,			
+				RegQueryValueEx(hKey,"Digis",0,
 					(ULONG *)&Type, UIUIDigi[i], (ULONG *)&Vallen);
 			}
 
 			Vallen=4;
-			retCode = RegQueryValueEx(hKey, "Interval", 0,			
+			retCode = RegQueryValueEx(hKey, "Interval", 0,
 				(ULONG *)&Type, (UCHAR *)&Interval[i], (ULONG *)&Vallen);
 
 			MinCounter[i] = Interval[i];
 
 			Vallen=4;
-			retCode = RegQueryValueEx(hKey, "SendFromFile", 0,			
+			retCode = RegQueryValueEx(hKey, "SendFromFile", 0,
 				(ULONG *)&Type, (UCHAR *)&SendFromFile[i], (ULONG *)&Vallen);
 
 
@@ -3842,14 +3842,14 @@ INT_PTR CALLBACK ChildDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM 
 				UIUIDigiAX[Port] = NULL;
 			}
 
-			GetDlgItemText(hDlg, IDC_UIDIGIS, Digis, 99); 
-		
+			GetDlgItemText(hDlg, IDC_UIDIGIS, Digis, 99);
+
 			UIUIDigi[Port] = _strdup(Digis);
-		
-			GetDlgItemText(hDlg, IDC_FILENAME, &FN[Port][0], 255); 
-			GetDlgItemText(hDlg, IDC_MESSAGE, &Message[Port][0], 1000); 
-	
-			Interval[Port] = GetDlgItemInt(hDlg, IDC_INTERVAL, &OK, FALSE); 
+
+			GetDlgItemText(hDlg, IDC_FILENAME, &FN[Port][0], 255);
+			GetDlgItemText(hDlg, IDC_MESSAGE, &Message[Port][0], 1000);
+
+			Interval[Port] = GetDlgItemInt(hDlg, IDC_INTERVAL, &OK, FALSE);
 
 			MinCounter[Port] = Interval[Port];
 
@@ -3859,7 +3859,7 @@ INT_PTR CALLBACK ChildDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM 
 
 			retCode = RegCreateKeyEx(REGTREE,
 					Key, 0, 0, 0, KEY_ALL_ACCESS, NULL, &hKey, &disp);
-	
+
 			if (retCode == ERROR_SUCCESS)
 			{
 				retCode = RegSetValueEx(hKey, "UIDEST", 0, REG_SZ,(BYTE *)&UIUIDEST[Port][0], strlen(&UIUIDEST[Port][0]));
@@ -3890,7 +3890,7 @@ INT_PTR CALLBACK ChildDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM 
 		}
 		break;
 
-	}	
+	}
 	return (INT_PTR)FALSE;
 }
 
@@ -3956,7 +3956,7 @@ VOID WINAPI OnTabbedDialogInit(HWND hDlg)
 
 		tie.pszText = PortNo;
 		TabCtrl_InsertItem(pHdr->hwndTab, tab, &tie);
-	
+
 		pHdr->apRes[tab++] = DoLockDlgRes("PORTPAGE");
 	}
 
@@ -4006,7 +4006,7 @@ VOID WINAPI OnTabbedDialogInit(HWND hDlg)
 
 	pos=rcTab.left+cxMargin;
 
-	
+
 	// Size the dialog box.
 
 	SetWindowPos(hwndDlg, NULL, 0, 0, rcTab.right + cyMargin + 2 * GetSystemMetrics(SM_CXDLGFRAME),
@@ -4105,7 +4105,7 @@ LRESULT CALLBACK UIWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam
 	int wmId, wmEvent;
 	HKEY hKey=0;
 
-	switch (message) { 
+	switch (message) {
 
 	case WM_INITDIALOG:
 		OnTabbedDialogInit(hWnd);
@@ -4166,15 +4166,15 @@ LRESULT CALLBACK UIWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam
 
 			return (DefWindowProc(hWnd, message, wParam, lParam));
 
-		case  SC_MINIMIZE: 
-			
+		case  SC_MINIMIZE:
+
 			if (MinimizetoTray)
 				return ShowWindow(hWnd, SW_HIDE);
 			else
 				return (DefWindowProc(hWnd, message, wParam, lParam));
-						
+
 			break;
-		
+
 		default:
 				return (DefWindowProc(hWnd, message, wParam, lParam));
 		}

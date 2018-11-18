@@ -2,7 +2,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"><head>
 <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-<style type="text/css"> 
+<style type="text/css">
 
 #main {width:500px;height:480px;position:absolute;left:105px;font-family: monospace;border:2px solid;}
 #sidebar{position: absolute;left: 0px;width: 97px;height: 480px;font-family: monospace;border:2px solid;overflow: auto;}
@@ -10,21 +10,21 @@
 
 <title>Edit WP</title>
 
-<script type="text/javascript"> 
- 
+<script type="text/javascript">
+
 var Details
 var Sidebar
 var fromleft;
 
 function initialize()
-{	
+{
 	var w=window,d=document,e=d.documentElement,g=d.getElementsByTagName('body')[0];
 	x=w.innerWidth||e.clientWidth||g.clientWidth;	y=w.innerHeight||e.clientHeight||g.clientHeight;
 	fromleft = (x / 2) - 300;
-	Sidebar = document.getElementById("sidebar"); 
+	Sidebar = document.getElementById("sidebar");
 	Sidebar.style.left = fromleft + "px";
-	Details = document.getElementById("main"); 
-	Details.innerHTML = "waiting for data..."; 
+	Details = document.getElementById("main");
+	Details.innerHTML = "waiting for data...";
 	Details.style.left = fromleft + 105 + "px";
 	GetData();
 }
@@ -60,7 +60,7 @@ function GetDetails(call)
 function GetData()
 {
 	if (window.XMLHttpRequest){request=new XMLHttpRequest();}else{request=new ActiveXObject("Microsoft.XMLHTTP");}
- 
+
 	request.onreadystatechange = function()
 	{
 		if (request.readyState == 4)
@@ -68,25 +68,25 @@ function GetData()
 			var text = request.responseText;
 			var lines = text.split("|");
 			var i = 0;
-			
-	 	    var infoArea = document.getElementById("sidebar"); 
+
+	 	    var infoArea = document.getElementById("sidebar");
 		    var strInfo = '<table>';
- 						
+
 			while(i < lines.length - 1)
-			{	
-				var clink = '<a href=javascript:GetDetails("' + lines[i] + '")>' + lines[i] + '</a>';	
-				var tableRow = '<tr><td>' + clink + '</td></tr>\n';	 
-				strInfo += tableRow;			
+			{
+				var clink = '<a href=javascript:GetDetails("' + lines[i] + '")>' + lines[i] + '</a>';
+				var tableRow = '<tr><td>' + clink + '</td></tr>\n';
+				strInfo += tableRow;
 				i=i+1;
 			}
 			infoArea.innerHTML = strInfo + "</table>";
 			GetDetails(lines[0]);
 		}
 	}
-	request.open("GET","WPInfo.txt?%s",true);										   
+	request.open("GET","WPInfo.txt?%s",true);
 	request.send();
 }
- 
+
 </script>
 </head><body background=/background.jpg onload="initialize()">
 <h3 align="center">BPQ32 BBS %s</h3>

@@ -15,10 +15,10 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with LinBPQ/BPQ32.  If not, see http://www.gnu.org/licenses
-*/	
+*/
 
 //
-//	DLL to provide interface to allow G8BPQ switch to use AGWPE as a Port Driver 
+//	DLL to provide interface to allow G8BPQ switch to use AGWPE as a Port Driver
 //	32bit environment,
 //
 //	Uses BPQ EXTERNAL interface
@@ -154,7 +154,7 @@ static HANDLE STDOUT=0;
 
 //SOCKET sock;
 
-static SOCKADDR_IN sinx; 
+static SOCKADDR_IN sinx;
 static SOCKADDR_IN rxaddr;
 static SOCKADDR_IN destaddr[MAXBPQPORTS+1];
 
@@ -199,7 +199,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 			if (CONNECTED[port] == FALSE && CONNECTING[port] == FALSE)
 			{
 				//	See if time to reconnect
-		
+
 				time( &ltime );
 				if (ltime-lasttime[port] > 9 )
 				{
@@ -207,17 +207,17 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 					lasttime[port]=ltime;
 				}
 			}
-		
+
 			FD_ZERO(&readfs);
-			
+
 			if (CONNECTED[port]) FD_SET(sock,&readfs);
-	
+
 			FD_ZERO(&writefs);
 
 			if (BPQtoAGW_Q[port]) FD_SET(sock,&writefs);	// Need notification of busy clearing
 
 			FD_ZERO(&errorfs);
-		
+
 			if (CONNECTED[port]) FD_SET(sock,&errorfs);
 
 			if (select(sock+1, &readfs, &writefs, &errorfs, &timeout) > 0)
@@ -226,11 +226,11 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 
 				if (FD_ISSET(sock, &readfs))
 				{
-			
+
 					// data available
-			
+
 					ProcessReceivedData(port);
-				
+
 				}
 
 				if (FD_ISSET(sock, &writefs))
@@ -249,11 +249,11 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 						memcpy(txbuff,buffptr+2,txlen);
 
 						bytes=send(AGWSock[port],(const char FAR *)&txbuff,txlen,0);
-					
+
 						ReleaseBuffer(buffptr);
 					}
 				}
-					
+
 				if (FD_ISSET(sock, &errorfs))
 				{
 					sprintf(ErrMsg, "AGW Connection lost for BPQ Port %d\n", port);
@@ -281,7 +281,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 
 //			buff[5]=(datalen & 0xff);
 //			buff[6]=(datalen >> 8);
-		
+
 			ReleaseBuffer(buffptr);
 
 			return (1);
@@ -294,7 +294,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 
 	case 2:				// send
 
-		
+
 		if (!CONNECTED[MasterPort[port]]) return 0;		// Don't try if not connected
 
 		if (BPQtoAGW_Q[MasterPort[port]]) return 0;		// Socket is blocked - just drop packets
@@ -305,8 +305,8 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 		sp = (short *)&buff[5];
 		txlen = *sp - 6;
 
-//		txlen=(buff[6]<<8) + buff[5]-6;	
-		
+//		txlen=(buff[6]<<8) + buff[5]-6;
+
 		AGWHeader.Port=AGWChannel[port];
 		AGWHeader.DataKind='K';				// raw send
 
@@ -318,29 +318,29 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 		memcpy(&txbuff,&AGWHeader,sizeof(AGWHeader));
 		memcpy(&txbuff[sizeof(AGWHeader)], &buff[6], txlen);
 		txbuff[sizeof(AGWHeader)]=0;
-		
+
 		txlen+=sizeof(AGWHeader);
 
 		bytes=send(AGWSock[MasterPort[port]],(const char FAR *)&txbuff, txlen, 0);
-		
+
 		if (bytes != txlen)
 		{
 
 			// AGW doesn't seem to recover from a blocked write. For now just reset
-			
+
 //			if (bytes == SOCKET_ERROR)
 //			{
 				winerr=WSAGetLastError();
-				
+
 				i=sprintf(ErrMsg, "AGW Write Failed for port %d - error code = %d\n", port, winerr);
 				WritetoConsole(ErrMsg);
-					
-	
+
+
 //				if (winerr != WSAEWOULDBLOCK)
 //				{
-				
+
 					closesocket(AGWSock[MasterPort[port]]);
-					
+
 					CONNECTED[MasterPort[port]]=FALSE;
 
 					return (0);
@@ -354,9 +354,9 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 
 			// Partial Send or WSAEWOULDBLOCK. Save data, and send once busy clears
 
-			
+
 			// Get a buffer
-						
+
 //			buffptr=GetBuff();
 
 //			if (buffptr == 0)
@@ -364,31 +364,31 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 				// No buffers, so can only break connection and try again
 
 //				closesocket(AGWSock[MasterPort[port]]);
-					
+
 //				CONNECTED[MasterPort[port]]=FALSE;
 
 //				return (0);
 //			}
-	
+
 //			buffptr[1]=txlen-bytes;			// Bytes still to send
 
 //			memcpy(buffptr+2,&txbuff[bytes],txlen-bytes);
 
 //			C_Q_ADD(&BPQtoAGW_Q[MasterPort[port]],buffptr);
-	
+
 //			return (0);
 		}
 
 
 		return (0);
 
-	
+
 
 
 	case 3:				// CHECK IF OK TO SEND
 
 		return (0);		// OK
-			
+
 		break;
 
 	case 4:				// reinit
@@ -405,7 +405,7 @@ UINT AGWExtInit(struct PORTCONTROL *  PortEntry)
 {
 	int i, port;
 	char Msg[255];
-	
+
 	//
 	//	Will be called once for each AGW port to be mapped to a BPQ Port
 	//	The AGW port number is in CHANNEL - A=0, B=1 etc
@@ -428,7 +428,7 @@ UINT AGWExtInit(struct PORTCONTROL *  PortEntry)
 
 		AGWHostName[port]=malloc(10);
 
-		if (AGWHostName[port] != NULL) 
+		if (AGWHostName[port] != NULL)
 			strcpy(AGWHostName[port],"127.0.0.1");
 
 	}
@@ -437,7 +437,7 @@ UINT AGWExtInit(struct PORTCONTROL *  PortEntry)
 	WritetoConsole(Msg);
 
 	// See if we already have a port for this host
-	
+
 
 	MasterPort[port]=port;
 
@@ -457,13 +457,13 @@ UINT AGWExtInit(struct PORTCONTROL *  PortEntry)
 
 
 	BPQPort[PortEntry->CHANNELNUM-65][MasterPort[port]]=PortEntry->PORTNUMBER;
-			
+
 	if (MasterPort[port] == port)
 		ConnecttoAGW(port);
 
 	time(&lasttime[port]);			// Get initial time value
 
-	
+
 	return ((int) ExtProc);
 
 }
@@ -507,7 +507,7 @@ BOOL ReadConfigFile(int Port)
 			ptr2 = strchr(ptr1, 13);
 
 			strcpy(errbuf,buf);			// save in case of error
-	
+
 			if (!ProcessLine(buf, Port, FALSE))
 			{
 				WritetoConsole("BPQtoAGW - Bad config record ");
@@ -541,7 +541,7 @@ static int ProcessLine(char * buf, int Port, BOOL CheckPort)
 	if (CheckPort)
 	{
 		p_ipad = strtok(NULL, " \t\n\r");
-			
+
 		if (p_ipad == NULL) return (FALSE);
 
 		BPQport = atoi(ptr);
@@ -554,9 +554,9 @@ static int ProcessLine(char * buf, int Port, BOOL CheckPort)
 		p_ipad = ptr;
 	}
 	if(BPQport > 0 && BPQport <33)
-	{	
+	{
 		p_udpport = strtok(NULL, " \t\n\r");
-			
+
 		if (p_udpport == NULL) return (FALSE);
 
 		AGWport = atoi(p_udpport);
@@ -571,11 +571,11 @@ static int ProcessLine(char * buf, int Port, BOOL CheckPort)
 		strcpy(AGWHostName[BPQport],p_ipad);
 
 		p_user = strtok(NULL, " \t\n\r");
-			
+
 		if (p_user == NULL) return (TRUE);
 
 		p_password = strtok(NULL, " \t\n\r");
-			
+
 		if (p_password == NULL) return (TRUE);
 
 		// Allocate buffer for signon message
@@ -601,9 +601,9 @@ static int ProcessLine(char * buf, int Port, BOOL CheckPort)
 	//	Bad line
 	//
 	return (FALSE);
-	
+
 }
-	
+
 int ConnecttoAGW(int port)
 {
 	_beginthread(ConnecttoAGWThread,0,port);
@@ -628,7 +628,7 @@ VOID ConnecttoAGWThread(int port)
 		//	Resolve name to address
 
 		 HostEnt = gethostbyname (AGWHostName[port]);
-		 
+
 		 if (!HostEnt) return;			// Resolve failed
 
 		 memcpy(&destaddr[port].sin_addr.s_addr,HostEnt->h_addr,4);
@@ -642,9 +642,9 @@ VOID ConnecttoAGWThread(int port)
 		i=sprintf(Msg, "Socket Failed for AGW socket - error code = %d\r\n", WSAGetLastError());
 		WritetoConsole(Msg);
 
-  	 	return; 
+  	 	return;
 	}
- 
+
 	setsockopt (AGWSock[port],SOL_SOCKET,SO_REUSEADDR,(const char FAR *)&bcopt,4);
 
 	sinx.sin_family = AF_INET;
@@ -656,12 +656,12 @@ VOID ConnecttoAGWThread(int port)
 		//
 		//	Bind Failed
 		//
-	
+
 		i=sprintf(Msg, "Bind Failed for AGW socket - error code = %d\r\n", WSAGetLastError());
 		WritetoConsole(Msg);
 
 		closesocket(AGWSock[port]);
-  	 	return; 
+  	 	return;
 	}
 
 	CONNECTING[port] = TRUE;
@@ -732,9 +732,9 @@ int ProcessReceivedData(int port)
 	{
 		i=sprintf(ErrMsg, "Read Failed for AGW socket - error code = %d\r\n", WSAGetLastError());
 		WritetoConsole(ErrMsg);
-				
+
 		closesocket(AGWSock[port]);
-					
+
 		CONNECTED[port]=FALSE;
 
 		return (0);
@@ -753,11 +753,11 @@ int ProcessReceivedData(int port)
 	}
 
 	//	Have some data
-	
+
 	if (bytes == sizeof(RXHeader))
 	{
 		//	Have a header - see if we have any associated data
-		
+
 		datalen=RXHeader.DataLength;
 
 		#ifdef __BIG_ENDIAN__
@@ -767,7 +767,7 @@ int ProcessReceivedData(int port)
 		if (datalen > 0)
 		{
 			// Need data - See if enough there
-			
+
 			bytes = recv(AGWSock[port],(char *)&Message,sizeof(RXHeader)+datalen,MSG_PEEK);
 		}
 
@@ -782,22 +782,22 @@ int ProcessReceivedData(int port)
 
 			// Have header, and data if needed
 
-			// Only use frame type 
+			// Only use frame type
 
 			if (RXHeader.DataKind == 'K')				// raw data
 			{
 				//	Make sure it is for a port we want - we may not be using all AGW ports
 
 				if (BPQPort[RXHeader.Port][MasterPort[port]] == 0)
-					
+
 					return (0);
 
 				// Get a buffer
-						
+
 				buffptr=GetBuff();
 
 				if (buffptr == 0) return (0);			// No buffers, so ignore
-	
+
 				buffptr[1]=datalen;
 				memcpy(buffptr+2,&Message,datalen);
 
@@ -813,6 +813,6 @@ int ProcessReceivedData(int port)
 	}
 
 	// Dont have at least header bytes
-	
+
 	return (0);
 }

@@ -6,9 +6,9 @@ function initialize(mainoffset)
 {
 	var w=window,d=document,e=d.documentElement,g=d.getElementsByTagName('body')[0];
 	x=w.innerWidth; //||e.clientWidth||g.clientWidth;
-	y=w.innerHeight; //||e.clientHeight||g.clientHeight; 
+	y=w.innerHeight; //||e.clientHeight||g.clientHeight;
 	Main = document.getElementById("main");
-	w = x;	
+	w = x;
 	if (w > 920) {w = 920;}
  	fromleft = (x / 2) - (x - 150)/2;
 	if (fromleft < 0) {fromleft = 0;}

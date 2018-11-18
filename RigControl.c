@@ -15,7 +15,7 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with LinBPQ/BPQ32.  If not, see http://www.gnu.org/licenses
-*/	
+*/
 
 //
 //	Rig Control Module
@@ -23,7 +23,7 @@ along with LinBPQ/BPQ32.  If not, see http://www.gnu.org/licenses
 
 // Dec 29 2009
 
-//	Add Scan Control for SCS 
+//	Add Scan Control for SCS
 
 // August 2010
 
@@ -54,7 +54,7 @@ along with LinBPQ/BPQ32.  If not, see http://www.gnu.org/licenses
 #ifndef LINBPQ
 #include <commctrl.h>
 #else
-char *fcvt(double number, int ndigits, int *decpt, int *sign);  
+char *fcvt(double number, int ndigits, int *decpt, int *sign);
 #endif
 #include "bpq32.h"
 
@@ -112,7 +112,7 @@ int GetPTCRadioCommand(struct TNCINFO * TNC, char * Block);
 extern  TRANSPORTENTRY * L4TABLE;
 HANDLE hInstance;
 
-VOID APIENTRY CreateOneTimePassword(char * Password, char * KeyPhrase, int TimeOffset); 
+VOID APIENTRY CreateOneTimePassword(char * Password, char * KeyPhrase, int TimeOffset);
 BOOL APIENTRY CheckOneTimePassword(char * Password, char * KeyPhrase);
 
 char * GetApplCallFromName(char * App);
@@ -153,7 +153,7 @@ struct RIGPORTINFO * PORTInfo[34] = {NULL};		// Records are Malloc'd
 struct TimeScan * AllocateTimeRec(struct RIGINFO * RIG)
 {
 	struct TimeScan * Band = malloc(sizeof (struct TimeScan));
-	
+
 	RIG->TimeBands = realloc(RIG->TimeBands, (++RIG->NumberofBands+2)*4);
 	RIG->TimeBands[RIG->NumberofBands] = Band;
 	RIG->TimeBands[RIG->NumberofBands+1] = NULL;
@@ -165,7 +165,7 @@ struct ScanEntry ** CheckTimeBands(struct RIGINFO * RIG)
 {
 	int i = 0;
 	time_t NOW = time(NULL) % 86400;
-				
+
 	// Find TimeBand
 
 	while (i < RIG->NumberofBands)
@@ -237,10 +237,10 @@ VOID Rig_PTT(struct RIGINFO * RIG, BOOL PTTState)
 				RigWriteCommBlock(PORT); // Send ICOM PTT OFF Twice
 
 			PORT->Retries = 1;
-			
+
 			if (PORT->PortType != ICOM)
 				PORT->Timeout = 0;
-			
+
 			return;
 
 		case FT100:
@@ -252,7 +252,7 @@ VOID Rig_PTT(struct RIGINFO * RIG, BOOL PTTState)
 			*(Poll++) = 0;
 			*(Poll++) = PTTState;	// OFF/ON
 			*(Poll++) = 15;
-	
+
 			PORT->TXLen = 5;
 			RigWriteCommBlock(PORT);
 
@@ -268,7 +268,7 @@ VOID Rig_PTT(struct RIGINFO * RIG, BOOL PTTState)
 			*(Poll++) = 0;
 			*(Poll++) = 0;
 			*(Poll++) = PTTState ? 0x08 : 0x88;		// CMD = 08 : PTT ON CMD = 88 : PTT OFF
-	
+
 			PORT->TXLen = 5;
 			RigWriteCommBlock(PORT);
 
@@ -365,13 +365,13 @@ int Rig_Command(int Session, char * Command)
 				return FALSE;
 			}
 		}
-		
+
 		sprintf(Command, "Sorry AUTH failed\r");
 		return FALSE;
 	}
 
 	if (Session != -1)				// Used for internal Stop/Start
-	{		
+	{
 		L4 += Session;
 
 		if (L4->Secure_Session == 0)
@@ -388,7 +388,7 @@ int Rig_Command(int Session, char * Command)
 
 	n = sscanf(Command,"%d %s %s %s %s", &Port, &FreqString[0], &Mode[0], &FilterString[0], &Data[0]);
 
-	// Look for the port 
+	// Look for the port
 
 	for (p = 0; p < NumberofPorts; p++)
 	{
@@ -430,7 +430,7 @@ portok:
 				else
 					RIG->ScanCounter = 10;
 
-				RIG->WaitingForPermission = FALSE;		// In case stuck	
+				RIG->WaitingForPermission = FALSE;		// In case stuck
 
 				if (RIG->ScanStopped == 0)
 				{
@@ -472,7 +472,7 @@ portok:
 	if (_stricmp(FreqString, "TUNE") == 0)
 	{
 		switch (PORT->PortType)
-		{ 
+		{
 		case ICOM:
 
 			buffptr = GetBuff();
@@ -483,7 +483,7 @@ portok:
 				return FALSE;
 			}
 
-			
+
 			// Build a ScanEntry in the buffer
 
 			FreqPtr = (struct ScanEntry *)&buffptr[2];
@@ -505,9 +505,9 @@ portok:
 			*(CmdPtr++) = 0x02;
 			*(CmdPtr++) = 0xFD;
 			FreqPtr[0].Cmd1Len = 8;
-	
+
 			buffptr[1] = 200;
-		
+
 			C_Q_ADD(&RIG->BPQtoRADIO_Q, buffptr);
 
 			return TRUE;
@@ -515,7 +515,7 @@ portok:
 		case KENWOOD:
 
 			buffptr = GetBuff();
-	
+
 			if (buffptr == 0)
 			{
 				sprintf(Command, "Sorry - No Buffers available\r");
@@ -526,7 +526,7 @@ portok:
 
 			FreqPtr = (struct ScanEntry *)&buffptr[2];
 			memset(FreqPtr, 0, sizeof(struct ScanEntry));
-	
+
 			Poll = (UCHAR *)&buffptr[30];
 
 			buffptr[1] = sprintf(Poll, "AC111;AC;");
@@ -545,7 +545,7 @@ portok:
 		int Power = atoi(Mode);
 
 		switch (PORT->PortType)
-		{ 
+		{
 		case ICOM:
 
 			if (n != 3 || Power > 255)
@@ -564,7 +564,7 @@ portok:
 				return FALSE;
 			}
 
-			
+
 			// Build a ScanEntry in the buffer
 
 			FreqPtr = (struct ScanEntry *)&buffptr[2];
@@ -591,9 +591,9 @@ portok:
 
 			*(CmdPtr++) = 0xFD;
 			FreqPtr[0].Cmd1Len = 9;
-	
+
 			buffptr[1] = 200;
-		
+
 			C_Q_ADD(&RIG->BPQtoRADIO_Q, buffptr);
 
 			return TRUE;
@@ -618,7 +618,7 @@ portok:
 
 			FreqPtr = (struct ScanEntry *)&buffptr[2];
 			memset(FreqPtr, 0, sizeof(struct ScanEntry));
-	
+
 			Poll = (UCHAR *)&buffptr[30];
 
 			buffptr[1] = sprintf(Poll, "PC%03d;PC;", Power);
@@ -665,9 +665,9 @@ portok:
 		FreqPtr->Cmd3 = NULL;
 
 		memset(FreqPtr, 0, sizeof(struct ScanEntry));
-	
+
 		switch (PORT->PortType)
-		{ 
+		{
 		case ICOM:
 
 			// String is in Hex
@@ -675,7 +675,7 @@ portok:
 			while (c = *(ptr1++))
 			{
 				if (c == ' ') continue;		// Allow space between pairs
-			
+
 				val = c - 0x30;
 				if (val > 15) val -= 7;
 				val <<= 4;
@@ -684,8 +684,8 @@ portok:
 				val |= c;
 				*(CmdPtr++) = val;
 			}
- 		
-			*(CmdPtr) = 0; 
+
+			*(CmdPtr) = 0;
 
 			Len = CmdPtr - (char *)&buffptr[30];
 			break;
@@ -703,7 +703,7 @@ portok:
 		default:
 			sprintf(Command, "Sorry - CMD not supported on your Radio\r");
 			return FALSE;
-	
+
 		}
 
 		FreqPtr[0].Cmd1Len = Len;		// for ICOM
@@ -762,15 +762,15 @@ portok:
 
 	if (strchr(Data, '+'))
 		Split = '+';
-	else if (strchr(Data, '-'))				
+	else if (strchr(Data, '-'))
 		Split = '-';
 	else if (strchr(Data, 'S'))
-		Split = 'S';	
-	else if (strchr(Data, 'D'))	
+		Split = 'S';
+	else if (strchr(Data, 'D'))
 		DataFlag = 1;
-								
+
 	if (strchr(Data, 'W'))
-		Bandwidth = 'W';	
+		Bandwidth = 'W';
 	else if (strchr(Data, 'N'))
 		Bandwidth = 'N';
 
@@ -788,7 +788,7 @@ portok:
 		Antenna = '6';
 
 	switch (PORT->PortType)
-	{ 
+	{
 	case ICOM:
 
 		if (n == 2)
@@ -853,7 +853,7 @@ portok:
 			char ChanString[5];
 
 			// Send Set Memory, then Channel
-								
+
 			*(CmdPtr++) = 0x08;
 			*(CmdPtr++) = 0xFD;
 
@@ -862,17 +862,17 @@ portok:
 			*(CmdPtr++) = RIG->RigAddr;
 			*(CmdPtr++) = 0xE0;
 
-			sprintf(ChanString, "%04d", MemoryNumber); 
-	
+			sprintf(ChanString, "%04d", MemoryNumber);
+
 			*(CmdPtr++) = 0x08;
 			*(CmdPtr++) = (ChanString[1] - 48) | ((ChanString[0] - 48) << 4);
 			*(CmdPtr++) = (ChanString[3] - 48) | ((ChanString[2] - 48) << 4);
 			*(CmdPtr++) = 0xFD;
-				
+
 			FreqPtr[0].Cmd1Len = 14;
 
 			if (MemoryBank)
-			{						
+			{
 				*(CmdPtr++) = 0xFE;
 				*(CmdPtr++) = 0xFE;
 				*(CmdPtr++) = RIG->RigAddr;
@@ -883,14 +883,14 @@ portok:
 				*(CmdPtr++) = 0xFD;
 
 				FreqPtr[0].Cmd1Len += 8;
-			}	
+			}
 		}
 		else
 		{
 			*(CmdPtr++) = 0x5;		// Set frequency command
 
 			// Need to convert two chars to bcd digit
-	
+
 			*(CmdPtr++) = (FreqString[8] - 48) | ((FreqString[7] - 48) << 4);
 			*(CmdPtr++) = (FreqString[6] - 48) | ((FreqString[5] - 48) << 4);
 			*(CmdPtr++) = (FreqString[4] - 48) | ((FreqString[3] - 48) << 4);
@@ -906,9 +906,9 @@ portok:
 				*(CmdPtr++) = 0xFD;
 				FreqPtr[0].Cmd1Len = 11;
 			}
-	
+
 			// Send Set VFO in case last chan was memory
-							
+
 	//		*(CmdPtr++) = 0xFE;
 	//		*(CmdPtr++) = 0xFE;
 	//		*(CmdPtr++) = RIG->RigAddr;
@@ -920,7 +920,7 @@ portok:
 	//		FreqPtr[0].Cmd1Len = 17;
 
 			if (ModeNo != -1)			// Dont Set
-			{		
+			{
 				CmdPtr = FreqPtr->Cmd2 = (UCHAR *)&buffptr[40];
 				*(CmdPtr++) = 0xFE;
 				*(CmdPtr++) = 0xFE;
@@ -950,7 +950,7 @@ portok:
 					else
 						if (Split == '-')
 							*(CmdPtr++) = 0x11;
-			
+
 					*(CmdPtr++) = 0xFD;
 				}
 				else if (DataFlag)
@@ -961,7 +961,7 @@ portok:
 					*(CmdPtr++) = 0xFE;
 					*(CmdPtr++) = RIG->RigAddr;
 					*(CmdPtr++) = 0xE0;
-					*(CmdPtr++) = 0x1a;	
+					*(CmdPtr++) = 0x1a;
 
 					if ((strcmp(RIG->RigName, "IC7100") == 0) ||
 						(strcmp(RIG->RigName, "IC7410") == 0) ||
@@ -983,13 +983,13 @@ portok:
 					{
 						FreqPtr[0].Cmd3Len = 8;
 						*(CmdPtr++) = 0x6;		// Set Data
-						*(CmdPtr++) = 0x1;		//On		
+						*(CmdPtr++) = 0x1;		//On
 					}
-						
+
 					*(CmdPtr++) = 0xFD;
 				}
 			}
-			
+
 			if (Antenna == '5' || Antenna == '6')
 			{
 				// Antenna select for 746 and maybe others
@@ -1006,7 +1006,7 @@ portok:
 					CmdPtr = FreqPtr->Cmd3 = (UCHAR *)&buffptr[50];
 					FreqPtr[0].Cmd3Len = 7;
 				}
-				else 
+				else
 				{
 					CmdPtr = FreqPtr->Cmd4 = (UCHAR *)&buffptr[60];
 					FreqPtr[0].Cmd4Len = 7;
@@ -1023,13 +1023,13 @@ portok:
 		}
 
 		buffptr[1] = 200;
-		
+
 		C_Q_ADD(&RIG->BPQtoRADIO_Q, buffptr);
 
 		return TRUE;
 
 	case YAESU:
-			
+
 		if (n < 3)
 		{
 			strcpy(Command, "Sorry - Invalid Format - should be Port Freq Mode\r");
@@ -1080,7 +1080,7 @@ portok:
 		*(Poll++) = (FreqString[5] - 48) | ((FreqString[4] - 48) << 4);
 		*(Poll++) = (FreqString[7] - 48) | ((FreqString[6] - 48) << 4);
 		*(Poll++) = 1;		// Set Freq
-					
+
 		buffptr[1] = 10;
 
 		if (strcmp(PORT->Rigs[0].RigName, "FT847") == 0)
@@ -1090,10 +1090,10 @@ portok:
 			*(Poll++) = 0;
 			*(Poll++) = 0;
 			*(Poll++) = 3;		// Status Poll
-	
+
 			buffptr[1] = 15;
 		}
-		
+
 		C_Q_ADD(&RIG->BPQtoRADIO_Q, buffptr);
 
 		return TRUE;
@@ -1112,10 +1112,10 @@ portok:
 				strcpy(Command, "Sorry - Invalid Format - should be Port Freq Mode\r");
 				return FALSE;
 			}
-		
+
 			if (PORT->PortType == FT100)
 			{
-				for (ModeNo = 0; ModeNo < 8; ModeNo++)	
+				for (ModeNo = 0; ModeNo < 8; ModeNo++)
 				{
 					if (_stricmp(FT100Modes[ModeNo], Mode) == 0)
 						break;
@@ -1129,7 +1129,7 @@ portok:
 			}
 			else if (PORT->PortType == FT990)
 			{
-				for (ModeNo = 0; ModeNo < 12; ModeNo++)	
+				for (ModeNo = 0; ModeNo < 12; ModeNo++)
 				{
 					if (_stricmp(FT990Modes[ModeNo], Mode) == 0)
 						break;
@@ -1143,7 +1143,7 @@ portok:
 			}
 			else
 			{
-				for (ModeNo = 0; ModeNo < 12; ModeNo++)	
+				for (ModeNo = 0; ModeNo < 12; ModeNo++)
 				{
 					if (_stricmp(FT1000Modes[ModeNo], Mode) == 0)
 						break;
@@ -1213,9 +1213,9 @@ portok:
 			*(Poll++) = 2;		// 100 or 1000MP
 
 		*(Poll++) = 16;		// Status Poll
-	
+
 		buffptr[1] = 15;
-		
+
 		C_Q_ADD(&RIG->BPQtoRADIO_Q, buffptr);
 
 		return TRUE;
@@ -1223,7 +1223,7 @@ portok:
 	case KENWOOD:
 	case FT2000:
 	case FLEX:
-			
+
 		if (n < 3)
 		{
 			strcpy(Command, "Sorry - Invalid Format - should be Port Freq Mode\r");
@@ -1286,7 +1286,7 @@ portok:
 		return TRUE;
 
 	case NMEA:
-			
+
 		if (n < 3)
 		{
 			strcpy(Command, "Sorry - Invalid Format - should be Port Freq Mode\r");
@@ -1319,9 +1319,9 @@ portok:
 		Len += i;
 		i = sprintf(Poll + Len, "$PICOA,90,%02x,MODE,%s*xx\r\n", RIG->RigAddr, Mode);
 		AddNMEAChecksum(Poll + Len);
-			
+
 		buffptr[1] = i + Len;
-		
+
 		C_Q_ADD(&RIG->BPQtoRADIO_Q, buffptr);
 
 		return TRUE;
@@ -1333,10 +1333,10 @@ portok:
 int BittoInt(UINT BitMask)
 {
 	// Returns bit position of first 1 bit in BitMask
-	
+
 	int i = 0;
 	while ((BitMask & 1) == 0)
-	{	
+	{
 		BitMask >>= 1;
 		i ++;
 	}
@@ -1371,12 +1371,12 @@ DllExport BOOL APIENTRY Rig_Init()
 		if (RigConfigMsg[port])
 		{
 			char msg[1000];
-			
+
 			char * SaveRigConfig = _strdup(RigConfigMsg[port]);
 			char * RigConfigMsg1 = _strdup(RigConfigMsg[port]);
 
 			RIG = TNC->RIG = RigConfig(TNC, RigConfigMsg1, port);
-			
+
 			if (TNC->RIG == NULL)
 			{
 				// Report Error
@@ -1387,7 +1387,7 @@ DllExport BOOL APIENTRY Rig_Init()
 				free(RigConfigMsg1);
 				continue;
 			}
-		
+
 			TNC->RIG->PTTMode = TNC->PTTMode;
 
 			if (TNC->RIG->PTTMode == 0)			// Not Set
@@ -1411,16 +1411,16 @@ DllExport BOOL APIENTRY Rig_Init()
 
 			RIG->hLabel = CreateWindow(WC_STATIC , "", WS_CHILD | WS_VISIBLE,
 				10, RigRow, 80,20, hDlg, NULL, hInstance, NULL);
-	
+
 			RIG->hCAT = CreateWindow(WC_STATIC , "",  WS_CHILD | WS_VISIBLE,
                  90, RigRow, 40,20, hDlg, NULL, hInstance, NULL);
-	
+
 			RIG->hFREQ = CreateWindow(WC_STATIC , "",  WS_CHILD | WS_VISIBLE,
                  135, RigRow, 100,20, hDlg, NULL, hInstance, NULL);
-	
+
 			RIG->hMODE = CreateWindow(WC_STATIC , "",  WS_CHILD | WS_VISIBLE,
                  240, RigRow, 60,20, hDlg, NULL, hInstance, NULL);
-	
+
 			RIG->hSCAN = CreateWindow(WC_STATIC , "",  WS_CHILD | WS_VISIBLE,
                  300, RigRow, 20,20, hDlg, NULL, hInstance, NULL);
 
@@ -1447,7 +1447,7 @@ DllExport BOOL APIENTRY Rig_Init()
 		}
 	}
 
-   
+
 	if (NumberofPorts == 0)
 	{
 		SetupPortRIGPointers();
@@ -1459,7 +1459,7 @@ DllExport BOOL APIENTRY Rig_Init()
 	for (p = 0; p < NumberofPorts; p++)
 	{
 		PORT = PORTInfo[p];
-		
+
 //		CreateDisplay(PORT);
 
 		if (_stricmp(PORT->IOBASE, "CM108") != 0)
@@ -1494,10 +1494,10 @@ DllExport BOOL APIENTRY Rig_Init()
 
 			// Get record for each port in Port Bitmap
 
-			// The Scan "Request Permission to Change" code needs the Port Records in order - 
+			// The Scan "Request Permission to Change" code needs the Port Records in order -
 			// Those with active connect lock (eg SCS) first, then those with just a connect pending lock (eg WINMOR)
 			// then those with neither
-			
+
 			BitMask = RIG->BPQPort;
 			for (j = 0; j < 32; j++)
 			{
@@ -1538,12 +1538,12 @@ DllExport BOOL APIENTRY Rig_Init()
 			}
 
 			RIG->PORT = PORT;		// For PTT
-			
+
 			if (RIG->NumberofBands)
 				CheckTimeBands(RIG);		// Set initial timeband
 
 #ifdef WIN32
-			if (RIG->PTTCATPort[0])			// Serial port RTS to CAT 
+			if (RIG->PTTCATPort[0])			// Serial port RTS to CAT
 				_beginthread(PTTCATThread,0,RIG);
 #endif
 		}
@@ -1578,14 +1578,14 @@ DllExport BOOL APIENTRY Rig_Close()
 
 			i = sprintf(REMOFF, "$PICOA,90,%02x,REMOTE,OFF*xx\r\n", PORT->Rigs[0].RigAddr);
 			AddNMEAChecksum(REMOFF);
-	
+
 			WriteCOMBlock(PORT->hDevice, REMOFF, i);
 			Sleep(200);
 		}
 
 		CloseCOMPort(PORT->hDevice);
 
-		
+
 		if (PORT->hPTTDevice != PORT->hDevice)
 			CloseCOMPort(PORT->hPTTDevice);
 
@@ -1597,7 +1597,7 @@ DllExport BOOL APIENTRY Rig_Close()
 		for (n = 0; n < PORT->ConfiguredRigs; n++)
 		{
 			struct RIGINFO * RIG = &PORT->Rigs[n];
-			
+
 			if (RIG->TimeBands)
 				free (RIG->TimeBands[1]->Scanlist);
 
@@ -1636,7 +1636,7 @@ DllExport BOOL APIENTRY Rig_Close()
 BOOL Rig_Poll()
 {
 	int p, i;
-	
+
 	struct RIGPORTINFO * PORT;
 	struct RIGINFO * RIG;
 
@@ -1652,8 +1652,8 @@ BOOL Rig_Poll()
 
 		if (PORT->hDevice == 0 && PORT->PTC == 0 && _stricmp(PORT->IOBASE, "CM108") != 0)
 		{
-			// Try to reopen every 15 secs 
-			
+			// Try to reopen every 15 secs
+
 			PORT->ReopenDelay++;
 
 			if (PORT->ReopenDelay > 150)
@@ -1682,9 +1682,9 @@ BOOL Rig_Poll()
 		CheckRX(PORT);
 
 		switch (PORT->PortType)
-		{ 
+		{
 		case ICOM:
-			
+
 			ICOMPoll(PORT);
 			break;
 
@@ -1692,7 +1692,7 @@ BOOL Rig_Poll()
 		case FT100:
 		case FT990:
 		case FT1000:
-			
+
 			YaesuPoll(PORT);
 			break;
 
@@ -1700,7 +1700,7 @@ BOOL Rig_Poll()
 		case FT2000:
 		case FLEX:
 		case NMEA:
-			
+
 			KenwoodPoll(PORT);
 			break;
 		}
@@ -1708,14 +1708,14 @@ BOOL Rig_Poll()
 
 	return TRUE;
 }
- 
+
 
 BOOL RigCloseConnection(struct RIGPORTINFO * PORT)
 {
    // disable event notification and wait for thread
    // to halt
 
-   CloseCOMPort(PORT->hDevice); 
+   CloseCOMPort(PORT->hDevice);
    return TRUE;
 
 } // end of CloseConnection()
@@ -1783,10 +1783,10 @@ void CheckRX(struct RIGPORTINFO * PORT)
 	}
 	else
 	{
-		if (PORT->hDevice == 0) 
+		if (PORT->hDevice == 0)
 			return;
 
-		// only try to read number of bytes in queue 
+		// only try to read number of bytes in queue
 
 		if (PORT->RXLen == 500)
 			PORT->RXLen = 0;
@@ -1798,26 +1798,26 @@ void CheckRX(struct RIGPORTINFO * PORT)
 
 	if (Length == 0)
 		return;					// Nothing doing
-	
+
 	PORT->RXLen += Length;
 
 	Length = PORT->RXLen;
 
 	switch (PORT->PortType)
-	{ 
+	{
 	case ICOM:
-	
+
 		if (Length < 6)				// Minimum Frame Sise
 			return;
 
 		if (PORT->RXBuffer[Length-1] != 0xfd)
-			return;	
+			return;
 
 		ProcessICOMFrame(PORT, PORT->RXBuffer, Length);	// Could have multiple packets in buffer
 
-		PORT->RXLen = 0;		// Ready for next frame	
+		PORT->RXLen = 0;		// Ready for next frame
 		return;
-	
+
 	case YAESU:
 
 		// Possible responses are a single byte ACK/NAK or a 5 byte info frame
@@ -1827,19 +1827,19 @@ void CheckRX(struct RIGPORTINFO * PORT)
 			ProcessYaesuCmdAck(PORT);
 			return;
 		}
-	
+
 		if (Length < 5)			// Frame Sise
 			return;
 
 		if (Length > 5)			// Frame Sise
 		{
-			PORT->RXLen = 0;	// Corruption - reset and wait for retry	
+			PORT->RXLen = 0;	// Corruption - reset and wait for retry
 			return;
 		}
 
 		ProcessYaesuFrame(PORT);
 
-		PORT->RXLen = 0;		// Ready for next frame	
+		PORT->RXLen = 0;		// Ready for next frame
 		return;
 
 	case FT100:
@@ -1851,37 +1851,37 @@ void CheckRX(struct RIGPORTINFO * PORT)
 
 		if (Length > 32)			// Frame Sise
 		{
-			PORT->RXLen = 0;	// Corruption - reset and wait for retry	
+			PORT->RXLen = 0;	// Corruption - reset and wait for retry
 			return;
 		}
 
 		ProcessFT100Frame(PORT);
 
-		PORT->RXLen = 0;		// Ready for next frame	
+		PORT->RXLen = 0;		// Ready for next frame
 		return;
 
 	case FT990:
 
 		// Only response should be a 32 byte info frame
-	
+
 		if (Length < 32)			// Frame Sise
 			return;
 
 		if (Length > 32)			// Frame Sise
 		{
-			PORT->RXLen = 0;		// Corruption - reset and wait for retry	
+			PORT->RXLen = 0;		// Corruption - reset and wait for retry
 			return;
 		}
 
 		ProcessFT990Frame(PORT);
-		PORT->RXLen = 0;		// Ready for next frame	
+		PORT->RXLen = 0;		// Ready for next frame
 		return;
 
 
 	case FT1000:
 
 		// Only response should be a 16 byte info frame
-	
+
 		ptr = PORT->RXBuffer;
 
 		if (Length < 16)			// Frame Sise
@@ -1889,13 +1889,13 @@ void CheckRX(struct RIGPORTINFO * PORT)
 
 		if (Length > 16)			// Frame Sise
 		{
-			PORT->RXLen = 0;		// Corruption - reset and wait for retry	
+			PORT->RXLen = 0;		// Corruption - reset and wait for retry
 			return;
 		}
 
 		ProcessFT1000Frame(PORT);
 
-		PORT->RXLen = 0;		// Ready for next frame	
+		PORT->RXLen = 0;		// Ready for next frame
 		return;
 
 	case KENWOOD:
@@ -1907,18 +1907,18 @@ void CheckRX(struct RIGPORTINFO * PORT)
 
 		if (Length > 50)			// Garbage
 		{
-			PORT->RXLen = 0;		// Ready for next frame	
+			PORT->RXLen = 0;		// Ready for next frame
 			return;
 		}
 
 		if (PORT->RXBuffer[Length-1] != ';')
-			return;	
+			return;
 
-		ProcessKenwoodFrame(PORT, Length);	
+		ProcessKenwoodFrame(PORT, Length);
 
-		PORT->RXLen = 0;		// Ready for next frame	
+		PORT->RXLen = 0;		// Ready for next frame
 		return;
-	
+
 	case NMEA:
 
 		ptr = memchr(PORT->RXBuffer, 0x0a, Length);
@@ -1926,9 +1926,9 @@ void CheckRX(struct RIGPORTINFO * PORT)
 		while (ptr != NULL)
 		{
 			ptr++;									// include lf
-			len = ptr - &PORT->RXBuffer[0];	
-			
-			memcpy(NMEAMsg, PORT->RXBuffer, len);	
+			len = ptr - &PORT->RXBuffer[0];
+
+			memcpy(NMEAMsg, PORT->RXBuffer, len);
 
 			NMEAMsg[len] = 0;
 
@@ -1957,21 +1957,21 @@ VOID ProcessICOMFrame(struct RIGPORTINFO * PORT, UCHAR * rxbuffer, int Len)
 
 	//	Split into Packets. By far the most likely is a single KISS frame
 	//	so treat as special case
-	
+
 	FendPtr = memchr(rxbuffer, 0xfd, Len);
-	
+
 	if (FendPtr == &rxbuffer[Len-1])
 	{
 		ProcessFrame(PORT, rxbuffer, Len);
 		return;
 	}
-		
+
 	// Process the first Packet in the buffer
 
 	NewLen =  FendPtr - rxbuffer +1;
 
 	ProcessFrame(PORT, rxbuffer, NewLen);
-	
+
 	// Loop Back
 
 	ProcessICOMFrame(PORT, FendPtr+1, Len - NewLen);
@@ -2015,7 +2015,7 @@ BOOL RigWriteCommBlock(struct RIGPORTINFO * PORT)
 	}
 
 	PORT->Timeout = 100;		// 2 secs
-	return TRUE;  
+	return TRUE;
 }
 
 VOID ReleasePermission(struct RIGINFO *RIG)
@@ -2047,17 +2047,17 @@ int GetPermissionToChange(struct RIGPORTINFO * PORT, struct RIGINFO *RIG)
 	if (RIG->PortRecord[0]->SCANCAPABILITIES != CONLOCK)
 		goto CheckOtherPorts;
 
-	
+
 	if (RIG->WaitingForPermission)
 	{
 		// This code should only be called if port needs two stage
 		// eg Request then confirm. only SCS Pactor at the moment.
-		
+
 		// TNC has been asked for permission, and we are waiting respoonse
 		// Only SCS pactor returns WaitingForPrmission, so check shouldn't be called on others
-		
+
 		RIG->OKtoChange = RIG->PortRecord[0]->PORT_EXT_ADDR(6, RIG->PortRecord[0]->PORTCONTROL.PORTNUMBER, 2);	// Get Ok Flag
-	
+
 		if (RIG->OKtoChange == 1)
 		{
 			if (RIG->RIG_DEBUG)
@@ -2073,20 +2073,20 @@ int GetPermissionToChange(struct RIGPORTINFO * PORT, struct RIGINFO *RIG)
 
 			if (RIG->RIG_DEBUG)
 				Debugprintf("Scan Debug %s Refused permission - waiting ScanInterval %d",
-						RIG->PortRecord[0]->PORT_DLL_NAME, PORT->FreqPtr->Dwell ); 
+						RIG->PortRecord[0]->PORT_DLL_NAME, PORT->FreqPtr->Dwell );
 
 			RIG->WaitingForPermission = FALSE;
 			SetWindowText(RIG->hSCAN, "-");
 			RIG->WEB_SCAN = '=';
 
-			RIG->ScanCounter = PORT->FreqPtr->Dwell; 
-			
+			RIG->ScanCounter = PORT->FreqPtr->Dwell;
+
 			if (RIG->ScanCounter == 0 || RIG->ScanCounter > 150)		// ? After manual change
 				RIG->ScanCounter = 50;
 
 			return FALSE;
 		}
-		
+
 		return FALSE;			// Haven't got reply yet. Will re-enter next tick
 	}
 	else
@@ -2095,7 +2095,7 @@ int GetPermissionToChange(struct RIGPORTINFO * PORT, struct RIGINFO *RIG)
 
 		if (RIG->PortRecord[0]->PORT_EXT_ADDR)
 			RIG->WaitingForPermission = RIG->PortRecord[0]->PORT_EXT_ADDR(6, RIG->PortRecord[0]->PORTCONTROL.PORTNUMBER, 1);	// Request Perrmission
-				
+
 		// If it returns zero there is no need to wait.
 		// Normally SCS Returns True for first call, but returns 0 if Link not running
 
@@ -2123,7 +2123,7 @@ CheckOtherPorts:
 
 			if (RIG->RIG_DEBUG)
 				Debugprintf("Scan Debug %s Refused permission - waiting ScanInterval %d",
-						PortRecord->PORT_DLL_NAME, PORT->FreqPtr->Dwell); 
+						PortRecord->PORT_DLL_NAME, PORT->FreqPtr->Dwell);
 
 			RIG->WaitingForPermission = FALSE;
 			MySetWindowText(RIG->hSCAN, "-");
@@ -2131,14 +2131,14 @@ CheckOtherPorts:
 			RIG->ScanCounter = PORT->FreqPtr->Dwell;
 
 			if (RIG->ScanCounter == 0 || RIG->ScanCounter > 150)		// ? After manual change
-				RIG->ScanCounter = 50; 
+				RIG->ScanCounter = 50;
 
 			ReleasePermission(RIG);
 			return FALSE;
 		}
 		else
 			if (RIG->RIG_DEBUG)
-				Debugprintf("Scan Debug %s gave permission", PortRecord->PORT_DLL_NAME); 
+				Debugprintf("Scan Debug %s gave permission", PortRecord->PORT_DLL_NAME);
 
 		i++;
 	}
@@ -2154,7 +2154,7 @@ CheckOtherPorts:
 
 	if (ptr == NULL)
 	{
-		Debugprintf("Scan Debug - No freqs - quitting"); 
+		Debugprintf("Scan Debug - No freqs - quitting");
 		return FALSE;					 // No Freqs
 	}
 
@@ -2165,8 +2165,8 @@ CheckOtherPorts:
 
 	PORT->FreqPtr = ptr[0];				// Save Scan Command Block
 
-	RIG->ScanCounter = PORT->FreqPtr->Dwell; 
-	
+	RIG->ScanCounter = PORT->FreqPtr->Dwell;
+
 	MySetWindowText(RIG->hSCAN, "S");
 	RIG->WEB_SCAN = 'S';
 
@@ -2184,7 +2184,7 @@ VOID DoBandwidthandAntenna(struct RIGINFO *RIG, struct ScanEntry * ptr)
 	int i;
 	struct _EXTPORTDATA * PortRecord;
 
-	if (ptr->Bandwidth || ptr->RPacketMode || ptr->HFPacketMode 
+	if (ptr->Bandwidth || ptr->RPacketMode || ptr->HFPacketMode
 		|| ptr->PMaxLevel || ptr->ARDOPMode[0])
 	{
 		i = 0;
@@ -2199,8 +2199,8 @@ VOID DoBandwidthandAntenna(struct RIGINFO *RIG, struct ScanEntry * ptr)
 
 /*			if (ptr->Bandwidth == 'R')			// Robust Packet
 				PortRecord->PORT_EXT_ADDR(6, PortRecord->PORTCONTROL.PORTNUMBER, 6);	// Set Robust Packet
-			else 
-				
+			else
+
 			if (ptr->Bandwidth == 'W')
 				PortRecord->PORT_EXT_ADDR(6, PortRecord->PORTCONTROL.PORTNUMBER, 4);	// Set Wide Mode
 			else
@@ -2211,7 +2211,7 @@ VOID DoBandwidthandAntenna(struct RIGINFO *RIG, struct ScanEntry * ptr)
 	}
 
 	// If Antenna Change needed, do it
-		
+
 	// 5 and 6 are used for CI-V switching so ignore here
 
 	if (ptr->Antenna && ptr->Antenna < '5')
@@ -2219,7 +2219,7 @@ VOID DoBandwidthandAntenna(struct RIGINFO *RIG, struct ScanEntry * ptr)
 		SwitchAntenna(RIG, ptr->Antenna);
 	}
 
-	return;	
+	return;
 }
 
 VOID ICOMPoll(struct RIGPORTINFO * PORT)
@@ -2241,7 +2241,7 @@ VOID ICOMPoll(struct RIGPORTINFO * PORT)
 	if (PORT->Timeout)
 	{
 		PORT->Timeout--;
-		
+
 		if (PORT->Timeout)			// Still waiting
 			return;
 
@@ -2285,7 +2285,7 @@ VOID ICOMPoll(struct RIGPORTINFO * PORT)
 	if (RIG->DebugDelay > 600)
 	{
 		RIG->DebugDelay = 0;
-		Debugprintf("Scan Debug %d %d %d %d %d %d", PORT->CurrentRig, 
+		Debugprintf("Scan Debug %d %d %d %d %d %d", PORT->CurrentRig,
 			RIG->NumberofBands, RIG->RIGOK, RIG->ScanStopped, RIG->ScanCounter,
 			RIG->WaitingForPermission);
 	}
@@ -2302,7 +2302,7 @@ VOID ICOMPoll(struct RIGPORTINFO * PORT)
 					Debugprintf("BPQ32 Change Freq to %9.4f", PORT->FreqPtr->Freq/1000000.0);
 
 				memcpy(PORT->TXBuffer, PORT->FreqPtr->Cmd1, PORT->FreqPtr->Cmd1Len);
-	
+
 				_gcvt(PORT->FreqPtr->Freq / 1000000.0, 9, RIG->Valchar);
 
 				PORT->TXLen = PORT->FreqPtr->Cmd1Len;
@@ -2319,7 +2319,7 @@ VOID ICOMPoll(struct RIGPORTINFO * PORT)
 	{
 		int datalen;
 		UINT * buffptr;
-			
+
 		buffptr=Q_REM(&RIG->BPQtoRADIO_Q);
 
 		datalen=buffptr[1];
@@ -2345,7 +2345,7 @@ VOID ICOMPoll(struct RIGPORTINFO * PORT)
 			{
 				PORT->ScanEntry.Cmd3 = (char *)&PORT->Line3;	// copy from buffer
 				memcpy(PORT->Line3, &buffptr[50], PORT->FreqPtr->Cmd3Len);
-			
+
 				if (PORT->ScanEntry.Cmd4)
 				{
 					PORT->ScanEntry.Cmd4 = (char *)&PORT->Line4;
@@ -2371,7 +2371,7 @@ VOID ICOMPoll(struct RIGPORTINFO * PORT)
 
 	if (RIG->RIGOK && (RIG->ScanStopped == 0) && RIG->NumberofBands)
 		return;						// no point in reading freq if we are about to change it
-		
+
 	if (RIG->PollCounter)
 	{
 		RIG->PollCounter--;
@@ -2392,7 +2392,7 @@ VOID ICOMPoll(struct RIGPORTINFO * PORT)
 
 	PORT->AutoPoll = TRUE;
 
-	// Read Frequency 
+	// Read Frequency
 
 	Poll[0] = 0xFE;
 	Poll[1] = 0xFE;
@@ -2419,7 +2419,7 @@ VOID ProcessFrame(struct RIGPORTINFO * PORT, UCHAR * Msg, int framelen)
 
 		// Duff Packer - return
 
-		return;	
+		return;
 
 	if (Msg[2] != 0xe0)
 	{
@@ -2427,7 +2427,7 @@ VOID ProcessFrame(struct RIGPORTINFO * PORT, UCHAR * Msg, int framelen)
 
 		if (PORT->PORTOK == FALSE)
 		{
-			// Just come up		
+			// Just come up
 			PORT->PORTOK = TRUE;
 			Debugprintf("Cat Port OK");
 		}
@@ -2453,7 +2453,7 @@ ok:
 		{
 			if (!PORT->AutoPoll)
 				SendResponse(RIG->Session, "Tune OK");
-		
+
 			PORT->Timeout = 0;
 			return;
 		}
@@ -2462,7 +2462,7 @@ ok:
 		{
 			if (!PORT->AutoPoll)
 				SendResponse(RIG->Session, "Set Power OK");
-		
+
 			PORT->Timeout = 0;
 			return;
 		}
@@ -2482,7 +2482,7 @@ ok:
 			{
 				if (!PORT->AutoPoll)
 					SendResponse(RIG->Session, "Frequency Set OK");
-		
+
 				PORT->Timeout = 0;
 
 			}
@@ -2507,7 +2507,7 @@ ok:
 		if (cmdSent == 0x08)
 		{
 			// Memory Chan
-			
+
 			cmdSent = 0;			// So we only do it once
 
 			goto SetFinished;
@@ -2624,7 +2624,7 @@ SetFinished:
 		}
 
 	}
-	else 
+	else
 		return;		// What does this mean??
 
 
@@ -2632,7 +2632,7 @@ SetFinished:
 	{
 		// Just come up
 //		char Status[80];
-		
+
 		PORT->PORTOK = TRUE;
 //		sprintf(Status,"COM%d PORT link OK", PORT->IOBASE);
 //		SetWindowText(PORT->hStatus, Status);
@@ -2643,7 +2643,7 @@ SetFinished:
 		// Rig Frequency
 		int n, j, Freq = 0, decdigit;
 		int start = 9;
-	
+
 		if (RIG->IC735)
 			start = 8;		// shorted msg
 
@@ -2660,7 +2660,7 @@ SetFinished:
 
 //		Valchar = _fcvt(FreqF, 6, &dec, &sign);
 		_gcvt(RIG->RigFreq, 9, RIG->Valchar);
- 
+
 		sprintf(RIG->WEB_FREQ,"%s", RIG->Valchar);
 		SetWindowText(RIG->hFREQ, RIG->WEB_FREQ);
 
@@ -2683,7 +2683,7 @@ SetFinished:
 		// Mode
 
 		unsigned int Mode;
-		
+
 		Mode = (Msg[5] >> 4);
 		Mode *= 10;
 		Mode += Msg[5] & 0xf;
@@ -2719,7 +2719,7 @@ int SendResponse(int Session, char * Msg)
 #ifndef LINBPQ
 
 	if (VEC)
-		PostMessage(VEC->HOSTHANDLE, BPQMsg, VEC->HOSTSTREAM, 2);  
+		PostMessage(VEC->HOSTHANDLE, BPQMsg, VEC->HOSTSTREAM, 2);
 #endif
 	return 0;
 }
@@ -2734,7 +2734,7 @@ VOID ProcessFT100Frame(struct RIGPORTINFO * PORT)
 	int Freq;
 	double FreqF;
 	unsigned int Mode;
-	
+
 	RIG->RIGOK = TRUE;
 	PORT->Timeout = 0;
 
@@ -2743,7 +2743,7 @@ VOID ProcessFT100Frame(struct RIGPORTINFO * PORT)
 	// Byte 5 is Mode
 
 	Freq =  (Msg[1] << 24) + (Msg[2] << 16) + (Msg[3] << 8) + Msg[4];
-	
+
 	FreqF = (Freq * 1.25) / 1000000;
 
 	if (PORT->YaesuVariant == FT1000MP)
@@ -2787,7 +2787,7 @@ VOID ProcessFT990Frame(struct RIGPORTINFO * PORT)
 	int Freq;
 	double FreqF;
 	unsigned int Mode;
-	
+
 	RIG->RIGOK = TRUE;
 	PORT->Timeout = 0;
 
@@ -2796,7 +2796,7 @@ VOID ProcessFT990Frame(struct RIGPORTINFO * PORT)
 	// Byte 5 is Mode
 
 	Freq =  (Msg[1] << 16) + (Msg[2] << 8) + Msg[3];
-	
+
 	FreqF = (Freq * 10.0) / 1000000;
 
 	_gcvt(FreqF, 9, RIG->Valchar);
@@ -2826,7 +2826,7 @@ VOID ProcessFT1000Frame(struct RIGPORTINFO * PORT)
 	int Freq;
 	double FreqF;
 	unsigned int Mode;
-	
+
 	RIG->RIGOK = TRUE;
 	PORT->Timeout = 0;
 
@@ -2838,7 +2838,7 @@ VOID ProcessFT1000Frame(struct RIGPORTINFO * PORT)
 
 	if (PORT->YaesuVariant == FT1000MP)
 	{
-		Freq =  (Msg[1] << 24) + (Msg[2] << 16) + (Msg[3] << 8) + Msg[4];	
+		Freq =  (Msg[1] << 24) + (Msg[2] << 16) + (Msg[3] << 8) + Msg[4];
 		FreqF = (Freq * 1.25) / 1000000;
 		FreqF = FreqF / 2;				// No idea why!
 	}
@@ -2885,7 +2885,7 @@ VOID ProcessYaesuCmdAck(struct RIGPORTINFO * PORT)
 	struct RIGINFO * RIG = &PORT->Rigs[0];		// Only one on Yaseu
 
 	PORT->Timeout = 0;
-	PORT->RXLen = 0;					// Ready for next frame	
+	PORT->RXLen = 0;					// Ready for next frame
 
 	if (PORT->CmdSent == 1)				// Set Freq
 	{
@@ -2936,7 +2936,7 @@ VOID ProcessYaesuCmdAck(struct RIGPORTINFO * PORT)
 		else
 		{
 			// Send the Frequency
-			
+
 			memcpy(Poll, &Poll[5], 5);
 			RigWriteCommBlock(PORT);
 			PORT->CmdSent = Poll[4];
@@ -2959,7 +2959,7 @@ VOID ProcessYaesuFrame(struct RIGPORTINFO * PORT)
 	// I'm not sure we get anything but a Command Response,
 	// and the only command we send is Get Rig Frequency and Mode
 
-	
+
 	RIG->RIGOK = TRUE;
 	PORT->Timeout = 0;
 
@@ -2988,12 +2988,12 @@ VOID ProcessYaesuFrame(struct RIGPORTINFO * PORT)
 	SetWindowText(RIG->hMODE, RIG->WEB_MODE);
 
 	//	FT847 Manual Freq Change response ends up here
-	
+
 	if (strcmp(RIG->RigName, "FT847") == 0)
 	{
 		if (!PORT->AutoPoll)
 			SendResponse(RIG->Session, "Mode and Frequency Set OK");
-			
+
 		if (PORT->CmdSent == -1)
 			ReleasePermission(RIG);			// Release Perrmission to change
 	}
@@ -3011,7 +3011,7 @@ VOID YaesuPoll(struct RIGPORTINFO * PORT)
 	if (PORT->Timeout)
 	{
 		PORT->Timeout--;
-		
+
 		if (PORT->Timeout)			// Still waiting
 			return;
 
@@ -3079,12 +3079,12 @@ VOID YaesuPoll(struct RIGPORTINFO * PORT)
 			}
 		}
 	}
-	
+
 	if (RIG->RIGOK && RIG->BPQtoRADIO_Q)
 	{
 		int datalen;
 		UINT * buffptr;
-			
+
 		buffptr=Q_REM(&RIG->BPQtoRADIO_Q);
 
 		datalen=buffptr[1];
@@ -3094,7 +3094,7 @@ VOID YaesuPoll(struct RIGPORTINFO * PORT)
 		memcpy(&PORT->ScanEntry, buffptr+2, sizeof(struct ScanEntry));
 
 		PORT->FreqPtr = &PORT->ScanEntry;		// Block we are currently sending.
-		
+
 		if (RIG->RIG_DEBUG)
 			Debugprintf("BPQ32 Change Freq to %9.4f", PORT->FreqPtr->Freq);
 
@@ -3125,13 +3125,13 @@ VOID YaesuPoll(struct RIGPORTINFO * PORT)
 
 		ReleaseBuffer(buffptr);
 		PORT->AutoPoll = FALSE;
-	
+
 		return;
 	}
 
 	if (RIG->RIGOK && (RIG->ScanStopped == 0) && RIG->NumberofBands)
 		return;						// no point in reading freq if we are about to change it
-		
+
 	if (RIG->PollCounter)
 	{
 		RIG->PollCounter--;
@@ -3141,7 +3141,7 @@ VOID YaesuPoll(struct RIGPORTINFO * PORT)
 
 	RIG->PollCounter = 10;			// Once Per Sec
 
-	// Read Frequency 
+	// Read Frequency
 
 	Poll[0] = 0;
 	Poll[1] = 0;
@@ -3151,7 +3151,7 @@ VOID YaesuPoll(struct RIGPORTINFO * PORT)
 		Poll[3] = 3;
 	else
 		Poll[3] = 2;
-	
+
 	if (PORT->PortType == YAESU)
 		Poll[4] = 0x3;		// Get frequency amd mode command
 	else
@@ -3173,10 +3173,10 @@ VOID ProcessNMEA(struct RIGPORTINFO * PORT, char * Msg, int Length)
 	struct RIGINFO * RIG = &PORT->Rigs[0];		// Only one on Yaseu
 
 	Msg[Length] = 0;
-	
+
 	if (PORT->PORTOK == FALSE)
 	{
-		// Just come up		
+		// Just come up
 		PORT->PORTOK = TRUE;
 	}
 
@@ -3191,7 +3191,7 @@ VOID ProcessNMEA(struct RIGPORTINFO * PORT, char * Msg, int Length)
 			SendResponse(RIG->Session, "Sorry - Command Rejected");
 		else
 			SendResponse(RIG->Session, "Mode and Frequency Set OK");
-	
+
 		PORT->AutoPoll = TRUE;
 	}
 
@@ -3241,10 +3241,10 @@ VOID ProcessKenwoodFrame(struct RIGPORTINFO * PORT, int Length)
 	int CmdLen;
 
 	Msg[Length] = 0;
-	
+
 	if (PORT->PORTOK == FALSE)
 	{
-		// Just come up		
+		// Just come up
 		PORT->PORTOK = TRUE;
 	}
 
@@ -3258,11 +3258,11 @@ VOID ProcessKenwoodFrame(struct RIGPORTINFO * PORT, int Length)
 			SendResponse(RIG->Session, "Sorry - Command Rejected");
 		else if (Msg[0] == 'A' && Msg[1] == 'C')
 			SendResponse(RIG->Session, "TUNE OK");
-		else if (Msg[0] == 'P' && Msg[1] == 'C') 
+		else if (Msg[0] == 'P' && Msg[1] == 'C')
 			SendResponse(RIG->Session, "Power Set OK");
 		else
 			SendResponse(RIG->Session, "Mode and Frequency Set OK");
-	
+
 		PORT->AutoPoll = TRUE;
 		return;
 	}
@@ -3316,7 +3316,7 @@ Loop:
 	else if (Msg[0] == 'M' && Msg[1] == 'D')
 	{
 		int Mode;
-		
+
 		if (PORT->PortType == FT2000)
 		{
 			Mode = Msg[3] - 48;
@@ -3369,7 +3369,7 @@ VOID KenwoodPoll(struct RIGPORTINFO * PORT)
 	if (PORT->Timeout)
 	{
 		PORT->Timeout--;
-		
+
 		if (PORT->Timeout)			// Still waiting
 			return;
 
@@ -3411,24 +3411,24 @@ VOID KenwoodPoll(struct RIGPORTINFO * PORT)
 
 				RigWriteCommBlock(PORT);
 				PORT->CmdSent = 1;
-				PORT->Retries = 0;	
+				PORT->Retries = 0;
 				PORT->Timeout = 0;
 				PORT->AutoPoll = TRUE;
 
 				// There isn't a response to a set command, so clear Scan Lock here
-			
+
 				ReleasePermission(RIG);			// Release Perrmission
 
 			return;
 			}
 		}
 	}
-	
+
 	if (RIG->RIGOK && RIG->BPQtoRADIO_Q)
 	{
 		int datalen;
 		UINT * buffptr;
-			
+
 		buffptr=Q_REM(&RIG->BPQtoRADIO_Q);
 
 		datalen=buffptr[1];
@@ -3438,7 +3438,7 @@ VOID KenwoodPoll(struct RIGPORTINFO * PORT)
 		memcpy(&PORT->ScanEntry, buffptr+2, sizeof(struct ScanEntry));
 
 		PORT->FreqPtr = &PORT->ScanEntry;		// Block we are currently sending.
-		
+
 		if (RIG->RIG_DEBUG)
 			Debugprintf("BPQ32 Change Freq to %9.4f", PORT->FreqPtr->Freq);
 
@@ -3456,10 +3456,10 @@ VOID KenwoodPoll(struct RIGPORTINFO * PORT)
 
 		ReleaseBuffer(buffptr);
 		PORT->AutoPoll = FALSE;
-	
+
 		return;
 	}
-		
+
 	if (RIG->PollCounter)
 	{
 		RIG->PollCounter--;
@@ -3471,12 +3471,12 @@ VOID KenwoodPoll(struct RIGPORTINFO * PORT)
 		return;						// no point in reading freq if we are about to change it
 
 	RIG->PollCounter = 10;			// Once Per Sec
-		
-	// Read Frequency 
+
+	// Read Frequency
 
 	PORT->TXLen = RIG->PollLen;
 	strcpy(Poll, RIG->Poll);
-	
+
 	RigWriteCommBlock(PORT);
 	PORT->Retries = 1;
 	PORT->Timeout = 10;
@@ -3495,7 +3495,7 @@ VOID DummyPoll(struct RIGPORTINFO * PORT)
 	if (RIG->ScanStopped == 0)
 		if (RIG->ScanCounter)
 			RIG->ScanCounter--;
-	
+
 	if (RIG->NumberofBands && RIG->RIGOK && (RIG->ScanStopped == 0))
 	{
 		if (RIG->ScanCounter <= 0)
@@ -3514,19 +3514,19 @@ VOID DummyPoll(struct RIGPORTINFO * PORT)
 /*
 				RigWriteCommBlock(PORT);
 				PORT->CmdSent = 1;
-				PORT->Retries = 0;	
+				PORT->Retries = 0;
 				PORT->Timeout = 0;
 				PORT->AutoPoll = TRUE;
 */
 				// There isn't a response to a set command, so clear Scan Lock here
-			
+
 				ReleasePermission(RIG);			// Release Perrmission
 
 			return;
 			}
 		}
 	}
-	
+
 	return;
 }
 
@@ -3561,7 +3561,7 @@ VOID SwitchAntenna(struct RIGINFO * RIG, char Antenna)
 		COMSetDTR(PORT->hDevice);
 		COMSetRTS(PORT->hDevice);
 		break;
-	}	
+	}
 }
 
 BOOL DecodeModePtr(char * Param, double * Dwell, double * Freq, char * Mode,
@@ -3579,11 +3579,11 @@ BOOL DecodeModePtr(char * Param, double * Dwell, double * Freq, char * Mode,
 	*MemoryNumber = 0;
 	*Mode = 0;
 	*ARDOPMode = 0;
-	
+
 	ptr = strtok_s(Param, ",", &Context);
 
 	// "New" format - Dwell, Freq, Params.
-	
+
 	//	Each param is a 2 char pair, separated by commas
 
 	// An - Antenna
@@ -3593,13 +3593,13 @@ BOOL DecodeModePtr(char * Param, double * Dwell, double * Freq, char * Mode,
 	// Fn - Filter
 	// Sx - Split
 
-	// 7.0770/LSB,F1,A3,WN,P1,R1 
+	// 7.0770/LSB,F1,A3,WN,P1,R1
 
 	*Dwell = atof(ptr);
-	
+
 	ptr = strtok_s(NULL, ",", &Context);
 
-	// May be a frequency or a Memory Bank/Channel 
+	// May be a frequency or a Memory Bank/Channel
 
 	if (_memicmp(ptr, "Chan", 4) == 0)
 	{
@@ -3625,7 +3625,7 @@ BOOL DecodeModePtr(char * Param, double * Dwell, double * Freq, char * Mode,
 
 	if (*MemoryNumber == 0)
 	{
-		strcpy(Mode, ptr); 
+		strcpy(Mode, ptr);
 		ptr = strtok_s(NULL, ",", &Context);
 	}
 
@@ -3639,13 +3639,13 @@ BOOL DecodeModePtr(char * Param, double * Dwell, double * Freq, char * Mode,
 
 		else if (ptr[0] == 'A' && strlen(ptr) == 2)
 			*Antenna = ptr[1];
-		
+
 		else if (ptr[0] == 'F')
 			*Filter = ptr[1];
 
 		else if (ptr[0] == 'R')
 			*RPacketMode = ptr[1];
-		
+
 		else if (ptr[0] == 'H')
 			*PacketMode = ptr[1];
 
@@ -3708,7 +3708,7 @@ void DecodeCM108(int Port, char * ptr)
 #ifdef WIN32
 
 	// Next Param is VID and PID - 0xd8c:0x8 or Full device name
-	// On Windows device name is very long and difficult to find, so 
+	// On Windows device name is very long and difficult to find, so
 	//	easier to use VID/PID, but allow device in case more than one needed
 
 	char * next;
@@ -3728,7 +3728,7 @@ void DecodeCM108(int Port, char * ptr)
 			PID = strtol(++next, &next, 0);
 
 		// Look for Device
-	
+
 		devs = hid_enumerate((USHORT)VID, (USHORT)PID);
 		cur_dev = devs;
 		while (cur_dev)
@@ -3742,11 +3742,11 @@ void DecodeCM108(int Port, char * ptr)
 			}
 			cur_dev = cur_dev->next;
 		}
-	
+
 		if (path_to_open)
 		{
 			handle = hid_open_path(path_to_open);
-	
+
 			if (handle)
 			{
 				hid_close(handle);
@@ -3762,7 +3762,7 @@ void DecodeCM108(int Port, char * ptr)
 		hid_free_enumeration(devs);
 	}
 #else
-		
+
 	// Linux - Next Param HID Device, eg /dev/hidraw0
 
 	CM108Device = _strdup(ptr);
@@ -3771,7 +3771,7 @@ void DecodeCM108(int Port, char * ptr)
 
 
 
-// Called by Port Driver .dll to add/update rig info 
+// Called by Port Driver .dll to add/update rig info
 
 // RIGCONTROL COM60 19200 ICOM IC706 5e 4 14.103/U1w 14.112/u1 18.1/U1n 10.12/l1
 
@@ -3859,7 +3859,7 @@ struct RIGINFO * RigConfig(struct TNCINFO * TNC, char * buf, int Port)
 		if (COMPort)
 			if (strcmp(PORT->IOBASE, COMPort) == 0)
 				goto PortFound;
-	
+
 		if (COMPort == 0)
 			if (PORT->IOBASE == COMPort)
 				goto PortFound;
@@ -3882,7 +3882,7 @@ PortFound:
 
 	if (_stricmp(PORT->IOBASE, "CM108") == 0) // HID Addr instead of Speed
 		DecodeCM108(Port, ptr);
-	else	
+	else
 		PORT->SPEED = atoi(ptr);
 
 	ptr = strtok_s(NULL, " \t\n\r", &Context);
@@ -3910,7 +3910,7 @@ PortFound:
 
 	}
 
-//		if (strcmp(ptr, "ICOM") == 0 || strcmp(ptr, "YAESU") == 0 
+//		if (strcmp(ptr, "ICOM") == 0 || strcmp(ptr, "YAESU") == 0
 //			|| strcmp(ptr, "KENWOOD") == 0 || strcmp(ptr, "PTTONLY") == 0 || strcmp(ptr, "ANTENNA") == 0)
 
 			// RADIO IC706 4E 5 14.103/U1 14.112/u1 18.1/U1 10.12/l1
@@ -3967,7 +3967,7 @@ PortFound:
 	}
 
 	if (strlen(ptr) > 9) return FALSE;
-	
+
 	RigName =  ptr;
 
 	Debugprintf("Rigname = *%s*", RigName);
@@ -4072,7 +4072,7 @@ PortFound:
 	}
 
 	RIG->RIG_DEBUG = RIG_DEBUG;
-	
+
 	strcpy(RIG->RigName, RigName);
 
 	RIG->TSMenu = 63;		// Default to TS590S
@@ -4090,8 +4090,8 @@ PortFound:
 			RIG->TSMenu = 69;
 	}
 
-domux:	
-	
+domux:
+
 	RIG->PortNum = Port;
 	RIG->BPQPort |=  (1 << Port);
 
@@ -4102,20 +4102,20 @@ domux:
 		if (strcmp(ptr, "PTTMUX") == 0)
 		{
 			// Ports whose RTS/DTR will be converted to CAT commands (for IC7100/IC7200 etc)
-	
+
 			int PIndex = 0;
 
 			ptr = strtok_s(NULL, " \t\n\r", &Context);
 
 			while (memcmp(ptr, "COM", 3) == 0)
-			{	
+			{
 				strcpy(RIG->PTTCATPort[PIndex], &ptr[3]);
-				
+
 				if (PIndex < 3)
 					PIndex++;
 
 				ptr = strtok_s(NULL, " \t\n\r", &Context);
-		
+
 				if (ptr == NULL)
 					break;
 			}
@@ -4134,7 +4134,7 @@ domux:
 
 			if (ptr == NULL)
 				break;
-	
+
 			if (strcmp(ptr, "MIC") == 0)
 				DataPTTOffMode = 0;
 			else if (strcmp(ptr, "AUX") == 0)
@@ -4268,7 +4268,7 @@ domux:
 
 	}
 	else if	(PORT->PortType == KENWOOD)
-	{	
+	{
 		RIG->PollLen = 6;
 		strcpy(RIG->Poll, "FA;MD;");
 
@@ -4280,7 +4280,7 @@ domux:
 		else
 		{
 			strcpy(RIG->PTTOff, "RX;");
-			
+
 			if (DataPTT)
 				strcpy(RIG->PTTOn, "TX1;");
 			else
@@ -4292,7 +4292,7 @@ domux:
 
 	}
 	else if	(PORT->PortType == FLEX)
-	{	
+	{
 		RIG->PollLen = 10;
 		strcpy(RIG->Poll, "ZZFA;ZZMD;");
 
@@ -4302,7 +4302,7 @@ domux:
 		RIG->PTTOffLen = 6;
 	}
 	else if	(PORT->PortType == FT2000)
-	{	
+	{
 		RIG->PollLen = 6;
 		strcpy(RIG->Poll, "FA;MD;");
 
@@ -4312,9 +4312,9 @@ domux:
 		RIG->PTTOffLen = 4;
 	}
 	else if	(PORT->PortType == NMEA)
-	{	
+	{
 		int Len;
-			
+
 		i = sprintf(RIG->Poll, "$PICOA,90,%02x,RXF*xx\r\n", RIG->RigAddr);
 		AddNMEAChecksum(RIG->Poll);
 		Len = i;
@@ -4333,7 +4333,7 @@ domux:
 
 
 	if (ptr == NULL) return RIG;			// No Scanning, just Interactive control
-	
+
 	if (strchr(ptr, ',') == 0)				// Old Format
 	{
 		ScanFreq = atof(ptr);
@@ -4390,7 +4390,7 @@ CheckScan:
 
 		Filter = PMinLevel = PMaxLevel = PacketMode = RPacketMode = Split =
 			Data = WinmorMode = Antenna = ModeNo = Supress = MemoryNumber = 0;
-	
+
 		MemoryBank = 0;
 		Appl[0] = 0;
 		ARDOPMode[0] = 0;
@@ -4401,11 +4401,11 @@ CheckScan:
 			// New TimeBand
 
 			struct TimeScan * Band;
-						
+
 			Band = AllocateTimeRec(RIG);
 
 			*FreqPtr = (struct ScanEntry *)0;		// Terminate Last Band
-						
+
 			Band->Start = (atoi(ptr) * 3600) + (atoi(&ptr[3]) * 60);
 			Band->End = 84540;	//23:59
 			SaveBand->End = Band->Start - 60;
@@ -4415,7 +4415,7 @@ CheckScan:
 			FreqPtr = Band->Scanlist = RIG->FreqPtr = malloc(1000);
 			memset(FreqPtr, 0, 1000);
 
-			ptr = strtok_s(NULL, " \t\n\r", &Context);										
+			ptr = strtok_s(NULL, " \t\n\r", &Context);
 		}
 
 		if (strchr(ptr, ','))			// New Format
@@ -4427,7 +4427,7 @@ CheckScan:
 		else
 		{
 			Modeptr = strchr(ptr, '/');
-					
+
 			if (Modeptr)
 				*Modeptr++ = 0;
 
@@ -4435,7 +4435,7 @@ CheckScan:
 
 			if (Modeptr)
 			{
-				// Mode can include 1/2/3 for Icom Filers. W/N for Winmor/Pactor Bandwidth, and +/-/S for Repeater Shift (S = Simplex) 
+				// Mode can include 1/2/3 for Icom Filers. W/N for Winmor/Pactor Bandwidth, and +/-/S for Repeater Shift (S = Simplex)
 				// First is always Mode
 				// First char is Mode (USB, LSB etc)
 
@@ -4450,7 +4450,7 @@ CheckScan:
 					Split = 'S';
 				else if (strchr(&Modeptr[1], 'D'))
 					Data = 1;
-						
+
 				if (strchr(&Modeptr[1], 'W'))
 				{
 					WinmorMode = 'W';
@@ -4486,11 +4486,11 @@ CheckScan:
 					Antenna = '6';
 				}
 			}
-			
+
 			switch(PORT->PortType)
 			{
-			case ICOM:						
-						
+			case ICOM:
+
 				for (ModeNo = 0; ModeNo < 8; ModeNo++)
 				{
 					if (strlen(Mode) == 1)
@@ -4506,8 +4506,8 @@ CheckScan:
 				}
 				break;
 
-			case YAESU:						
-						
+			case YAESU:
+
 				for (ModeNo = 0; ModeNo < 16; ModeNo++)
 				{
 					if (strlen(Mode) == 1)
@@ -4524,7 +4524,7 @@ CheckScan:
 				break;
 
 			case KENWOOD:
-						
+
 				for (ModeNo = 0; ModeNo < 8; ModeNo++)
 				{
 					if (strlen(Mode) == 1)
@@ -4541,7 +4541,7 @@ CheckScan:
 				break;
 
 			case FLEX:
-						
+
 				for (ModeNo = 0; ModeNo < 12; ModeNo++)
 				{
 					if (strlen(Mode) == 1)
@@ -4558,7 +4558,7 @@ CheckScan:
 				break;
 
 			case FT2000:
-						
+
 				if (Modeptr)
 				{
 					if (strstr(Modeptr, "PL"))
@@ -4587,8 +4587,8 @@ CheckScan:
 				}
 				break;
 
-			case FT100:						
-				
+			case FT100:
+
 				for (ModeNo = 0; ModeNo < 8; ModeNo++)
 				{
 					if (strlen(Mode) == 1)
@@ -4604,7 +4604,7 @@ CheckScan:
 				}
 				break;
 
-			case FT990:	
+			case FT990:
 
 				for (ModeNo = 0; ModeNo < 12; ModeNo++)
 				{
@@ -4621,8 +4621,8 @@ CheckScan:
 				}
 				break;
 
-			case FT1000:						
-				
+			case FT1000:
+
 				for (ModeNo = 0; ModeNo < 12; ModeNo++)
 				{
 					if (strlen(Mode) == 1)
@@ -4650,7 +4650,7 @@ CheckScan:
 			sprintf(FreqString, "%s", Valchar);
 		else
 		if (dec == 8)	// 10-100
-			sprintf(FreqString, "0%s", Valchar);		
+			sprintf(FreqString, "0%s", Valchar);
 		else
 		if (dec == 7)	// 1-10
 			sprintf(FreqString, "00%s", Valchar);
@@ -4672,7 +4672,7 @@ CheckScan:
 		else
 			FreqPtr[0]->Dwell = Dwell * 10;
 
-		#pragma warning(pop) 
+		#pragma warning(pop)
 
 		FreqPtr[0]->Freq = Freq;
 		FreqPtr[0]->Bandwidth = WinmorMode;
@@ -4717,7 +4717,7 @@ CheckScan:
 				char ChanString[5];
 
 				// Send Set Memory, then Channel
-								
+
 				*(CmdPtr++) = 0x08;
 				*(CmdPtr++) = 0xFD;
 
@@ -4726,17 +4726,17 @@ CheckScan:
 				*(CmdPtr++) = RIG->RigAddr;
 				*(CmdPtr++) = 0xE0;
 
-				sprintf(ChanString, "%04d", MemoryNumber); 
-	
+				sprintf(ChanString, "%04d", MemoryNumber);
+
 				*(CmdPtr++) = 0x08;
 				*(CmdPtr++) = (ChanString[1] - 48) | ((ChanString[0] - 48) << 4);
 				*(CmdPtr++) = (ChanString[3] - 48) | ((ChanString[2] - 48) << 4);
 				*(CmdPtr++) = 0xFD;
-				
+
 				FreqPtr[0]->Cmd1Len = 14;
 
 				if (MemoryBank)
-				{						
+				{
 					*(CmdPtr++) = 0xFE;
 					*(CmdPtr++) = 0xFE;
 					*(CmdPtr++) = RIG->RigAddr;
@@ -4748,13 +4748,13 @@ CheckScan:
 
 					FreqPtr[0]->Cmd1Len += 8;
 				}
-			}	
+			}
 			else
 			{
 				*(CmdPtr++) = 0x5;		// Set frequency command
 
 				// Need to convert two chars to bcd digit
-		
+
 				*(CmdPtr++) = (FreqString[8] - 48) | ((FreqString[7] - 48) << 4);
 				*(CmdPtr++) = (FreqString[6] - 48) | ((FreqString[5] - 48) << 4);
 				*(CmdPtr++) = (FreqString[4] - 48) | ((FreqString[3] - 48) << 4);
@@ -4772,7 +4772,7 @@ CheckScan:
 				}
 
 				// Send Set VFO in case last chan was memory
-							
+
 //				*(CmdPtr++) = 0xFE;
 //				*(CmdPtr++) = 0xFE;
 //				*(CmdPtr++) = RIG->RigAddr;
@@ -4784,9 +4784,9 @@ CheckScan:
 //				FreqPtr[0]->Cmd1Len = 17;
 
 				if (Filter)
-				{						
+				{
 					CmdPtr = FreqPtr[0]->Cmd2 = malloc(10);
-					FreqPtr[0]->Cmd2Len = 8;		
+					FreqPtr[0]->Cmd2Len = 8;
 					*(CmdPtr++) = 0xFE;
 					*(CmdPtr++) = 0xFE;
 					*(CmdPtr++) = RIG->RigAddr;
@@ -4813,7 +4813,7 @@ CheckScan:
 						else
 							if (Split == '-')
 								*(CmdPtr++) = 0x11;
-			
+
 						*(CmdPtr++) = 0xFD;
 					}
 					else
@@ -4826,7 +4826,7 @@ CheckScan:
 							*(CmdPtr++) = 0xFE;
 							*(CmdPtr++) = RIG->RigAddr;
 							*(CmdPtr++) = 0xE0;
-							*(CmdPtr++) = 0x1a;	
+							*(CmdPtr++) = 0x1a;
 
 
 							if ((strcmp(RIG->RigName, "IC7100") == 0) ||
@@ -4849,9 +4849,9 @@ CheckScan:
 							{
 								FreqPtr[0]->Cmd3Len = 8;
 								*(CmdPtr++) = 0x6;		// Set Data
-								*(CmdPtr++) = 0x1;		//On		
+								*(CmdPtr++) = 0x1;		//On
 							}
-						
+
 							*(CmdPtr++) = 0xFD;
 						}
 					}
@@ -4873,7 +4873,7 @@ CheckScan:
 						CmdPtr = FreqPtr[0]->Cmd3 = malloc(10);
 						FreqPtr[0]->Cmd3Len = 7;
 					}
-					else 
+					else
 					{
 						CmdPtr = FreqPtr[0]->Cmd4 = malloc(10);
 						FreqPtr[0]->Cmd4Len = 7;
@@ -4891,7 +4891,7 @@ CheckScan:
 		}
 
 		else if	(PORT->PortType == YAESU)
-		{	
+		{
 			//Send Mode first - changing mode can change freq
 
 			*(CmdPtr++) = ModeNo;
@@ -4917,19 +4917,19 @@ CheckScan:
 
 		}
 		else if	(PORT->PortType == KENWOOD)
-		{	
+		{
 			if (Antenna == '5' || Antenna == '6')
 				FreqPtr[0]->Cmd1Len = sprintf(CmdPtr, "FA00%s;MD%d;AN%c;FA;MD;", FreqString, ModeNo, Antenna - 4);
 			else
 				FreqPtr[0]->Cmd1Len = sprintf(CmdPtr, "FA00%s;MD%d;FA;MD;", FreqString, ModeNo);
-	
+
 		}
 		else if	(PORT->PortType == FLEX)
-		{	
+		{
 			FreqPtr[0]->Cmd1Len = sprintf(CmdPtr, "ZZFA00%s;ZZMD%02d;ZZFA;ZZMD;", FreqString, ModeNo);
 		}
 		else if	(PORT->PortType == FT2000)
-		{	
+		{
 			FreqPtr[0]->Cmd1Len = sprintf(CmdPtr, "FA%s;MD0%X;FA;MD;", &FreqString[1], ModeNo);
 		}
 		else if	(PORT->PortType == FT100 || PORT->PortType == FT990
@@ -4970,18 +4970,18 @@ CheckScan:
 			*(CmdPtr++) = 0;
 			*(CmdPtr++) = 0;
 			*(CmdPtr++) = 0;
-			
+
 			if (PORT->PortType == FT990 || PORT->YaesuVariant == FT1000D)
 				*(CmdPtr++) = 3;
 			else
 				*(CmdPtr++) = 2;		// F100 or FT1000MP
-			
+
 			*(CmdPtr++) = 16;			// Get Status
 		}
 		else if	(PORT->PortType == NMEA)
-		{	
+		{
 			int Len;
-			
+
 			i = sprintf(CmdPtr, "$PICOA,90,%02x,RXF,%.6f*xx\r\n", RIG->RigAddr, Freq/1000000.);
 			AddNMEAChecksum(CmdPtr);
 			Len = i;
@@ -5010,7 +5010,7 @@ CheckScan:
 	if (RIG->NumberofBands)
 	{
 		CheckTimeBands(RIG);		// Set initial FreqPtr;
-		PORT->FreqPtr = RIG->FreqPtr[0];	
+		PORT->FreqPtr = RIG->FreqPtr[0];
 	}
 
 	return RIG;
@@ -5029,9 +5029,9 @@ VOID SetupScanInterLockGroups(struct RIGINFO *RIG)
 		// Find records in same Interlock Group
 
 		int LockGroup = PortRecord->PORTINTERLOCK;
-					
+
 		PortRecord = PORTTABLE;
-					
+
 		while (PortRecord)
 		{
 			if (LockGroup == PortRecord->PORTINTERLOCK)
@@ -5062,10 +5062,10 @@ VOID SetupPortRIGPointers()
 		if (TNC->Hardware == H_WINMOR || TNC->Hardware == H_V4 || TNC->Hardware == H_ARDOP || TNC->Hardware == H_VARA)
 			if (TNC->RIG && TNC->PTTMode)
 				TNC->RIG->PTTMode = TNC->PTTMode;
-	
+
 		if (TNC->RIG == NULL)
 			TNC->RIG = &TNC->DummyRig;		// Not using Rig control, so use Dummy
-	
+
 /*		if (TNC->WL2KFreq[0])
 		{
 			// put in ValChar for MH reporting
@@ -5138,7 +5138,7 @@ VOID PTTCATThread(struct RIGINFO *RIG)
 
 		ReadFile(Handle[i], Block[i], 80, &Length, &Overlapped[i]);
 	}
-		
+
 	while (EndPTTCATThread == FALSE)
 	{
 
@@ -5178,14 +5178,14 @@ WaitAgain:
 				while (Length > 0)
 				{
 					c = *(ptr1++);
-				
+
 					Length--;
 
 					if (c == 0xff)
 					{
 						c = *(ptr1++);
 						Length--;
-					
+
 						if (c == 0xff)			// ff ff means ff
 						{
 							Length--;
@@ -5208,7 +5208,7 @@ WaitAgain:
 						}
 					}
 				}
-				
+
 				memset(&Overlapped[i], 0, sizeof(OVERLAPPED));
 				Overlapped[i].hEvent = Event;
 
@@ -5225,7 +5225,7 @@ WaitAgain:
 		ResetEvent(Event);
 
 		ret = ReadFile(Handle, Block, 80, &Length, &Overlapped);
-		
+
 		if (ret == 0)
 		{
 			ret = GetLastError();
@@ -5240,7 +5240,7 @@ WaitAgain:
 				}
 			}
 		}
-		
+
 */
 #endif
 
@@ -5273,7 +5273,7 @@ void CM108_set_ptt(struct RIGINFO *RIG, int PTTState)
 		printf("Unable to write()\n");
 		printf("Error: %ls\n", hid_error(handle));
 	}
-	
+
 	hid_close(handle);
 
 #else
@@ -5281,13 +5281,13 @@ void CM108_set_ptt(struct RIGINFO *RIG, int PTTState)
 	int fd;
 
 	fd = open (RIG->CM108Device, O_WRONLY);
-		
+
 	if (fd == -1)
 	{
           printf ("Could not open %s for write, errno=%d\n", RIG->CM108Device, errno);
           return;
 	}
-	
+
 	io[0] = 0;
 	io[1] = 0;
 	io[2] = 1 << (3 - 1);
@@ -5299,7 +5299,7 @@ void CM108_set_ptt(struct RIGINFO *RIG, int PTTState)
 	{
 		printf ("Write to %s failed, n=%d, errno=%d\n", RIG->CM108Device, n, errno);
 	}
-	
+
 	close (fd);
 #endif
 	return;
@@ -5336,7 +5336,7 @@ VOID CreateRigConfigLine(HWND hDlg, struct RIGPORTINFO * PORT, struct RIGINFO * 
 	hBPQPort =  CreateWindow(WC_EDIT , Port, WS_CHILD | WS_VISIBLE | WS_TABSTOP | WS_BORDER | ES_AUTOHSCROLL,
                  405, CRow, 20, 20, hDlg, NULL, hInstance, NULL);
 
-	hTimes =  CreateWindow(WC_COMBOBOX , "", WS_CHILD | WS_VISIBLE | CBS_DROPDOWN | 
+	hTimes =  CreateWindow(WC_COMBOBOX , "", WS_CHILD | WS_VISIBLE | CBS_DROPDOWN |
                     WS_VSCROLL | WS_TABSTOP,
                  430, CRow, 100,80, hDlg, NULL, hInstance, NULL);
 
@@ -5347,16 +5347,16 @@ VOID CreateRigConfigLine(HWND hDlg, struct RIGPORTINFO * PORT, struct RIGINFO * 
 	SendMessage(hTimes, CB_ADDSTRING, 0, (LPARAM)(LPCTSTR) "1200:2359");
 	SendMessage(hTimes, CB_SETCURSEL, 0, 0);
 
-	CRow += 30;	
+	CRow += 30;
 
 }
 
 VOID CreatePortConfigLine(HWND hDlg, struct RIGPORTINFO * PORT)
-{	
-	char Port[20]; 
+{
+	char Port[20];
 	int i;
 
-	hComPort =  CreateWindow(WC_COMBOBOX , "", WS_CHILD | WS_VISIBLE | CBS_DROPDOWN | 
+	hComPort =  CreateWindow(WC_COMBOBOX , "", WS_CHILD | WS_VISIBLE | CBS_DROPDOWN |
                     WS_VSCROLL | WS_TABSTOP,
                  30, CRow, 90, 160, hDlg, NULL, hInstance, NULL);
 
@@ -5371,9 +5371,9 @@ VOID CreatePortConfigLine(HWND hDlg, struct RIGPORTINFO * PORT)
 	i = SendMessage(hComPort, CB_FINDSTRINGEXACT, 0,(LPARAM) Port);
 
 	SendMessage(hComPort, CB_SETCURSEL, i, 0);
-	
-	
-	hSpeed =  CreateWindow(WC_COMBOBOX , "", WS_CHILD | WS_VISIBLE | CBS_DROPDOWN | 
+
+
+	hSpeed =  CreateWindow(WC_COMBOBOX , "", WS_CHILD | WS_VISIBLE | CBS_DROPDOWN |
                     WS_VSCROLL | WS_TABSTOP,
                  120, CRow, 75, 80, hDlg, NULL, hInstance, NULL);
 
@@ -5420,7 +5420,7 @@ INT_PTR CALLBACK ConfigDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM
 			PORT = PORTInfo[p];
 
 			CreatePortConfigLine(hDlg, PORT);
-		
+
 			for (i=0; i < PORT->ConfiguredRigs; i++)
 			{
 				RIG = &PORT->Rigs[i];
@@ -5432,11 +5432,11 @@ INT_PTR CALLBACK ConfigDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM
 
 //	 CreateWindow(WC_STATIC , "",  WS_CHILD | WS_VISIBLE,
 //                 90, Row, 40,20, hDlg, NULL, hInstance, NULL);
-	
+
 //	 CreateWindow(WC_STATIC , "",  WS_CHILD | WS_VISIBLE,
 //                 135, Row, 100,20, hDlg, NULL, hInstance, NULL);
 
-return TRUE; 
+return TRUE;
 	}
 
 	case WM_SIZING:

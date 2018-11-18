@@ -16,7 +16,7 @@ struct SORTLIST
 } SortList;
 
 struct STATIONRECORD
-{  
+{
 	struct STATIONRECORD * Next;
 	char Callsign[12];
 	char Path[120];

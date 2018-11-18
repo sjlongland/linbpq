@@ -15,7 +15,7 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with LinBPQ/BPQ32.  If not, see http://www.gnu.org/licenses
-*/	
+*/
 
 // Mail and Chat Server for BPQ32 Packet Switch
 //
@@ -81,11 +81,11 @@ struct Continent Continents[] =
    		"NAFR",	"AF", // Northern Africa
    		"CAFR",	"AF", // Central Africa
    		"SAFR",	"AF", // Southern Africa
-   		"ANTR",	"OC", // Antarctica 
+   		"ANTR",	"OC", // Antarctica
 };
 
-struct Country Countries[] = 
-{			
+struct Country Countries[] =
+{
 		"AFG", "****", "AS", 		// Afghanistan
 		"ALA", "EURO", "EU", 		// Åland Islands
 		"ALB", "EURO", "EU", 		// Albania
@@ -346,7 +346,7 @@ struct Continent * FindContinent(char * Name)
 	for(i=0; i< NumberofContinents; i++)
 	{
 		Cont = &Continents[i];
-		
+
 		if ((_stricmp(Name, Cont->FourCharCode) == 0) || (_stricmp(Name, Cont->TwoCharCode) == 0))
 			return Cont;
 
@@ -363,7 +363,7 @@ struct Country * FindCountry(char * Name)
 	for(i=0; i< NumberofCountries; i++)
 	{
 		Cont = &Countries[i];
-		
+
 		if (_stricmp(Name, Cont->Country) == 0)
 			return Cont;
 	}
@@ -381,7 +381,7 @@ struct ALIAS * FindAlias(char * Name)
 	{
 		if (_stricmp(Name, Alias[0]->Dest) == 0)
 			return Alias[0];
-	
+
 		Alias++;
 	}
 
@@ -395,14 +395,14 @@ VOID SetupMyHA()
 	struct Continent * Continent;
 
 	strcpy(MyRouteElements, HRoute);
-	
+
 	// Split it up
 
 	ptr2 = MyRouteElements + strlen(MyRouteElements) - 1;
 
 	if (HRoute[0])
 	{
-		do 
+		do
 		{
 			while ((*ptr2 != '.') && (ptr2 > MyRouteElements))
 				ptr2 --;
@@ -410,7 +410,7 @@ VOID SetupMyHA()
 			if (ptr2 == MyRouteElements)
 			{
 				// End
-	
+
 				MyElements[Elements++] = _strdup(ptr2);
 				break;
 			}
@@ -476,7 +476,7 @@ VOID SetupNTSAliases(char * FN)
 			NTSAliases = realloc(NTSAliases, (Count+2)* sizeof(struct ALIAS));
 			NTSAliases[Count] = zalloc(sizeof(struct ALIAS));
 
-			NTSAliases[Count]->Dest =  Dest; 
+			NTSAliases[Count]->Dest =  Dest;
 			NTSAliases[Count]->Alias = Alias;
 
 			Count++;
@@ -507,7 +507,7 @@ VOID SetupFwdAliases()
 
 			Dest = strtok_s(Dest, seps, &Alias);
 
-			Aliases[Count]->Dest =  Dest; 
+			Aliases[Count]->Dest =  Dest;
 			Aliases[Count]->Alias = Alias;
 
 			Count++;
@@ -532,10 +532,10 @@ VOID SetupHAElements(struct BBSForwardingInfo * ForwardingInfo)
 
 	ForwardingInfo->BBSHAElements[0] = _strdup(WW);
 
-	do 
+	do
 	{
 		ForwardingInfo->BBSHAElements = realloc(ForwardingInfo->BBSHAElements, (Elements+2)*4);
-		
+
 		while ((*ptr2 != '.') && (ptr2 > SaveHText))
 		{
 			ptr2 --;
@@ -544,7 +544,7 @@ VOID SetupHAElements(struct BBSForwardingInfo * ForwardingInfo)
 		if (ptr2 == SaveHText)
 		{
 			// End
-	
+
 			ForwardingInfo->BBSHAElements[Elements++] = _strdup(ptr2);
 			break;
 		}
@@ -591,7 +591,7 @@ VOID SetupHAddreses(struct BBSForwardingInfo * ForwardingInfo)
 		int Elements = 1;
 		ForwardingInfo->HADDRS = realloc(ForwardingInfo->HADDRS, (Count+2)*4);
 		ForwardingInfo->HADDROffet = realloc(ForwardingInfo->HADDROffet, (Count+2)*4);
-	
+
 		ForwardingInfo->HADDRS[Count] = zalloc(8);	// Always at lesat WWW and NULL
 
 		SaveHText = _strdup(HText[0]);
@@ -604,10 +604,10 @@ VOID SetupHAddreses(struct BBSForwardingInfo * ForwardingInfo)
 		if (strcmp(HText[0], "WW") != 0)
 		{
 
-		do 
+		do
 		{
 			ForwardingInfo->HADDRS[Count] = realloc(ForwardingInfo->HADDRS[Count], (Elements+2)*4);
-			
+
 			while ((*ptr2 != '.') && (ptr2 > SaveHText))
 			{
 				ptr2 --;
@@ -616,7 +616,7 @@ VOID SetupHAddreses(struct BBSForwardingInfo * ForwardingInfo)
 			if (ptr2 == SaveHText)
 			{
 				// End
-	
+
 				ForwardingInfo->HADDRS[Count][Elements++] = _strdup(ptr2);
 				break;
 			}
@@ -645,7 +645,7 @@ VOID SetupHAddreses(struct BBSForwardingInfo * ForwardingInfo)
 
 		if (FindContinent(TopElement))
 			goto FullHR;
-	
+
 		// Need to add stuff from our HR
 
 		Elements--;
@@ -695,7 +695,7 @@ VOID SetupHAddresesP(struct BBSForwardingInfo * ForwardingInfo)
 	{
 		int Elements = 1;
 		ForwardingInfo->HADDRSP = realloc(ForwardingInfo->HADDRSP, (Count+2)*4);
-	
+
 		ForwardingInfo->HADDRSP[Count] = zalloc(8);	// Always at lesat WWW and NULL
 
 		SaveHText = _strdup(HText[0]);
@@ -708,10 +708,10 @@ VOID SetupHAddresesP(struct BBSForwardingInfo * ForwardingInfo)
 		if (strcmp(HText[0], "WW") != 0)
 		{
 
-		do 
+		do
 		{
 			ForwardingInfo->HADDRSP[Count] = realloc(ForwardingInfo->HADDRSP[Count], (Elements+2)*4);
-			
+
 			while ((*ptr2 != '.') && (ptr2 > SaveHText))
 			{
 				ptr2 --;
@@ -720,7 +720,7 @@ VOID SetupHAddresesP(struct BBSForwardingInfo * ForwardingInfo)
 			if (ptr2 == SaveHText)
 			{
 				// End
-	
+
 				ForwardingInfo->HADDRSP[Count][Elements++] = _strdup(ptr2);
 				break;
 			}
@@ -754,10 +754,10 @@ VOID SetupHAddresesP(struct BBSForwardingInfo * ForwardingInfo)
 	ForwardingInfo->HADDRSP[Count] = NULL;
 }
 
-VOID CheckAndSend(struct MsgInfo * Msg, CIRCUIT * conn, struct UserInfo * bbs) 
+VOID CheckAndSend(struct MsgInfo * Msg, CIRCUIT * conn, struct UserInfo * bbs)
 {
 	struct BBSForwardingInfo * ForwardingInfo = bbs->ForwardingInfo;
-		
+
 	if (ForwardToMe || _stricmp(bbs->Call, BBSName) != 0) // Dont forward to ourself - already here! (unless ForwardToMe set)
 	{
 		if ((conn == NULL) || (!(conn->BBSFlags & BBS) || (_stricmp(conn->UserPointer->Call, bbs->Call) != 0))) // Dont send back
@@ -779,7 +779,7 @@ VOID UpdateB2Dest(struct MsgInfo * Msg, char * Alias)
 	FILE * hFile;
 	char * MsgBytes;
 	struct stat STAT;
- 
+
 	sprintf_s(MsgFile, sizeof(MsgFile), "%s/m_%06d.mes", MailDir, Msg->number);
 
 	if (stat(MsgFile, &STAT) == -1)
@@ -794,7 +794,7 @@ VOID UpdateB2Dest(struct MsgInfo * Msg, char * Alias)
 
 	MsgBytes=malloc(FileSize + 100);	// A bit of space for alias substitution on B2
 
-	fread(MsgBytes, 1, FileSize, hFile); 
+	fread(MsgBytes, 1, FileSize, hFile);
 
 	fclose(hFile);
 
@@ -926,7 +926,7 @@ int MatchMessagetoBBSList(struct MsgInfo * Msg, CIRCUIT * conn)
 	if (_stricmp(Msg->to, "RMS") == 0)
 	{
 		// If a user of this bbs with Poll RMS set, leave it here - no point in sending to winlink
-	
+
 		// To = RMS could come from RMS:EMAIL Address. If so, we only check user if @winlink.org, or
 		// we will hold g8bpq@g8bpq.org.uk
 
@@ -954,7 +954,7 @@ int MatchMessagetoBBSList(struct MsgInfo * Msg, CIRCUIT * conn)
 
 						if (user->flags & F_BBS)	// User is also a BBS, so set FWD bit so he can get it
 							set_fwd_bit(Msg->fbbs, user->BBSNumber);
-	
+
 						return 1;
 					}
 				}
@@ -969,7 +969,7 @@ int MatchMessagetoBBSList(struct MsgInfo * Msg, CIRCUIT * conn)
 		if (RMS)
 		{
 			Logprintf(LOG_BBS, conn, '?', "Routing Trace to RMS Matches BBS RMS");
-			
+
 			set_fwd_bit(Msg->fbbs, RMS->BBSNumber);
 			RMS->ForwardingInfo->MsgCount++;
 			if (RMS->ForwardingInfo->SendNew)
@@ -991,20 +991,20 @@ int MatchMessagetoBBSList(struct MsgInfo * Msg, CIRCUIT * conn)
 			if (user->flags & F_POLLRMS)
 			{
 				Logprintf(LOG_BBS, conn, '?', "Routing Trace @ winlink.org, but local RMS user - leave here");
-		
+
 				if (user->flags & F_BBS)	// User is also a BBS, so set FWD bit so he can get it
 					set_fwd_bit(Msg->fbbs, user->BBSNumber);
 
 				return 1;					// Route found
 			}
 		}
-	
+
 		RMS = FindRMS();
 
 		if (RMS)
 		{
 			Logprintf(LOG_BBS, conn, '?', "Routing Trace @ winlink.org Matches BBS RMS");
-			
+
 			set_fwd_bit(Msg->fbbs, RMS->BBSNumber);
 			RMS->ForwardingInfo->MsgCount++;
 			if (RMS->ForwardingInfo->SendNew)
@@ -1028,7 +1028,7 @@ int MatchMessagetoBBSList(struct MsgInfo * Msg, CIRCUIT * conn)
 		{
 			if (_stricmp(Msg->to, "AMPR") != 0)	// Already set up?
 			{
-		
+
 				// Put full name in VIA and AMPR in TO
 
 				char Full[80];
@@ -1044,7 +1044,7 @@ int MatchMessagetoBBSList(struct MsgInfo * Msg, CIRCUIT * conn)
 			}
 		}
 
-	
+
 		if (_stricmp(Msg->to, "AMPR") == 0)
 		{
 			bbs = FindAMPR();
@@ -1052,7 +1052,7 @@ int MatchMessagetoBBSList(struct MsgInfo * Msg, CIRCUIT * conn)
 			if (bbs)
 			{
 				Logprintf(LOG_BBS, conn, '?', "Routing Trace to ampr.org Matches BBS AMPR");
-			
+
 				set_fwd_bit(Msg->fbbs, bbs->BBSNumber);
 				bbs->ForwardingInfo->MsgCount++;
 				if (bbs->ForwardingInfo->SendNew)
@@ -1068,11 +1068,11 @@ int MatchMessagetoBBSList(struct MsgInfo * Msg, CIRCUIT * conn)
 	// See if a well-known alias
 
 	Alias = FindAlias(RouteElements);
-	
+
 	if (Alias)
 	{
 		Logprintf(LOG_BBS, conn, '?', "Routing Trace Alias Substitution %s > %s",
-			RouteElements, Alias->Alias); 
+			RouteElements, Alias->Alias);
 
 		strcpy(RouteElements, Alias->Alias);
 
@@ -1118,7 +1118,7 @@ int MatchMessagetoBBSList(struct MsgInfo * Msg, CIRCUIT * conn)
 	}
 
 	Country = FindCountry(ptr2);
-	
+
 	if (Country)
 	{
 		// Just need to add Continent and WW
@@ -1148,7 +1148,7 @@ FULLHA:
 
 		ptr2 = FullRoute + strlen(FullRoute) - 1;
 
-		do 
+		do
 		{
 			while ((*ptr2 != '.') && (ptr2 > FullRoute))
 			{
@@ -1157,7 +1157,7 @@ FULLHA:
 
 			if (ptr2 != FullRoute)
 				*ptr2++ = 0;
-	
+
 			HElements[Elements++] = ptr2;
 
 
@@ -1184,7 +1184,7 @@ FULLHA:
 	if (Msg->type == 'B')
 	{
 		int i = 0;
-		
+
 		// All elements of Helements must match Myelements
 
 		while (MyElements[i] && HElements[i]) // Until one set runs out
@@ -1220,7 +1220,7 @@ NOHA:
 		//  If no match, send to any BBS with routing to state XX and NTS flag set (no we dont!)
 
 		for (bbs = BBSChain; bbs; bbs = bbs->BBSNext)
-		{		
+		{
 			ForwardingInfo = bbs->ForwardingInfo;
 
 			depth = CheckBBSToForNTS(Msg, ForwardingInfo);
@@ -1228,7 +1228,7 @@ NOHA:
 			if (depth > -1)
 			{
 				Logprintf(LOG_BBS, conn, '?', "Routing Trace NTS Matches TO BBS %s Length %d", bbs->Call, depth);
-		
+
 				if (depth > bestmatch)
 				{
 					bestmatch = depth;
@@ -1238,7 +1238,7 @@ NOHA:
 		}
 		if (bestbbs)
 		{
-			if (bestbbs->flags  & F_NTSMPS) 
+			if (bestbbs->flags  & F_NTSMPS)
 				Logprintf(LOG_BBS, conn, '?', "Routing Trace NTS Best Match is %s, but NTS MPS Set so not queued", bestbbs->Call);
 			else
 			{
@@ -1248,15 +1248,15 @@ NOHA:
 			return 1;
 		}
 
-		// Check AT 
+		// Check AT
 
 		for (bbs = BBSChain; bbs; bbs = bbs->BBSNext)
-		{		
+		{
 			ForwardingInfo = bbs->ForwardingInfo;
 
 			if (CheckBBSAtList(Msg, ForwardingInfo, ATBBS))
 			{
-				if (bbs->flags  & F_NTSMPS) 
+				if (bbs->flags  & F_NTSMPS)
 					Logprintf(LOG_BBS, conn, '?', "Routing Trace NTS %s Matches AT %s, but NTS MPS Set so not queued", ATBBS, bbs->Call);
 				else
 				{
@@ -1280,12 +1280,12 @@ NOHA:
 		int depth;
 
 		for (bbs = BBSChain; bbs; bbs = bbs->BBSNext)
-		{		
+		{
 			ForwardingInfo = bbs->ForwardingInfo;
 
 			if (ForwardingInfo->PersonalOnly && (Msg->type != 'P') && (Msg->type != 'T'))
 				continue;
-			
+
 			if (CheckBBSToList(Msg, bbs, ForwardingInfo))
 			{
 				Logprintf(LOG_BBS, conn, '?', "Routing Trace TO %s Matches BBS %s", Msg->to, bbs->Call);
@@ -1296,25 +1296,25 @@ NOHA:
 		}
 
 		for (bbs = BBSChain; bbs; bbs = bbs->BBSNext)
-		{		
+		{
 			ForwardingInfo = bbs->ForwardingInfo;
 
 			if (ForwardingInfo->PersonalOnly && (Msg->type != 'P'))
 				continue;
 
-			// Check implied AT 
+			// Check implied AT
 
-			if ((strcmp(ATBBS, bbs->Call) == 0))			// @BBS = BBS		
+			if ((strcmp(ATBBS, bbs->Call) == 0))			// @BBS = BBS
 			{
 				Logprintf(LOG_BBS, conn, '?', "Routing Trace %s Matches implied AT %s", ATBBS, bbs->Call);
 
-		
+
 				CheckAndSend(Msg, conn, bbs);
 
 				return 1;
 			}
 
-			// Check AT 
+			// Check AT
 
 			if (CheckBBSAtList(Msg, ForwardingInfo, ATBBS))
 			{
@@ -1329,7 +1329,7 @@ NOHA:
 		// We should choose the BBS with most matching elements (ie match on #23.GBR better that GBR)
 
 		for (bbs = BBSChain; bbs; bbs = bbs->BBSNext)
-		{		
+		{
 			ForwardingInfo = bbs->ForwardingInfo;
 
 			if (ForwardingInfo->PersonalOnly && (Msg->type != 'P'))
@@ -1340,7 +1340,7 @@ NOHA:
 			if (depth)
 			{
 				Logprintf(LOG_BBS, conn, '?', "Routing Trace HR Matches BBS %s Depth %d", bbs->Call, depth);
-		
+
 				if (depth > bestmatch)
 				{
 					bestmatch = depth;
@@ -1353,7 +1353,7 @@ NOHA:
 			Logprintf(LOG_BBS, conn, '?', "Routing Trace HR Best Match is %s", bestbbs->Call);
 
 			CheckAndSend(Msg, conn, bestbbs);
-		
+
 			return 1;
 		}
 
@@ -1369,7 +1369,7 @@ CheckWildCardedAT:
 		bestbbs = NULL;
 
 		for (bbs = BBSChain; bbs; bbs = bbs->BBSNext)
-		{		
+		{
 			ForwardingInfo = bbs->ForwardingInfo;
 
 			if (ForwardingInfo->PersonalOnly && (Msg->type != 'P'))
@@ -1380,7 +1380,7 @@ CheckWildCardedAT:
 			if (depth > -1)
 			{
 				Logprintf(LOG_BBS, conn, '?', "Routing Trace Wildcarded AT Matches  %s Length %d", bbs->Call, depth);
-		
+
 				if (depth > bestmatch)
 				{
 					bestmatch = depth;
@@ -1390,7 +1390,7 @@ CheckWildCardedAT:
 		}
 		if (bestbbs)
 		{
-			if (Msg->type == 'T' && (bestbbs->flags  & F_NTSMPS)) 
+			if (Msg->type == 'T' && (bestbbs->flags  & F_NTSMPS))
 				Logprintf(LOG_BBS, conn, '?', "Routing Trace Wildcarded AT Best Match is %s, but NTS Msg and MPS Set so not queued", bestbbs->Call);
 			else
 			{
@@ -1411,7 +1411,7 @@ CheckWildCardedAT:
 	// Ver 1.0.4.2 - Try including TO
 
 	for (bbs = BBSChain; bbs; bbs = bbs->BBSNext)
-	{		
+	{
 		ForwardingInfo = bbs->ForwardingInfo;
 
 		if (ForwardingInfo->PersonalOnly)
@@ -1431,7 +1431,7 @@ CheckWildCardedAT:
 			continue;
 		}
 
-		if ((strcmp(ATBBS, bbs->Call) == 0) ||			// @BBS = BBS		
+		if ((strcmp(ATBBS, bbs->Call) == 0) ||			// @BBS = BBS
 			CheckBBSAtList(Msg, ForwardingInfo, ATBBS))
 		{
 			Logprintf(LOG_BBS, conn, '?', "Routing Trace AT %s Matches BBS %s", Msg->to, bbs->Call);
@@ -1440,14 +1440,14 @@ CheckWildCardedAT:
 			Count++;
 			continue;
 		}
-		
-		
+
+
 		if (CheckBBSHElementsFlood(Msg, bbs, ForwardingInfo, Msg->via, &HElements[0]))
 		{
 			Logprintf(LOG_BBS, conn, '?', "Routing Trace HR %s %s %s %s %s Matches BBS %s",
-				HElements[0], HElements[1], HElements[2], 
+				HElements[0], HElements[1], HElements[2],
 				HElements[3], HElements[4], bbs->Call);
-	
+
 			CheckAndSend(Msg, conn, bbs);
 
 			Count++;
@@ -1455,7 +1455,7 @@ CheckWildCardedAT:
 
 	}
 
-	if (Count == 0)		
+	if (Count == 0)
 		Logprintf(LOG_BBS, conn, '?', "Routing Trace - No Match");
 
 	return Count;
@@ -1473,7 +1473,7 @@ BOOL CheckBBSToList(struct MsgInfo * Msg, struct UserInfo * bbs, struct	BBSForwa
 
 		while(Calls[0])
 		{
-			if (strcmp(Calls[0], Msg->to) == 0)	
+			if (strcmp(Calls[0], Msg->to) == 0)
 				return TRUE;
 
 			Calls++;
@@ -1497,7 +1497,7 @@ BOOL CheckBBSAtList(struct MsgInfo * Msg, struct BBSForwardingInfo * ForwardingI
 
 		while(Calls[0])
 		{
-			if (strcmp(Calls[0], ATBBS) == 0)	
+			if (strcmp(Calls[0], ATBBS) == 0)
 				return TRUE;
 
 			Calls++;
@@ -1524,7 +1524,7 @@ int CheckBBSHElements(struct MsgInfo * Msg, struct UserInfo * bbs, struct BBSFor
 		while(HRoutes[k])
 		{
 			i = j = 0;
-			
+
 			while (HRoutes[k][i] && HElements[j]) // Until one set runs out
 			{
 				if (strcmp(HRoutes[k][i], HElements[j]) != 0)
@@ -1565,9 +1565,9 @@ int CheckBBSHElementsFlood(struct MsgInfo * Msg, struct UserInfo * bbs, struct B
 
 		if (BBSHA == NULL)
 			return 0;				// Not safe to flood
-			
+
 		i = j = 0;
-			
+
 		while (BBSHA[i] && HElements[j]) // Until one set runs out
 		{
 			if (strcmp(BBSHA[i], HElements[j]) != 0)
@@ -1575,9 +1575,9 @@ int CheckBBSHElementsFlood(struct MsgInfo * Msg, struct UserInfo * bbs, struct B
 			i++;
 			j++;
 		}
-		
+
 		if (HElements[j] != 0)
-			return 0;				// Message is not for BBS's area 
+			return 0;				// Message is not for BBS's area
 
 		HRoutes = ForwardingInfo->HADDRS;
 		k=0;
@@ -1585,7 +1585,7 @@ int CheckBBSHElementsFlood(struct MsgInfo * Msg, struct UserInfo * bbs, struct B
 		while(HRoutes[k])
 		{
 			i = j = 0;
-			
+
 			while (HRoutes[k][i] && HElements[j]) // Until one set runs out
 			{
 				if (strcmp(HRoutes[k][i], HElements[j]) != 0)
@@ -1593,11 +1593,11 @@ int CheckBBSHElementsFlood(struct MsgInfo * Msg, struct UserInfo * bbs, struct B
 				i++;
 				j++;
 			}
-				
+
 			if (i > bestmatch)
 			{
 				// As Flooding, only match if all elements match, and elements matching > offset
-				
+
 				// As Flooding, only match if all elements from BBS are matched
 				// ie if BBS has #23.gbr.eu, and msg gbr.eu, don't match
 				// if BBS has gbr.eu, and msg #23.gbr.eu, ok (so long as bbs in in #23, checked above.
@@ -1622,7 +1622,7 @@ int CheckBBSToForNTS(struct MsgInfo * Msg, struct BBSForwardingInfo * Forwarding
 	int MatchLen = 0;
 
 	// Look for Matches on TO using Wildcarded Addresses. Intended for use with NTS traffic, with TO = ZIPCode
-	
+
 	// We forward to the BBS with the most specific match - ie minimum *'s in match
 
 	if (ForwardingInfo->TOCalls)
@@ -1663,7 +1663,7 @@ int CheckBBSToForNTS(struct MsgInfo * Msg, struct BBSForwardingInfo * Forwarding
 			else
 			{
 				//no star - just do a normal compare
-				
+
 				if (strcmp(Msg->to, Call) == 0)
 				{
 					if (Invert)
@@ -1692,7 +1692,7 @@ int CheckBBSATListWildCarded(struct MsgInfo * Msg, struct BBSForwardingInfo * Fo
 
 	// Look for Matches on AT using Wildcarded Addresses. Only applied after all other checks fail. Intended mainly
 	// for setting a default route, but could have other uses
-	
+
 	// We forward to the BBS with the most specific match - ie minimum *'s in match
 
 	if (ForwardingInfo->ATCalls)
@@ -1705,7 +1705,7 @@ int CheckBBSATListWildCarded(struct MsgInfo * Msg, struct BBSForwardingInfo * Fo
 			ptr = strchr(Call, '*');
 
 			// only look if * present - we have already tried routing on the full AT
-			
+
 			if (ptr)
 			{
 				MatchLen = ptr - Call;
@@ -1745,7 +1745,7 @@ struct ALIAS * CheckForNTSAlias(struct MsgInfo * Msg, char * ATFirstElement)
 			break;
 
 		ptr = strchr(Call, '*');
-	
+
 		if (ptr)
 		{
 			MatchLen = ptr - Call;
@@ -1756,7 +1756,7 @@ struct ALIAS * CheckForNTSAlias(struct MsgInfo * Msg, char * ATFirstElement)
 		else
 		{
 			//no star - just do a normal compare
-				
+
 			if (strcmp(Msg->to, Call) == 0)
 				return(Alias[0]);
 		}
@@ -1823,12 +1823,12 @@ VOID ReRouteMessages()
 			// Clear fwd bits on any BBS it has been sent to
 
 			if (memcmp(Msg->fbbs, zeros, NBMASK) != 0)
-			{	
+			{
 				struct UserInfo * user;
 
 				for (user = BBSChain; user; user = user->BBSNext)
 				{
-					if (check_fwd_bit(Msg->fbbs, user->BBSNumber))		// for this BBS?	
+					if (check_fwd_bit(Msg->fbbs, user->BBSNumber))		// for this BBS?
 					{
 						if (check_fwd_bit(Msg->forw, user->BBSNumber))	// Already sent?
 							 clear_fwd_bit(Msg->fbbs, user->BBSNumber);

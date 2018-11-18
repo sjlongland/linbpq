@@ -15,10 +15,10 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with LinBPQ/BPQ32.  If not, see http://www.gnu.org/licenses
-*/	
+*/
 
 //
-//	Telnet Driver for BPQ Switch 
+//	Telnet Driver for BPQ Switch
 //
 //	Uses BPQ EXTERNAL interface
 //
@@ -119,7 +119,7 @@ static char BlankCall[]="         ";
 BOOL LogEnabled = FALSE;
 BOOL CMSLogEnabled = TRUE;
 
-static	HMENU hMenu, hPopMenu, hPopMenu2, hPopMenu3;		// handle of menu 
+static	HMENU hMenu, hPopMenu, hPopMenu2, hPopMenu3;		// handle of menu
 
 static int ProcessLine(char * buf, int Port);
 VOID __cdecl Debugprintf(const char * format, ...);
@@ -195,7 +195,7 @@ int DeleteTelnetLogFiles()
 
    hFind = FindFirstFile(szDir, &ffd);
 
-   if (INVALID_HANDLE_VALUE == hFind) 
+   if (INVALID_HANDLE_VALUE == hFind)
       return dwError;
 
    // List all the files in the directory with some info about them.
@@ -214,7 +214,7 @@ int DeleteTelnetLogFiles()
 		 ft.QuadPart -=  116444736000000000;
 		 ft.QuadPart /= 10000000;
 
-		 Age = (now - ft.LowPart) / 86400; 
+		 Age = (now - ft.LowPart) / 86400;
 
 		 if (Age > LogAge)
 		 {
@@ -225,7 +225,7 @@ int DeleteTelnetLogFiles()
       }
    }
    while (FindNextFile(hFind, &ffd) != 0);
- 
+
    strcpy(szDir, GetLogDirectory());
    strcat(szDir, "/logs/CMSAccess_*.log");
 
@@ -233,7 +233,7 @@ int DeleteTelnetLogFiles()
 
    hFind = FindFirstFile(szDir, &ffd);
 
-   if (INVALID_HANDLE_VALUE == hFind) 
+   if (INVALID_HANDLE_VALUE == hFind)
       return dwError;
 
    // List all the files in the directory with some info about them.
@@ -252,7 +252,7 @@ int DeleteTelnetLogFiles()
 		 ft.QuadPart -=  116444736000000000;
 		 ft.QuadPart /= 10000000;
 
-		 Age = (now - ft.LowPart) / 86400; 
+		 Age = (now - ft.LowPart) / 86400;
 
 		 if (Age > LogAge)
 		 {
@@ -286,20 +286,20 @@ int DeleteTelnetLogFiles()
 	time_t now = time(NULL);
 	int Age = 0, res;
 	char FN[256];
-     	
+
     n = scandir("logs", &namelist, TelFilter, alphasort);
 
-	if (n < 0) 
+	if (n < 0)
 		perror("scandir");
-	else  
-	{ 
+	else
+	{
 		while(n--)
 		{
 			sprintf(FN, "logs/%s", namelist[n]->d_name);
 			if (stat(FN, &STAT) == 0)
 			{
 				Age = (now - STAT.st_mtime) / 86400;
-				
+
 				if (Age > LogAge)
 				{
 					Debugprintf("Deleting  %s\n", FN);
@@ -327,7 +327,7 @@ void BuffertoNode(struct ConnectionInfo * sockptr, char * MsgPtr, int InputLen)
 		sockptr->FromHostBuffer = realloc(sockptr->FromHostBuffer, sockptr->FromHostBufferSize);
 	}
 
-	memcpy(&sockptr->FromHostBuffer[sockptr->FromHostBuffPutptr], MsgPtr, InputLen); 
+	memcpy(&sockptr->FromHostBuffer[sockptr->FromHostBuffPutptr], MsgPtr, InputLen);
 
 	sockptr->FromHostBuffPutptr += InputLen;
 	sockptr->InputLen = 0;
@@ -344,7 +344,7 @@ BOOL SendAndCheck(struct ConnectionInfo * sockptr, unsigned char * MsgPtr, int l
 		return TRUE;			// OK
 
 	err = WSAGetLastError();
-				
+
 	Debugprintf("TCP Send Failed - Sent %d should be %d err %d - requeue data", sent, len, err);
 
 	if (err == 10035 || err == 115 || err == 36)		//EWOULDBLOCK
@@ -379,7 +379,7 @@ VOID SendPortsForMonitor(SOCKET sock)
 	for (n=1; n <= p; n++)
 	{
 		PORT = GetPortTableEntryFromSlot(n);
-		
+
 		memcpy(ID, PORT->PORTDESCRIPTION, 30);
 
 		for (i = 29; i; i--)
@@ -459,10 +459,10 @@ int ProcessLine(char * buf, int Port)
 	if (_stricmp(param, "CMSPASS") == 0)
 	{
 		char Temp[80];
-		
+
 		if (strlen(value) > 79)
 			value[79] = 0;
-	
+
 		strcpy(Temp, value);
 		strlop(Temp, 32);
 		strlop(Temp, 13);
@@ -608,14 +608,14 @@ int ProcessLine(char * buf, int Port)
 		scanCTEXT:
 
 			ptr = strstr(ptr, "\\n");
-    
+
 			if (ptr)
-			{    
+			{
 				*(ptr++)=13;			// put in cr
 				*(ptr++)=10;			// put in lf
 
 				goto scanCTEXT;
-			}  
+			}
 		}
 		else
 		if (_stricmp(param,"USER") == 0)
@@ -672,7 +672,7 @@ int ProcessLine(char * buf, int Port)
 			USER = zalloc(sizeof(struct UserRec));
 
 			TCP->UserRecPtr[TCP->NumberofUsers] = USER;
- 
+
 			USER->Callsign = _strdup(UserCall);
 			USER->Password = _strdup(Pwd);
 			USER->UserName = _strdup(User);
@@ -681,7 +681,7 @@ int ProcessLine(char * buf, int Port)
 
 			if (_stricmp(Secure, "SYSOP") == 0)
 				USER->Secure = TRUE;
-		
+
 			if (Appl[0] && strcmp(Appl, "\"\"") != 0)
 			{
 				strcpy(USER->Appl, _strupr(Appl));
@@ -732,8 +732,8 @@ lineloop:
 
 	if (Len > 0)
 	{
-		//	copy text to file a line at a time	
-					
+		//	copy text to file a line at a time
+
 		ptr2 = memchr(ptr1, 13 , Len);
 
 		if (ptr2)
@@ -756,7 +756,7 @@ lineloop:
 				ptr2++;
 				Len --;
 			}
-			
+
 			Line[LineLen] = 0;
 
 			// If line contains any data above 7f, assume binary and dont display
@@ -813,7 +813,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 
 	switch (fn)
 	{
-	case 7:			
+	case 7:
 
 		// 100 mS Timer. Now needed, as Poll can be called more ferquently in some circimstances
 
@@ -824,7 +824,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 		}
 
 		TCP = TNC->TCPInfo;
-	
+
 		if (TCP->CMS)
 		{
 			TCP->CheckCMSTimer++;
@@ -842,7 +842,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 		}
 
 		// We now use persistent HTTP sessions, so need to close after a reasonable time
-		
+
 		for (n = 0; n <= TCP->MaxSessions; n++)
 		{
 			sockptr = TNC->Streams[n].ConnectionInfo;
@@ -865,7 +865,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 	case 1:				// poll
 
 		for (Stream = 0; Stream <= MaxStreams; Stream++)
-		{	
+		{
 			TRANSPORTENTRY * SESS;
 			struct ConnectionInfo * sockptr = TNC->Streams[Stream].ConnectionInfo;
 
@@ -918,7 +918,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 			if (STREAM->PACTORtoBPQ_Q !=0)
 			{
 				int datalen;
-			
+
 				buffptr=Q_REM(&STREAM->PACTORtoBPQ_Q);
 
 				datalen=buffptr[1];
@@ -931,11 +931,11 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 				PutLengthinBuffer(buff, datalen);
 
 				ReleaseBuffer(buffptr);
-	
+
 				return (1);
 			}
 		}
-			
+
 		return 0;
 
 	case 2:				// send
@@ -949,11 +949,11 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 		Stream = buff[4];
 		STREAM = &TNC->Streams[Stream];
 
-		txlen = GetLengthfromBuffer(buff) - 8;	
+		txlen = GetLengthfromBuffer(buff) - 8;
 
 		buffptr[1] = txlen;
 		memcpy(buffptr+2, &buff[8], txlen);
-		
+
 		C_Q_ADD(&STREAM->BPQtoPACTOR_Q, buffptr);
 		STREAM->FramesQueued++;
 
@@ -961,9 +961,9 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 
 
 	case 3:				// CHECK IF OK TO SEND. Also used to check if TNC is responding
-		
+
 		Stream = (int)buff;
-		
+
 		STREAM = &TNC->Streams[Stream];
 
 		if (STREAM->FramesQueued  > 40)
@@ -979,8 +979,8 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 
 #ifndef LINBPQ
 		HWND SavehDlg, SaveCMS, SaveMonitor;
-		HMENU SaveMenu1, SaveMenu2, SaveMenu3; 
-#endif	
+		HMENU SaveMenu1, SaveMenu2, SaveMenu3;
+#endif
 		int n, i;
 
 		ProcessConfig();
@@ -1031,7 +1031,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 		closesocket(TCP->HTTPsock6);
 
 		// Save info from old TNC record
-			
+
 		n = TNC->Port;
 		PortRecord = TNC->PortRecord;
 #ifndef LINBPQ
@@ -1074,7 +1074,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 		// Malloc TCP Session Stucts
 
 		for (i = 0; i <= TNC->TCPInfo->MaxSessions; i++)
-		{			
+		{
 			TNC->Streams[i].ConnectionInfo = zalloc(sizeof(struct ConnectionInfo));
 			TCP->CurrentSockets = i;  //Record max used to save searching all entries
 #ifndef LINBPQ
@@ -1104,7 +1104,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 			sockptr = TNC->Streams[n].ConnectionInfo;
 			closesocket(sockptr->socket);
 		}
-	
+
 		shutdown(TCP->TCPSock, SD_BOTH);
 
 		n = 0;
@@ -1204,7 +1204,7 @@ static int WebProc(struct TNCINFO * TNC, char * Buff, BOOL LOCAL)
 			else
 			{
 				i=sprintf(msg,"<tr><td>%s</td><td>%s</td><td>%d</td></tr>",
-					sockptr->UserPointer->UserName, sockptr->Callsign, 
+					sockptr->UserPointer->UserName, sockptr->Callsign,
 					sockptr->FromHostBuffPutptr - sockptr->FromHostBuffGetptr);
 			}
 		}
@@ -1230,7 +1230,7 @@ UINT TelnetExtInit(EXTPORTDATA * PortEntry)
 /*
 	UCHAR NC[257];
 	WCHAR WC[1024];
-	
+
 	int WLen, NLen;
 
 	UINT UTF[256] = {0};
@@ -1241,7 +1241,7 @@ UINT TelnetExtInit(EXTPORTDATA * PortEntry)
 	for (n = 0; n < 256; n++)
 		NC[n] =n ;
 
-	n = MultiByteToWideChar(437, 0, NC, 256, &WC[0], 1024); 
+	n = MultiByteToWideChar(437, 0, NC, 256, &WC[0], 1024);
 
 	for (n = 0; n < 256; n++)
 		UTFL[n] = WideCharToMultiByte(CP_UTF8, 0, &WC[n], 1, &UTF[n], 1024 , NULL, NULL);
@@ -1255,7 +1255,7 @@ UINT TelnetExtInit(EXTPORTDATA * PortEntry)
 
 
 	Handle = CreateFile("c:\\UTF8437Data.c", GENERIC_WRITE, FILE_SHARE_READ, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-	
+
 	n = wsprintf (Line, "unsigned int CP437toUTF8Data[128] = {\r\n");
 
 	WriteFile(Handle, Line ,n , &n, NULL);
@@ -1270,7 +1270,7 @@ UINT TelnetExtInit(EXTPORTDATA * PortEntry)
 
 		}
 
-		WriteFile(Handle, "};\r\n", 4, &n, NULL); 
+		WriteFile(Handle, "};\r\n", 4, &n, NULL);
 	}
 	n = wsprintf (Line, "unsigned int CP437toUTF8DataLen[128] = {\r\n");
 
@@ -1286,10 +1286,10 @@ UINT TelnetExtInit(EXTPORTDATA * PortEntry)
 
 		}
 
-		WriteFile(Handle, "};\r\n", 4, &n, NULL); 
+		WriteFile(Handle, "};\r\n", 4, &n, NULL);
 
 		SetEndOfFile(Handle);
-	
+
 		CloseHandle(Handle);
 	}
 	}
@@ -1331,7 +1331,7 @@ UINT TelnetExtInit(EXTPORTDATA * PortEntry)
 
 	PortEntry->PORTCONTROL.PROTOCOL = 10;	// WINMOR/Pactor
 	PortEntry->PORTCONTROL.PORTQUALITY = 0;
-	PortEntry->SCANCAPABILITIES = NONE;		// No Scan Control 
+	PortEntry->SCANCAPABILITIES = NONE;		// No Scan Control
 	PortEntry->PERMITGATEWAY = TRUE;
 
 	ptr=strchr(TNC->NodeCall, ' ');
@@ -1401,8 +1401,8 @@ UINT TelnetExtInit(EXTPORTDATA * PortEntry)
 	CheckMenuItem(TCP->hLogMenu, 0, MF_BYPOSITION | LogEnabled<<3);
 	CheckMenuItem(TCP->hLogMenu, 1, MF_BYPOSITION | CMSLogEnabled<<3);
 
-//	ModifyMenu(hMenu, 1, MF_BYPOSITION | MF_OWNERDRAW | MF_STRING, 10000,  0); 
- 
+//	ModifyMenu(hMenu, 1, MF_BYPOSITION | MF_OWNERDRAW | MF_STRING, 10000,  0);
+
 #endif
 
 	// Malloc TCP Session Stucts
@@ -1462,8 +1462,8 @@ SOCKET OpenSocket4(struct TNCINFO * xTNC, int port)
 
 		setsockopt (sock, SOL_SOCKET, SO_REUSEADDR, (char *)&param,4);
 
- 
-		psin->sin_port = htons(port);        // Convert to network ordering 
+
+		psin->sin_port = htons(port);        // Convert to network ordering
 
 		if (bind( sock, (struct sockaddr FAR *) &local_sin, sizeof(local_sin)) == SOCKET_ERROR)
 		{
@@ -1549,7 +1549,7 @@ BOOL OpenSocket6(struct TNCINFO * TNC, int port)
 	psin->sin6_scope_id = 0;
 
 	sock = socket(AF_INET6, SOCK_STREAM, 0);
-	
+
 #ifndef WIN32
 
 	if (setsockopt(sock, IPPROTO_IPV6, IPV6_V6ONLY, &param, sizeof(param)) < 0)
@@ -1563,10 +1563,10 @@ BOOL OpenSocket6(struct TNCINFO * TNC, int port)
 	{
 		sprintf(szBuff, "IPV6 socket() failed error %d\n", WSAGetLastError());
 		WritetoConsoleLocal(szBuff);
-		return FALSE;  
+		return FALSE;
 	}
 
-	psin->sin6_port = htons(port);        // Convert to network ordering 
+	psin->sin6_port = htons(port);        // Convert to network ordering
 
 	if (bind(sock, (struct sockaddr FAR *)psin, sizeof(local_sin)) == SOCKET_ERROR)
 	{
@@ -1665,7 +1665,7 @@ static VOID SetupListenSet(struct TNCINFO * TNC)
 		if (sock > maxsock)
 			maxsock = sock;
 	}
-		
+
 	sock = TCP->Relaysock;
 	if (sock)
 	{
@@ -1673,7 +1673,7 @@ static VOID SetupListenSet(struct TNCINFO * TNC)
 		if (sock > maxsock)
 			maxsock = sock;
 	}
-		
+
 	sock = TCP->HTTPsock;
 	if (sock)
 	{
@@ -1681,7 +1681,7 @@ static VOID SetupListenSet(struct TNCINFO * TNC)
 		if (sock > maxsock)
 			maxsock = sock;
 	}
-		
+
 	sock = TCP->TriModeSock;
 	if (sock)
 	{
@@ -1716,7 +1716,7 @@ static VOID SetupListenSet(struct TNCINFO * TNC)
 		if (sock > maxsock)
 			maxsock = sock;
 	}
-		
+
 	sock = TCP->Relaysock6;
 	if (sock)
 	{
@@ -1724,7 +1724,7 @@ static VOID SetupListenSet(struct TNCINFO * TNC)
 		if (sock > maxsock)
 			maxsock = sock;
 	}
-		
+
 	sock = TCP->HTTPsock6;
 	if (sock)
 	{
@@ -1763,7 +1763,7 @@ VOID TelnetPoll(int Port)
 
 		if (TCP->maxsock == 0)
 			goto nosocks;
-		
+
 		memcpy(&readfd, &TCP->ListenSet, sizeof(fd_set));
 
 		retval = select(TCP->maxsock + 1, &readfd, NULL, NULL, &timeout);
@@ -1776,7 +1776,7 @@ VOID TelnetPoll(int Port)
 
 		if (retval)
 		{
-		
+
 		n = 0;
 		while (TCP->FBBsock[n])
 		{
@@ -1791,7 +1791,7 @@ VOID TelnetPoll(int Port)
 			if (FD_ISSET(sock, &readfd))
 				Socket_Accept(TNC, sock);
 		}
-		
+
 		sock = TCP->TriModeSock;
 		if (sock)
 		{
@@ -1804,14 +1804,14 @@ VOID TelnetPoll(int Port)
 			if (FD_ISSET(sock, &readfd))
 				Socket_Accept(TNC, sock);
 		}
-	
+
 		sock = TCP->Relaysock;
 		if (sock)
 		{
 			if (FD_ISSET(sock, &readfd))
 				Socket_Accept(TNC, sock);
 		}
-		
+
 		sock = TCP->HTTPsock;
 		if (sock)
 		{
@@ -1820,7 +1820,7 @@ VOID TelnetPoll(int Port)
 		}
 
 		n = 0;
-		
+
 		while (TCP->FBBsock6[n])
 		{
 			sock = TCP->FBBsock6[n++];
@@ -1834,21 +1834,21 @@ VOID TelnetPoll(int Port)
 			if (FD_ISSET(sock, &readfd))
 			Socket_Accept(TNC, sock);
 		}
-		
+
 		sock = TCP->Relaysock6;
 		if (sock)
 		{
 			if (FD_ISSET(sock, &readfd))
 			Socket_Accept(TNC, sock);
 		}
-		
+
 		sock = TCP->HTTPsock6;
 		if (sock)
 		{
 			if (FD_ISSET(sock, &readfd))
 			Socket_Accept(TNC, sock);
 		}
-		
+
 		}
 
 		// look for data on any active sockets
@@ -1862,7 +1862,7 @@ VOID TelnetPoll(int Port)
 		for (n = 0; n <= TCP->MaxSessions; n++)
 		{
 			sockptr = TNC->Streams[n].ConnectionInfo;
-		
+
 			//	Should we use write event after a blocked write ????
 
 			if (sockptr->SocketActive)
@@ -1894,7 +1894,7 @@ VOID TelnetPoll(int Port)
 				{
 					FD_SET(sockptr->TriModeDataSock, &readfd);
 					FD_SET(sockptr->TriModeDataSock, &exceptfd);
-			
+
 					if (sockptr->TriModeDataSock > maxsock)
 						maxsock = sockptr->TriModeDataSock;
 				}
@@ -1906,7 +1906,7 @@ VOID TelnetPoll(int Port)
 			retval = select(maxsock + 1, &readfd, &writefd, &exceptfd, &timeout);
 
 			if (retval == -1)
-			{				
+			{
 				perror("data select");
 				Debugprintf("Telnet Select Error %d Active %d", WSAGetLastError(), Active);
 
@@ -1926,7 +1926,7 @@ VOID TelnetPoll(int Port)
 					for (n = 0; n <= TCP->MaxSessions; n++)
 					{
 						sockptr = TNC->Streams[n].ConnectionInfo;
-		
+
 						if (sockptr->SocketActive)
 						{
 							sock = sockptr->socket;
@@ -1987,7 +1987,7 @@ nosocks:
 			buffer[2] = 91;
 		else
 			buffer[2] = 17;
-	
+
 		for (Stream = 0; Stream <= TCP->MaxSessions; Stream++)
 		{
 			STREAM = &TNC->Streams[Stream];
@@ -2026,7 +2026,7 @@ nosocks:
 
 		ReleaseBuffer(monbuff);
 	}
-	
+
 	for (Stream = 0; Stream <= TCP->MaxSessions; Stream++)
 	{
 		STREAM = &TNC->Streams[Stream];
@@ -2052,7 +2052,7 @@ nosocks:
 
 			struct ConnectionInfo * sockptr = TNC->Streams[Stream].ConnectionInfo;
 			SOCKET sock = sockptr->socket;
-			char Msg[80];	
+			char Msg[80];
 			UINT * buffptr;
 
 			STREAM->Attached = FALSE;
@@ -2113,7 +2113,7 @@ nosocks:
 				}
 				// Always Disconnect CMS Socket
 
-				DataSocket_Disconnect(TNC, sockptr);	
+				DataSocket_Disconnect(TNC, sockptr);
 			}
 
 			if (sockptr->RelayMode)
@@ -2130,7 +2130,7 @@ nosocks:
 				// Always Disconnect Relay Socket
 
 				Sleep(100);
-				DataSocket_Disconnect(TNC, sockptr);	
+				DataSocket_Disconnect(TNC, sockptr);
 			}
 
 			else
@@ -2185,7 +2185,7 @@ nosocks:
 				BuffertoNode(sockptr, "Keepalive\r", 10);
 			}
 		}
-			
+
 		if (sockptr->ResendBuffer)
 		{
 			// Data saved after EWOULDBLOCK returned to send
@@ -2198,7 +2198,7 @@ nosocks:
 
 			continue;
 		}
-			
+
 		while (STREAM->BPQtoPACTOR_Q)
 		{
 			int datalen;
@@ -2260,7 +2260,7 @@ nosocks:
 					ReleaseBuffer(buffptr);
 					return;
 				}
-				
+
 				if ((_memicmp(MsgPtr, "C", 1) == 0) && MsgPtr[1] == ' ' && datalen > 2)	// Connect
 				{
 					char Host[100] = "";
@@ -2275,7 +2275,7 @@ nosocks:
 
 					n = sscanf(&MsgPtr[2], "%s %s %s %s %s %s %s",
 							&Host[0], &P2[0], &P3[0], &P4[0], &P5[0], &P6[0], &P7[0]);
-	
+
 					sockptr->Signon[0] = 0;		// Not outgoing;
 					sockptr->Keepalive = FALSE;	// No Keepalives
 					sockptr->UTF8 = 0;			// Not UTF8
@@ -2314,7 +2314,7 @@ nosocks:
 						ReleaseBuffer(buffptr);
 						return;
 					}
-							
+
 					if (_stricmp(Host, "CMS") == 0)
 					{
 						if (!TCP->CMSOK)
@@ -2328,7 +2328,7 @@ nosocks:
 								ReleaseBuffer(buffptr);
 								return;
 							}
-					
+
 							buffptr[1] = sprintf((UCHAR *)&buffptr[2], "Error - CMS Not Available\r");
 							C_Q_ADD(&TNC->Streams[Stream].PACTORtoBPQ_Q, buffptr);
 							STREAM->NeedDisc = 10;
@@ -2346,8 +2346,8 @@ nosocks:
 						return;
 					}
 
-					// Outward Connect. 
-						
+					// Outward Connect.
+
 					Port = atoi(P2);
 
 					if (Port)
@@ -2359,7 +2359,7 @@ nosocks:
 						if (_stricmp(P3, "TELNET") == 0)
 						{
 //							// FBB with CRLF
-		
+
 							STREAM->ConnectionInfo->NeedLF = TRUE;
 						}
 						else
@@ -2371,7 +2371,7 @@ nosocks:
 						if (_stricmp(P3, "NEEDLF") == 0 || STREAM->ConnectionInfo->NeedLF)
 						{
 							// Send LF after each param
-						
+
 							if (P6[0])
 								sprintf(STREAM->ConnectionInfo->Signon, "%s\r\n%s\r\n%s\r\n", P4, P5, P6);
 							else
@@ -2398,7 +2398,7 @@ nosocks:
 						return;
 					}
 				}
-	
+
 				buffptr[1] = sprintf((UCHAR *)&buffptr[2], "Error - Invalid Command\r");
 				C_Q_ADD(&TNC->Streams[Stream].PACTORtoBPQ_Q, buffptr);
 				STREAM->NeedDisc = 10;
@@ -2414,10 +2414,10 @@ nosocks:
 			int Queued = 0;
 			TRANSPORTENTRY * Sess1 = TNC->PortRecord->ATTACHEDSESSIONS[Stream];
 			TRANSPORTENTRY * Sess2 = NULL;
-			
+
 			if (Sess1)
 				Sess2 = Sess1->L4CROSSLINK;
-			
+
 			// Can't use TXCount - it is Semaphored=
 
 			Queued = C_Q_COUNT(&TNC->Streams[Stream].PACTORtoBPQ_Q);
@@ -2465,10 +2465,10 @@ LRESULT CALLBACK TelWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 	struct TCPINFO * TCP;
 	struct _EXTPORTDATA * PortRecord;
 	HWND SavehDlg, SaveCMS, SaveMonitor;
-	HMENU SaveMenu1, SaveMenu2, SaveMenu3; 
+	HMENU SaveMenu1, SaveMenu2, SaveMenu3;
 	MINMAXINFO * mmi;
 
-    LPMEASUREITEMSTRUCT lpmis;  // pointer to item of data             
+    LPMEASUREITEMSTRUCT lpmis;  // pointer to item of data
 	LPDRAWITEMSTRUCT lpdis;     // pointer to item drawing data
 
 //	struct ConnectionInfo * ConnectionInfo;
@@ -2478,7 +2478,7 @@ LRESULT CALLBACK TelWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 		TNC = TNCInfo[i];
 		if (TNC == NULL)
 			continue;
-		
+
 		if (TNC->hDlg == hWnd)
 			break;
 	}
@@ -2494,7 +2494,7 @@ LRESULT CALLBACK TelWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 		RECT rcClient;
 		int ClientHeight, ClientWidth;
 
-		GetClientRect(TNC->hDlg, &rcClient); 
+		GetClientRect(TNC->hDlg, &rcClient);
 
 		ClientHeight = rcClient.bottom;
 		ClientWidth = rcClient.right;
@@ -2514,9 +2514,9 @@ LRESULT CALLBACK TelWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 
 
 	case WM_MDIACTIVATE:
-	{			 
+	{
 		// Set the system info menu when getting activated
-			 
+
 		if (lParam == (LPARAM) hWnd)
 		{
 			// Activate
@@ -2529,10 +2529,10 @@ LRESULT CALLBACK TelWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 		else
 		{
 			 // Deactivate
-	
+
 			SendMessage(ClientWnd, WM_MDISETMENU, (WPARAM) hMainFrameMenu, (LPARAM) NULL);
 		 }
-			 
+
 		// call DrawMenuBar after the menu items are set
 		DrawMenuBar(FrameWnd);
 
@@ -2546,19 +2546,19 @@ LRESULT CALLBACK TelWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 		wmEvent = HIWORD(wParam);
 
 		switch (wmId)
-		{ 
+		{
 		case SC_RESTORE:
 
 			TNC->Minimized = FALSE;
 			SendMessage(ClientWnd, WM_MDIRESTORE, (WPARAM)hWnd, 0);
 			return DefMDIChildProc(hWnd, message, wParam, lParam);
 
-		case  SC_MINIMIZE: 
+		case  SC_MINIMIZE:
 
 			TNC->Minimized = TRUE;
 			return DefMDIChildProc(hWnd, message, wParam, lParam);
 		}
-		
+
 		return DefMDIChildProc(hWnd, message, wParam, lParam);
 
 	case WM_COMMAND:
@@ -2571,7 +2571,7 @@ LRESULT CALLBACK TelWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 			// disconnect user
 
 			sockptr = TNC->Streams[wmId-IDM_DISCONNECT].ConnectionInfo;
-		
+
 			if (sockptr->SocketActive)
 			{
 				sock=sockptr->socket;
@@ -2579,7 +2579,7 @@ LRESULT CALLBACK TelWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 				send(sock,disMsg, strlen(disMsg),0);
 
 				Sleep (1000);
-    
+
 				shutdown(sock,2);
 
 				DataSocket_Disconnect(TNC, sockptr);
@@ -2597,7 +2597,7 @@ LRESULT CALLBACK TelWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 			// Toggle CMS Enabled Flag
 
 			TCP = TNC->TCPInfo;
-			
+
 			TCP->CMS = !TCP->CMS;
 			CheckMenuItem(TCP->hActionMenu, 3, MF_BYPOSITION | TCP->CMS<<3);
 
@@ -2606,7 +2606,7 @@ LRESULT CALLBACK TelWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 			else
 			{
 				TCP->CMSOK = FALSE;
-				SetWindowText(TCP->hCMSWnd, "CMS Off"); 
+				SetWindowText(TCP->hCMSWnd, "CMS Off");
 			}
 			break;
 
@@ -2661,7 +2661,7 @@ LRESULT CALLBACK TelWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 			shutdown(TCP->Relaysock6, SD_BOTH);
 
 			Sleep(500);
-	
+
 			closesocket(TCP->TCPSock);
 			closesocket(TCP->sock6);
 
@@ -2679,7 +2679,7 @@ LRESULT CALLBACK TelWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 			closesocket(TCP->HTTPsock6);
 
 			// Save info from old TNC record
-			
+
 			n = TNC->Port;
 			PortRecord = TNC->PortRecord;
 			SavehDlg = TNC->hDlg;
@@ -2721,7 +2721,7 @@ LRESULT CALLBACK TelWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 			// Malloc TCP Session Stucts
 
 			for (i = 0; i <= TNC->TCPInfo->MaxSessions; i++)
-			{			
+			{
 				TNC->Streams[i].ConnectionInfo = zalloc(sizeof(struct ConnectionInfo));
 				TNC->Streams[i].ConnectionInfo->Number = i;
 
@@ -2752,7 +2752,7 @@ LRESULT CALLBACK TelWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 //		return (0);
 
 	case WM_CTLCOLORDLG:
-	
+
 		return (LONG)bgBrush;
 
 
@@ -2767,28 +2767,28 @@ LRESULT CALLBACK TelWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 			else
 				SetTextColor(hdcStatic, RGB(255, 0, 0));
 		}
-	
+
 		SetBkMode(hdcStatic, TRANSPARENT);
 		return (LONG)bgBrush;
 	}
-	case WM_MEASUREITEM: 
- 
-		// Retrieve pointers to the menu item's 
-		// MEASUREITEMSTRUCT structure and MYITEM structure. 
- 
-		lpmis = (LPMEASUREITEMSTRUCT) lParam;  
-		lpmis->itemWidth = 300; 
+	case WM_MEASUREITEM:
 
-		return TRUE; 
+		// Retrieve pointers to the menu item's
+		// MEASUREITEMSTRUCT structure and MYITEM structure.
 
-	case WM_DRAWITEM: 
- 
-            // Get pointers to the menu item's DRAWITEMSTRUCT 
-            // structure and MYITEM structure. 
- 
-            lpdis = (LPDRAWITEMSTRUCT) lParam; 
- 
-            // If the user has selected the item, use the selected 
+		lpmis = (LPMEASUREITEMSTRUCT) lParam;
+		lpmis->itemWidth = 300;
+
+		return TRUE;
+
+	case WM_DRAWITEM:
+
+            // Get pointers to the menu item's DRAWITEMSTRUCT
+            // structure and MYITEM structure.
+
+            lpdis = (LPDRAWITEMSTRUCT) lParam;
+
+            // If the user has selected the item, use the selected
             // text and background colors to display the item.
 
 			SetTextColor(lpdis->hDC, RGB(0, 128, 0));
@@ -2806,13 +2806,13 @@ LRESULT CALLBACK TelWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 			else
 				TextOut(lpdis->hDC, 340, lpdis->rcItem.top + 2, "             ", 13);
 
-            return TRUE; 
+            return TRUE;
 
 	case WM_DESTROY:
 
 		break;
 	}
-			
+
 	return DefMDIChildProc(hWnd, message, wParam, lParam);
 
 }
@@ -2822,7 +2822,7 @@ LRESULT CALLBACK TelWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 int Socket_Accept(struct TNCINFO * TNC, int SocketId)
 {
 	int n, addrlen = sizeof(struct sockaddr_in6);
-	struct sockaddr_in6 sin6;  
+	struct sockaddr_in6 sin6;
 
 	struct ConnectionInfo * sockptr;
 	SOCKET sock;
@@ -2832,7 +2832,7 @@ int Socket_Accept(struct TNCINFO * TNC, int SocketId)
 	HMENU hDisMenu = TCP->hDisMenu;
 	u_long param=1;
 
-	// if for TriModeData Session, use the TriMode Control connection entry 
+	// if for TriModeData Session, use the TriMode Control connection entry
 
 	if (SocketId == TCP->TriModeDataSock)
 	{
@@ -2849,7 +2849,7 @@ int Socket_Accept(struct TNCINFO * TNC, int SocketId)
 	for (n = 1; n <= TCP->MaxSessions; n++)
 	{
 		sockptr = TNC->Streams[n].ConnectionInfo;
-		
+
 		if (sockptr->SocketActive == FALSE)
 		{
 			sock = accept(SocketId, (struct sockaddr *)&sockptr->sin, &addrlen);
@@ -2859,7 +2859,7 @@ int Socket_Accept(struct TNCINFO * TNC, int SocketId)
 				Debugprintf("BPQ32 Telnet accept() failed Error %d", WSAGetLastError());
 				return FALSE;
 			}
-				
+
 //			Debugprintf("BPQ32 Telnet accept() Sock %d", sock);
 
 			ioctl(sock, FIONBIO, &param);
@@ -2879,8 +2879,8 @@ int Socket_Accept(struct TNCINFO * TNC, int SocketId)
 			TNC->Streams[n].BytesRXed = TNC->Streams[n].BytesTXed = 0;
 			TNC->Streams[n].FramesQueued = 0;
 
-			sockptr->HTTPMode = FALSE;	
-			sockptr->FBBMode = FALSE;	
+			sockptr->HTTPMode = FALSE;
+			sockptr->FBBMode = FALSE;
 			sockptr->RelayMode = FALSE;
 			sockptr->ClientSession = FALSE;
 			sockptr->NeedLF = FALSE;
@@ -2904,7 +2904,7 @@ int Socket_Accept(struct TNCINFO * TNC, int SocketId)
 				sockptr->FBBMode = TRUE;
 #ifndef LINBPQ
 			ModifyMenu(hDisMenu, n - 1, MF_BYPOSITION | MF_STRING, IDM_DISCONNECT + n, ".");
-			DrawMenuBar(TNC->hDlg);	
+			DrawMenuBar(TNC->hDlg);
 #endif
 			ShowConnections(TNC);
 
@@ -2942,7 +2942,7 @@ int Socket_Accept(struct TNCINFO * TNC, int SocketId)
 			sockptr->FromHostBuffPutptr = sockptr->FromHostBuffGetptr = 0;
 
 			return 0;
-		}	
+		}
 	}
 
 	//	No free sessions. Must accept() then close
@@ -2971,7 +2971,7 @@ int Socket_Data(struct TNCINFO * TNC, int sock, int error, int eventcode)
 	for (n = 0; n <= TCP->CurrentSockets; n++)
 	{
 		sockptr = TNC->Streams[n].ConnectionInfo;
-	
+
 		if (sockptr->socket == sock && sockptr->SocketActive)
 		{
 #ifndef LINBPQ
@@ -2984,7 +2984,7 @@ int Socket_Data(struct TNCINFO * TNC, int sock, int error, int eventcode)
 
 					if (sockptr->HTTPMode)
 						return DataSocket_ReadHTTP(TNC, sockptr, sock, n);
-					
+
 					if (sockptr->FBBMode)
 						return DataSocket_ReadFBB(TNC, sockptr, sock, n);
 					else
@@ -3013,7 +3013,7 @@ int Socket_Data(struct TNCINFO * TNC, int sock, int error, int eventcode)
 					return 0;
 				}
 			return 0;
-#endif	
+#endif
 		}
 
 	}
@@ -3028,7 +3028,7 @@ VOID SendtoNode(struct TNCINFO * TNC, int Stream, char * Msg, int MsgLen)
 {
 	UINT * buffptr = GetBuff();
 
-	if (buffptr == NULL) 
+	if (buffptr == NULL)
 		return;			// No buffers, so ignore
 
 	if (TNC->Streams[Stream].Connected == 0)
@@ -3046,11 +3046,11 @@ VOID SendtoNode(struct TNCINFO * TNC, int Stream, char * Msg, int MsgLen)
 		if (sockptr->UserPointer)
 			TNC->PortRecord->ATTACHEDSESSIONS[sockptr->Number]->Secure_Session = sockptr->UserPointer->Secure;
 	}
-			
+
 	buffptr[1] = MsgLen;				// Length
-	
+
 	memcpy(&buffptr[2], Msg, MsgLen);
-	
+
 	C_Q_ADD(&TNC->Streams[Stream].PACTORtoBPQ_Q, buffptr);
 }
 
@@ -3073,7 +3073,7 @@ int DataSocket_Read(struct TNCINFO * TNC, struct ConnectionInfo * sockptr, SOCKE
 	ioctl(sock,FIONREAD,&len);
 
 	maxlen = InputBufferLen - sockptr->InputLen;
-	
+
 	if (len > maxlen) len=maxlen;
 
 	len = recv(sock, &sockptr->InputBuffer[sockptr->InputLen], len, 0);
@@ -3093,9 +3093,9 @@ int DataSocket_Read(struct TNCINFO * TNC, struct ConnectionInfo * sockptr, SOCKE
 		send(sockptr->socket,&sockptr->InputBuffer[sockptr->InputLen],len,0);
 
 	// look for backspaces in data just read
-	
+
 	BSptr = memchr(&sockptr->InputBuffer[sockptr->InputLen], 8, len);
-	
+
 	if (BSptr == NULL)
 		BSptr = memchr(&sockptr->InputBuffer[sockptr->InputLen], 127, len);
 
@@ -3104,7 +3104,7 @@ int DataSocket_Read(struct TNCINFO * TNC, struct ConnectionInfo * sockptr, SOCKE
 		// single char or BS as last is most likely, and worth treating as a special case
 
 		int n;
-		
+
 		charsAfter = len-(BSptr-&sockptr->InputBuffer[sockptr->InputLen])-1;
 
 		if (charsAfter == 0)
@@ -3119,7 +3119,7 @@ int DataSocket_Read(struct TNCINFO * TNC, struct ConnectionInfo * sockptr, SOCKE
 		memmove(BSptr-1, BSptr+1, charsAfter);
 
 		n = sockptr->InputLen;
-	
+
 		sockptr->InputLen+=(len-2);		// drop bs and char before
 
 		// see if more bs chars
@@ -3166,9 +3166,9 @@ IACLoop:
 
 		// If ProcessTelnet Command returns FALSE, then it has removed the IAC and its
 		// params from the buffer. There may still be more to process.
-		
+
 		if (sockptr->InputLen == 0) return 0;	// Nothing Left
-	
+
 		goto IACLoop;					// There may be more
 	}
 
@@ -3214,7 +3214,7 @@ MsgLoop:
 					if ((*ptr) == 0 || *(ptr) == 10)
 					{
 						// skip next
-						
+
 						n--;
 						ptr++;
 					}
@@ -3223,14 +3223,14 @@ MsgLoop:
 			else if (c == 10)
 			{
 				*(optr - 1) = 13;
-			}							
+			}
 			else
 			{
 				//  Normal Char
 
 				if (len >= PACLEN)
 				{
-					BuffertoNode(sockptr, NodeLine, len); 
+					BuffertoNode(sockptr, NodeLine, len);
 					optr = NodeLine;
 					len = 0;
 				}
@@ -3250,7 +3250,7 @@ MsgLoop:
 
 
 	// Server Mode
-	
+
 	CRPtr=memchr(MsgPtr, 13, InputLen);
 
 	if (CRPtr)
@@ -3267,7 +3267,7 @@ MsgLoop:
 	}
 
 	// could just have LF??
-	
+
 	LFPtr=memchr(MsgPtr, 10, InputLen);
 
 	if (LFPtr == 0)
@@ -3292,28 +3292,28 @@ MsgLoop:
 			}
 
 			// Send to Node
-    
+
 			// Line could be up to 500 chars if coming from a program rather than an interative user
 			// Limit send to node to 255
 
 			while (InputLen > 255)
-			{		
+			{
 				SendtoNode(TNC, sockptr->Number, MsgPtr, 255);
 				sockptr->InputLen -= 255;
 				InputLen -= 255;
 
 				memmove(MsgPtr,MsgPtr+255,InputLen);
 			}
-	           
+
 			SendtoNode(TNC, sockptr->Number, MsgPtr, InputLen);
 
 			sockptr->InputLen = 0;
-		
+
 		} // PACLEN
 
 		return 0;	// No CR
 	}
-	
+
 	// Got a LF
 
 	// Process data up to the cr
@@ -3326,7 +3326,7 @@ MsgLoop:
 	case 2:
 
 		// Normal Data State
-			
+
 		STREAM->BytesRXed += MsgLen;
 		SendIndex = 0;
 
@@ -3334,14 +3334,14 @@ MsgLoop:
 		// Limit send to node to 255. Should really use PACLEN instead of 255....
 
 		while (MsgLen > 255)
-		{		
+		{
 			SendtoNode(TNC, sockptr->Number, MsgPtr + SendIndex, 255);
 			SendIndex += 255;
 			MsgLen -= 255;
 		}
 
 		SendtoNode(TNC, sockptr->Number, MsgPtr + SendIndex, MsgLen);
-		
+
 		MsgLen += SendIndex;
 
 		// If anything left, copy down buffer, and go back
@@ -3360,20 +3360,20 @@ MsgLoop:
 		return 0;
 
 	case 0:
-		
+
         //   Check Username
         //
 
 		*(LFPtr-1)=0;				 // remove cr
-        
+
   //      send(sock, NLMsg, 2, 0);
 
         if (LogEnabled)
 		{
 			char Addr[256];
-			
+
 			Tel_Format_Addr(sockptr, Addr);
-			
+
 			if (strlen(MsgPtr) > 64)
 			{
 				Debugprintf("Telnet Bad User Name %s", MsgPtr);
@@ -3403,11 +3403,11 @@ MsgLoop:
 			}
 			else
 				continue;
-                
+
 			send(sock, TCP->PasswordMsg, strlen(TCP->PasswordMsg),0);
-                
+
 			sockptr->Retries = 0;
-                
+
 			sockptr->LoginState = 1;
 			sockptr->InputLen = 0;
 
@@ -3418,10 +3418,10 @@ MsgLoop:
 			ShowConnections(TNC);;
 			return 0;
 		}
-        
+
         //   Not found
-        
-        
+
+
         if (sockptr->Retries++ == 4)
 		{
             send(sock,AttemptsMsg,sizeof(AttemptsMsg),0);
@@ -3429,26 +3429,26 @@ MsgLoop:
             DataSocket_Disconnect(TNC, sockptr);       //' Tidy up
 		}
 		else
-		{        
+		{
             send(sock, TCP->LoginMsg, strlen(TCP->LoginMsg), 0);
             sockptr->InputLen=0;
 
 		}
 
 		return 0;
-       
+
 	case 1:
-		   
+
 		*(LFPtr-1)=0;				 // remove cr
-        
+
         send(sock, NLMsg, 2, 0);	// Need to echo NL, as password is not echoed
-    
+
         if (LogEnabled)
 		{
 			char Addr[256];
-			
+
 			Tel_Format_Addr(sockptr, Addr);
-						
+
 			if (strlen(MsgPtr) > 64)
 			{
 				Debugprintf("Telnet Bad Password %s", MsgPtr);
@@ -3475,7 +3475,7 @@ MsgLoop:
 
             sockptr->LoginState = 2;
             sockptr->InputLen = 0;
-            
+
             if (ctlen > 0)  send(sock, ct, ctlen, 0);
 
 			STREAM->BytesTXed = ctlen;
@@ -3483,14 +3483,14 @@ MsgLoop:
             if (LogEnabled)
 			{
 				char Addr[100];
-			
+
 				Tel_Format_Addr(sockptr, Addr);
 				sprintf(logmsg,"%d %s Call Accepted Callsign=%s\n", sockptr->Number, Addr, sockptr->Callsign);
 				WriteLog (logmsg);
 			}
 
 			Appl = sockptr->UserPointer->Appl;
-			
+
 			if (Appl[0])
 				SendtoNode(TNC, sockptr->Number, Appl, strlen(Appl));
 
@@ -3500,7 +3500,7 @@ MsgLoop:
 		}
 
 		// Bad Password
-        
+
         if (sockptr->Retries++ == 4)
 		{
 			send(sock,AttemptsMsg, strlen(AttemptsMsg),0);
@@ -3537,7 +3537,7 @@ int DataSocket_ReadRelay(struct TNCINFO * TNC, struct ConnectionInfo * sockptr, 
 	ioctl(sock,FIONREAD,&len);
 
 	maxlen = InputBufferLen - sockptr->InputLen;
-	
+
 	if (len > maxlen) len=maxlen;
 
 	len = recv(sock, &sockptr->InputBuffer[sockptr->InputLen], len, 0);
@@ -3578,16 +3578,16 @@ int DataSocket_ReadRelay(struct TNCINFO * TNC, struct ConnectionInfo * sockptr, 
 			sockptr->FromHostBuffer = realloc(sockptr->FromHostBuffer, sockptr->FromHostBufferSize);
 		}
 
-		memcpy(&sockptr->FromHostBuffer[sockptr->FromHostBuffPutptr], MsgPtr, InputLen); 
+		memcpy(&sockptr->FromHostBuffer[sockptr->FromHostBuffPutptr], MsgPtr, InputLen);
 
 		sockptr->FromHostBuffPutptr += InputLen;
 		sockptr->InputLen = 0;
 
 		return 0;
 	}
-/*	
+/*
 		if (InputLen > 256)
-		{		
+		{
 			SendtoNode(TNC, sockptr->Number, MsgPtr, 256);
 			sockptr->InputLen -= 256;
 
@@ -3597,13 +3597,13 @@ int DataSocket_ReadRelay(struct TNCINFO * TNC, struct ConnectionInfo * sockptr, 
 
 			goto MsgLoop;
 		}
-			
+
 		SendtoNode(TNC, sockptr->Number, MsgPtr, InputLen);
 		sockptr->InputLen = 0;
 
 		return 0;
 	}
-*/	
+*/
 	if (InputLen > 256)
 	{
 		// Long message received when waiting for user or password - just ignore
@@ -3614,10 +3614,10 @@ int DataSocket_ReadRelay(struct TNCINFO * TNC, struct ConnectionInfo * sockptr, 
 	}
 
 	LFPtr=memchr(MsgPtr, 13, InputLen);
-	
+
 	if (LFPtr == 0)
 		return 0;							// Waitr for more
-	
+
 	// Got a CR
 
 	// Process data up to the cr
@@ -3628,7 +3628,7 @@ int DataSocket_ReadRelay(struct TNCINFO * TNC, struct ConnectionInfo * sockptr, 
 	{
 
 	case 0:
-		
+
         //   Check Username
         //
 
@@ -3636,7 +3636,7 @@ int DataSocket_ReadRelay(struct TNCINFO * TNC, struct ConnectionInfo * sockptr, 
 
 		if (*MsgPtr == '.')
 			MsgPtr++;
-        
+
         if (LogEnabled)
 		{
 			unsigned char work[4];
@@ -3652,9 +3652,9 @@ int DataSocket_ReadRelay(struct TNCINFO * TNC, struct ConnectionInfo * sockptr, 
 		strcpy(sockptr->Callsign, MsgPtr);
 
 		// Save callsign  for *** linked
-                                            
+
 		send(sock, "Password :\r", 11,0);
-                
+
 		sockptr->Retries = 0;
 		sockptr->LoginState = 1;
         sockptr->InputLen = 0;
@@ -3666,12 +3666,12 @@ int DataSocket_ReadRelay(struct TNCINFO * TNC, struct ConnectionInfo * sockptr, 
 		ShowConnections(TNC);;
 
         return 0;
-	
-       
+
+
 	case 1:
-		   
+
 		*(LFPtr)=0;				 // remove cr
-            
+
         if (LogEnabled)
 		{
 			unsigned char work[4];
@@ -3719,9 +3719,9 @@ int DataSocket_ReadRelay(struct TNCINFO * TNC, struct ConnectionInfo * sockptr, 
 		SendtoNode(TNC, sockptr->Number, TCP->RelayAPPL, strlen(TCP->RelayAPPL));
 
 		ShowConnections(TNC);;
-	
+
 		return 0;
-	
+
 	default:
 
 		return 0;
@@ -3744,11 +3744,11 @@ int DataSocket_ReadFBB(struct TNCINFO * TNC, struct ConnectionInfo * sockptr, SO
 	struct STREAMINFO * STREAM = &TNC->Streams[Stream];
 	TRANSPORTENTRY * Sess1 = TNC->PortRecord->ATTACHEDSESSIONS[Stream];
 	TRANSPORTENTRY * Sess2 = NULL;
-	
+
 	ioctl(sock,FIONREAD,&len);
 
 	maxlen = InputBufferLen - sockptr->InputLen;
-	
+
 	if (len > maxlen) len = maxlen;
 
 	len = recv(sock, &sockptr->InputBuffer[sockptr->InputLen], len, 0);
@@ -3805,7 +3805,7 @@ MsgLoop:
 				// Monitor Control
 
 				int P8 = 0;
-				
+
 				int n = sscanf(&MsgPtr[4], "%x %x %x %x %x %x %x %x",
 					&sockptr->MMASK, &sockptr->MTX, &sockptr->MCOM, &sockptr->MonitorNODES,
 					&sockptr->MonitorColour, &sockptr->MUIOnly, &sockptr->UTF8, &P8);
@@ -3838,12 +3838,12 @@ MsgLoop:
 		// Queue to Node. Data may arrive it large quantities, possibly exceeding node buffer capacity
 
 		STREAM->BytesRXed += InputLen;
-		BuffertoNode(sockptr, MsgPtr, InputLen); 
+		BuffertoNode(sockptr, MsgPtr, InputLen);
 		sockptr->InputLen = 0;
 
 		return 0;
 	}
-	
+
 	if (InputLen > 256)
 	{
 		// Long message received when waiting for user or password - just ignore
@@ -3852,7 +3852,7 @@ MsgLoop:
 
 		return 0;
 	}
-	
+
 	if (MsgPtr[0] == 10)			// LF
 	{
 		// Remove the LF
@@ -3864,10 +3864,10 @@ MsgLoop:
 	}
 
 	CRPtr = memchr(MsgPtr, 13, InputLen);
-	
+
 	if (CRPtr == 0)
 		return 0;							// Waitr for more
-	
+
 	// Got a CR
 
 	// Process data up to the cr
@@ -3896,7 +3896,7 @@ MsgLoop:
 		MsgLen++;
 
 		InputLen -= MsgLen;
-		
+
 		memmove(MsgPtr, MsgPtr+MsgLen, InputLen);
 		sockptr->InputLen = InputLen ;
 		MsgPtr[InputLen] = 0;
@@ -3907,13 +3907,13 @@ MsgLoop:
 	case 3:
 
 		// CMS Signon
-		
+
 		strlop(MsgPtr, 13);
 
 		sprintf(logmsg,"%d %s\r\n", Stream, MsgPtr);
 		WriteCMSLog (logmsg);
 
-		if (strstr(MsgPtr, "Callsign :")) 
+		if (strstr(MsgPtr, "Callsign :"))
 		{
 			char Msg[80];
 			int Len;
@@ -3927,10 +3927,10 @@ MsgLoop:
 			sockptr->LogonSent = TRUE;
 
 			if (TCP->SecureCMSPassword[0] && sockptr->RelaySession == 0)
-				Len = sprintf(Msg, "%s %s\r", TNC->Streams[sockptr->Number].MyCall, TCP->GatewayCall);			
+				Len = sprintf(Msg, "%s %s\r", TNC->Streams[sockptr->Number].MyCall, TCP->GatewayCall);
 			else
-				Len = sprintf(Msg, "%s\r", TNC->Streams[sockptr->Number].MyCall);			
-			
+				Len = sprintf(Msg, "%s\r", TNC->Streams[sockptr->Number].MyCall);
+
 			send(sock, Msg, Len, 0);
 			sprintf(logmsg,"%d %s", Stream, Msg);
 			WriteCMSLog (logmsg);
@@ -3971,7 +3971,7 @@ MsgLoop:
 						{
 							LINKTABLE * LINK = Sess2->L4TARGET.LINK;
 							PORTCONTROLX * PORT = LINK->LINKPORT;
-						
+
 							Freq = PORT->WL2KInfo.Freq;
 							Mode = PORT->WL2KInfo.mode;
 						}
@@ -3990,8 +3990,8 @@ MsgLoop:
 
 			sprintf(RespString, "%010d", Response);
 
-			Len = sprintf(Msg, ";SR: %s %d %d\r", &RespString[2], Freq, Mode);			
-			
+			Len = sprintf(Msg, ";SR: %s %d %d\r", &RespString[2], Freq, Mode);
+
 			send(sock, Msg, Len,0);
 			sprintf(logmsg,"%d %s", Stream, Msg);
 			WriteCMSLog (logmsg);
@@ -4002,7 +4002,7 @@ MsgLoop:
 			return TRUE;
 		}
 
-		if (strstr(MsgPtr, "Password :")) 
+		if (strstr(MsgPtr, "Password :"))
 		{
 			// Send “CMSTelnet” + gateway callsign + frequency + emission type if info is available
 
@@ -4023,7 +4023,7 @@ MsgLoop:
 					{
 						LINKTABLE * LINK = Sess2->L4TARGET.LINK;
 						PORTCONTROLX * PORT = LINK->LINKPORT;
-						
+
 						if (PORT->WL2KInfo.Freq)
 							len = sprintf(Passline, "CMSTELNET %s %d %d\r", PORT->WL2KInfo.RMSCall, PORT->WL2KInfo.Freq, PORT->WL2KInfo.mode);
 
@@ -4055,17 +4055,17 @@ MsgLoop:
 		return TRUE;
 
 	case 0:
-		
+
         //   Check Username
         //
 
 		*(CRPtr)=0;				 // remove cr
-        
+
         if (LogEnabled)
 		{
-			char Addr[256];		
+			char Addr[256];
 			Tel_Format_Addr(sockptr, Addr);
-						
+
 			if (strlen(MsgPtr) > 64)
 			{
 				Debugprintf("Telnet Bad User Name %s", MsgPtr);
@@ -4090,13 +4090,13 @@ MsgLoop:
 			{
 				sockptr->UserPointer = USER;      //' Save pointer for checking password
                 strcpy(sockptr->Callsign, USER->Callsign); //' for *** linked
-            
+
 			}
 			else
 				continue;
 
 			sockptr->Retries = 0;
-                
+
 			sockptr->LoginState = 1;
 			sockptr->InputLen = 0;
 
@@ -4111,7 +4111,7 @@ MsgLoop:
 			InputLen=InputLen-(MsgLen+1);
 
 			sockptr->InputLen=InputLen;
-				
+
 			if (InputLen > 0)
 			{
 				memmove(MsgPtr, CRPtr+1, InputLen);
@@ -4122,7 +4122,7 @@ MsgLoop:
 		}
 
         //   User Not found
-        
+
         if (sockptr->Retries++ == 4)
 		{
             send(sock,AttemptsMsg,sizeof(AttemptsMsg),0);
@@ -4130,7 +4130,7 @@ MsgLoop:
             DataSocket_Disconnect(TNC, sockptr);       //' Tidy up
 		}
 		else
-		{        
+		{
             send(sock, TCP->LoginMsg, strlen(TCP->LoginMsg), 0);
             sockptr->InputLen=0;
 
@@ -4139,14 +4139,14 @@ MsgLoop:
 		return 0;
 
 	case 1:
-		   
+
 		*(CRPtr)=0;				 // remove cr
-            
+
         if (LogEnabled)
 		{
 			char Addr[256];
 			Tel_Format_Addr(sockptr, Addr);
-						
+
 			if (strlen(MsgPtr) > 64)
 			{
 				Debugprintf("Telnet Bad Password %s", MsgPtr);
@@ -4165,13 +4165,13 @@ MsgLoop:
 				DataSocket_Disconnect(TNC, sockptr);      //' Tidy up
 				return 0;
 			}
-		
+
 			TNC->PortRecord->ATTACHEDSESSIONS[sockptr->Number]->Secure_Session = sockptr->UserPointer->Secure;
 
             sockptr->LoginState = 2;
-            
+
             sockptr->InputLen = 0;
-            
+
             if (LogEnabled)
 			{
 				char Addr[100];
@@ -4211,7 +4211,7 @@ MsgLoop:
 						// Monitor control info may arrive in same packet
 
 						int P8 = 0;
-						
+
 						memmove(MsgPtr, &MsgPtr[11], InputLen);
 						if (memcmp(MsgPtr, "\\\\\\\\", 4) == 0)
 						{
@@ -4247,16 +4247,16 @@ MsgLoop:
 			}
 
 			Appl = sockptr->UserPointer->Appl;
-			
+
 			if (Appl[0])
 				SendtoNode(TNC, sockptr->Number, Appl, strlen(Appl));
 
 			return 0;
-	
+
 
 		}
 		// Bad Password
-        
+
         if (sockptr->Retries++ == 4)
 		{
 			send(sock,AttemptsMsg, strlen(AttemptsMsg),0);
@@ -4288,11 +4288,11 @@ int DataSocket_ReadHTTP(struct TNCINFO * TNC, struct ConnectionInfo * sockptr, S
 	UCHAR * LenPtr;
 	int BodyLen, ContentLen;
 	struct ConnectionInfo * sockcopy;
-	
+
 	ioctl(sock,FIONREAD,&len);
 
 	maxlen = InputBufferLen - sockptr->InputLen;
-	
+
 	if (len > maxlen) len = maxlen;
 
 	len = recv(sock, &sockptr->InputBuffer[sockptr->InputLen], len, 0);
@@ -4423,16 +4423,16 @@ BOOL ProcessTelnetCommand(struct ConnectionInfo * sockptr, byte * Msg, int Len)
 	if (Len < 2) return TRUE;		//' Wait for more
 
 	cmd = Msg[1];
-	
+
 	if (cmd == DOx || cmd == DONT || cmd == WILL || cmd == WONT)
 		if (Len < 3) return TRUE;		//' wait for option
-    
+
 	TelOption = Msg[2];
 
 	switch (cmd)
 	{
 	case DOx:
-            
+
         switch (TelOption)
 		{
 		case echo:
@@ -4456,7 +4456,7 @@ BOOL ProcessTelnetCommand(struct ConnectionInfo * sockptr, byte * Msg, int Len)
 		break;
 
 	case DONT:
-    
+
  //       Debug.Print "DONT"; TelOption
 
 		switch (TelOption)
@@ -4467,33 +4467,33 @@ BOOL ProcessTelnetCommand(struct ConnectionInfo * sockptr, byte * Msg, int Len)
 		}
 
 		used=3;
-   
+
 		break;
 
 	case WILL:
 
  //       Debug.Print "WILL"; TelOption
-        
+
         if (TelOption == echo) sockptr->DoEcho = TRUE;
-        
+
 		used=3;
 
 		break;
 
 	case WONT:
-            
+
 //        Debug.Print "WONT"; TelOption
 
 		used=3;
-       
+
 		break;
 
 	default:
-    
+
 		used=2;
 
 	}
-   
+
 	// remove the processed command from the buffer
 
 	memmove(Msg,&Msg[used],Len-used);
@@ -4554,7 +4554,7 @@ int WriteLog(char * msg)
 		strftime( timebuf, 128,
 			"%d/%m/%Y %H:%M:%S ", &today);
 	}
-#endif    
+#endif
 	fputs(timebuf, file);
 	fputs(msg, file);
 	fclose(file);
@@ -4610,7 +4610,7 @@ VOID WriteCMSLog(char * msg)
 		UCHAR SYMLINK[MAX_PATH];
 
 		sprintf(SYMLINK,"%s/CMSAccessLatest.log", BPQDirectory);
-		unlink(SYMLINK); 
+		unlink(SYMLINK);
 		strcpy(LastCMSLog, Value);
 		symlink(Value, SYMLINK);
 	}
@@ -4634,7 +4634,7 @@ int Telnet_Connected(struct TNCINFO * TNC, struct ConnectionInfo * sockptr, SOCK
 
 	buffptr = GetBuff();
 	if (buffptr == 0) return 0;			// No buffers, so ignore
-				
+
 #ifndef WIN32
 
 //	SO_ERROR codes
@@ -4671,9 +4671,9 @@ int Telnet_Connected(struct TNCINFO * TNC, struct ConnectionInfo * sockptr, SOCK
 			getsockopt(sock, SOL_SOCKET, SO_ERROR, (char *)&err, &errlen);
 
 			buffptr[1] = sprintf((UCHAR *)&buffptr[2], "*** Failed to Connect\r");
-					
+
 			C_Q_ADD(&TNC->Streams[Stream].PACTORtoBPQ_Q, buffptr);
-				
+
 			closesocket(sock);
 			TNC->Streams[Stream].Connecting = FALSE;
 			sockptr->SocketActive = FALSE;
@@ -4696,7 +4696,7 @@ int Telnet_Connected(struct TNCINFO * TNC, struct ConnectionInfo * sockptr, SOCK
 		sockptr->FBBMode = TRUE;
 		sockptr->RelayMode = FALSE;
 		sockptr->ClientSession = FALSE;
-	
+
 		SaveCMSHostInfo(TNC->Port, TNC->TCPInfo, sockptr->CMSIndex);
 
 		if (CMSLogEnabled)
@@ -4707,7 +4707,7 @@ int Telnet_Connected(struct TNCINFO * TNC, struct ConnectionInfo * sockptr, SOCK
 
 			WriteCMSLog (logmsg);
 		}
-		
+
 		buffptr[1]  = sprintf((UCHAR *)&buffptr[2], "*** %s Connected to CMS\r", TNC->Streams[Stream].MyCall);;
 	}
 	else
@@ -4726,9 +4726,9 @@ int Telnet_Connected(struct TNCINFO * TNC, struct ConnectionInfo * sockptr, SOCK
 		}
 		else
 		{
-			buffptr[1]  = sprintf((UCHAR *)&buffptr[2], "Connected to %s\r", 
+			buffptr[1]  = sprintf((UCHAR *)&buffptr[2], "Connected to %s\r",
 				TNC->PortRecord->ATTACHEDSESSIONS[Stream]->L4CROSSLINK->APPL);
-			
+
 			send(sockptr->socket, Signon, sprintf(Signon, "%s\r\n", TNC->Streams[Stream].MyCall), 0);
 		}
 	}
@@ -4763,9 +4763,9 @@ VOID ReportError(struct STREAMINFO * STREAM, char * Msg)
 
 	buffptr = GetBuff();
 	if (buffptr == 0) return;			// No buffers, so ignore
-				
+
 	buffptr[1]  = sprintf((UCHAR *)&buffptr[2], "Error - %s\r", Msg);
-					
+
 	C_Q_ADD(&STREAM->PACTORtoBPQ_Q, buffptr);
 }
 
@@ -4775,9 +4775,9 @@ VOID Report(struct STREAMINFO * STREAM, char * Msg)
 
 	buffptr = GetBuff();
 	if (buffptr == 0) return;			// No buffers, so ignore
-				
+
 	buffptr[1]  = sprintf((UCHAR *)&buffptr[2], "%s\r", Msg);
-					
+
 	C_Q_ADD(&STREAM->PACTORtoBPQ_Q, buffptr);
 }
 
@@ -4819,12 +4819,12 @@ BOOL CheckCMSThread(struct TNCINFO * TNC)
 
 	if (n == 0)
 		goto rootok;
-	
+
 	memset(&hints, 0, sizeof hints);
 	hints.ai_family = AF_UNSPEC;  // use IPv4 or IPv6, whichever
 	hints.ai_socktype = SOCK_DGRAM;
 	n = getaddrinfo("b.root-servers.net", NULL, &hints, &res);
-		 
+
 	if (n == 0)
 		goto rootok;
 
@@ -4847,11 +4847,11 @@ rootok:
 	hints.ai_family = AF_UNSPEC;  // use IPv4 or IPv6, whichever
 	hints.ai_socktype = SOCK_DGRAM;
 	n = getaddrinfo(TCP->CMSServer, NULL, &hints, &res);
-	 
+
 	if (n || !res || res->ai_next == 0)	// Resolve Failed, or Returned only one Host
 	{
 		// Switch to Cached Servers
-		
+
 		if (res)
 		{
 			// If Host is amazonaws, allow it
@@ -4895,13 +4895,13 @@ resok:
 	{
 		if (TCP->CMSName[i])
 			free(TCP->CMSName[i]);
-		   				
+
 		remoteHost = gethostbyaddr((char *) &TCP->CMSAddr[i], 4, AF_INET);
 
 		if (remoteHost == NULL)
 		{
 			int dwError = WSAGetLastError();
-	
+
 			TCP->CMSName[i] = NULL;
 
 			if (dwError != 0)
@@ -4913,11 +4913,11 @@ resok:
 			}
 	   }
 	   else
-	   { 
+	   {
 		   Debugprintf("CMS #%d %s Official name : %s",i, inet_ntoa(TCP->CMSAddr[i]), remoteHost->h_name);
-		   
+
 		   TCP->CMSName[i] = _strdup(remoteHost->h_name);			// Save Host Name
-	
+
 		   for (pAlias = remoteHost->h_aliases; *pAlias != 0; pAlias++)
 		   {
 			   Debugprintf("\tAlternate name #%d: %s\n", i, *pAlias);
@@ -4941,7 +4941,7 @@ CheckServers:
 	{
 		TCP->CMSOK = FALSE;
 #ifndef LINBPQ
-		SetWindowText(TCP->hCMSWnd, "NO CMS"); 
+		SetWindowText(TCP->hCMSWnd, "NO CMS");
 #endif
 		return TRUE;
 	}
@@ -4949,12 +4949,12 @@ CheckServers:
 	// if we don't know we have Internet connectivity, make sure we can connect to at least one of them
 
 	TCP->CMSOK = INETOK | CMSCheck(TNC, TCP);		// If we know we have Inet, dont check connectivity
-	
+
 #ifndef LINBPQ
 	if (TCP->CMSOK)
-		MySetWindowText(TCP->hCMSWnd, "CMS OK"); 
+		MySetWindowText(TCP->hCMSWnd, "CMS OK");
 	else
-		MySetWindowText(TCP->hCMSWnd, "NO CMS"); 
+		MySetWindowText(TCP->hCMSWnd, "NO CMS");
 #endif
 	return TRUE;
 }
@@ -4970,7 +4970,7 @@ VOID GetCMSCachedInfo(struct TNCINFO * TNC)
 	ULONG IPAD;
 
 #ifdef LINBPQ
-	
+
 	FILE *in;
 	char Buffer[2048];
 	char *buf = Buffer;
@@ -4988,19 +4988,19 @@ VOID GetCMSCachedInfo(struct TNCINFO * TNC)
 		ptr1 =  strtok_s(buf, ", ", &context);
 		ptr2 =  strtok_s(NULL, ", ", &context);		// Skip Time
 		ptr2 =  strtok_s(NULL, ", ", &context);
-			
+
 		if (ptr2 == NULL)
 			continue;
-		
+
 		IPAD = inet_addr(ptr2);
 
 		memcpy(&TCP->CMSAddr[i], &IPAD, 4);
 
 		TCP->CMSFailed[i] = FALSE;
-		
+
 		if (TCP->CMSName[i])
 			free(TCP->CMSName[i]);
-		   		
+
 		TCP->CMSName[i] = _strdup(ptr1);			// Save Host Name
 		i++;
 
@@ -5014,91 +5014,91 @@ VOID GetCMSCachedInfo(struct TNCINFO * TNC)
 
 #else
 
-    TCHAR    achClass[MAX_PATH] = TEXT("");  // buffer for class name 
-    DWORD    cchClassName = MAX_PATH;  // size of class string 
-    DWORD    cSubKeys=0;               // number of subkeys 
-    DWORD    cbMaxSubKey;              // longest subkey size 
-    DWORD    cchMaxClass;              // longest class string 
-    DWORD    cValues;              // number of values for key 
-    DWORD    cchMaxValue;          // longest value name 
-    DWORD    cbMaxValueData;       // longest value data 
-    DWORD    cbSecurityDescriptor; // size of security descriptor 
-    FILETIME ftLastWriteTime;      // last write time 
- 
-    DWORD i, retCode; 
- 
-    TCHAR  achValue[MAX_VALUE_NAME]; 
-    DWORD cchValue = MAX_VALUE_NAME; 
+    TCHAR    achClass[MAX_PATH] = TEXT("");  // buffer for class name
+    DWORD    cchClassName = MAX_PATH;  // size of class string
+    DWORD    cSubKeys=0;               // number of subkeys
+    DWORD    cbMaxSubKey;              // longest subkey size
+    DWORD    cchMaxClass;              // longest class string
+    DWORD    cValues;              // number of values for key
+    DWORD    cchMaxValue;          // longest value name
+    DWORD    cbMaxValueData;       // longest value data
+    DWORD    cbSecurityDescriptor; // size of security descriptor
+    FILETIME ftLastWriteTime;      // last write time
+
+    DWORD i, retCode;
+
+    TCHAR  achValue[MAX_VALUE_NAME];
+    DWORD cchValue = MAX_VALUE_NAME;
 
 	HKEY hKey=0;
 	char Key[80];
 
-	Debugprintf("Getting cached CMS Server info"); 
+	Debugprintf("Getting cached CMS Server info");
 
 	TCP->NumberofCMSAddrs = 0;
 
 	sprintf(Key, "SOFTWARE\\G8BPQ\\BPQ32\\PACTOR\\PORT%d\\CMSInfo", TNC->Port);
-	
+
 	retCode = RegOpenKeyEx (REGTREE, Key, 0, KEY_QUERY_VALUE, &hKey);
 
 	if (retCode != ERROR_SUCCESS)
 	{
-		Debugprintf("Cached CMS Server info key not found"); 
+		Debugprintf("Cached CMS Server info key not found");
 		return;
 	}
 
-    // Get the class name and the value count. 
+    // Get the class name and the value count.
     retCode = RegQueryInfoKey(
-        hKey,                    // key handle 
-        achClass,                // buffer for class name 
-        &cchClassName,           // size of class string 
-        NULL,                    // reserved 
-        &cSubKeys,               // number of subkeys 
-        &cbMaxSubKey,            // longest subkey size 
-        &cchMaxClass,            // longest class string 
-        &cValues,                // number of values for this key 
-        &cchMaxValue,            // longest value name 
-        &cbMaxValueData,         // longest value data 
-        &cbSecurityDescriptor,   // security descriptor 
-        &ftLastWriteTime);       // last write time 
- 
-    // Enumerate the key values. 
+        hKey,                    // key handle
+        achClass,                // buffer for class name
+        &cchClassName,           // size of class string
+        NULL,                    // reserved
+        &cSubKeys,               // number of subkeys
+        &cbMaxSubKey,            // longest subkey size
+        &cchMaxClass,            // longest class string
+        &cValues,                // number of values for this key
+        &cchMaxValue,            // longest value name
+        &cbMaxValueData,         // longest value data
+        &cbSecurityDescriptor,   // security descriptor
+        &ftLastWriteTime);       // last write time
+
+    // Enumerate the key values.
 
     if (cValues == 0)
 	{
-		Debugprintf("No Cached CMS Servers found"); 
+		Debugprintf("No Cached CMS Servers found");
 		return;
 	}
 
 	if (cValues > MaxCMS)
 		cValues = MaxCMS;
 
-	for (i=0, retCode=ERROR_SUCCESS; i<cValues; i++) 
-	{ 
+	for (i=0, retCode=ERROR_SUCCESS; i<cValues; i++)
+	{
 		int Type;
 		int ValLen = MAX_VALUE_DATA;
 		UCHAR Value[MAX_VALUE_DATA] = "";
 
-		cchValue = MAX_VALUE_NAME; 
-		achValue[0] = '\0'; 
-	
+		cchValue = MAX_VALUE_NAME;
+		achValue[0] = '\0';
+
 		retCode = RegEnumValue(hKey, i, achValue, &cchValue, NULL, &Type, Value, &ValLen);
- 
-		if (retCode == ERROR_SUCCESS) 
+
+		if (retCode == ERROR_SUCCESS)
 		{
 			char Time[80], IPADDR[80];
-			
-			Debugprintf("%s = %s", achValue, Value); 
+
+			Debugprintf("%s = %s", achValue, Value);
 			sscanf(Value, "%s %s", &Time, &IPADDR);
 
 			IPAD = inet_addr(IPADDR);
 			memcpy(&TCP->CMSAddr[i], &IPAD, 4);
 
 			TCP->CMSFailed[i] = FALSE;
-		
+
 			if (TCP->CMSName[i])
 				free(TCP->CMSName[i]);
-		   		
+
 			TCP->CMSName[i] = _strdup(achValue);			// Save Host Name
 		}
 	}
@@ -5118,12 +5118,12 @@ BOOL CMSCheck(struct TNCINFO * TNC, struct TCPINFO * TCP)
 	u_long param=1;
 	BOOL bcopt=TRUE;
 	SOCKET sock;
-	struct sockaddr_in sinx; 
+	struct sockaddr_in sinx;
 	struct sockaddr_in destaddr;
 	int addrlen=sizeof(sinx);
 	int n = 0;
 
-	destaddr.sin_family = AF_INET; 
+	destaddr.sin_family = AF_INET;
 	destaddr.sin_port = htons(8772);
 
 	sinx.sin_family = AF_INET;
@@ -5136,7 +5136,7 @@ BOOL CMSCheck(struct TNCINFO * TNC, struct TCPINFO * TCP)
 
 		if (sock == INVALID_SOCKET)
 			return FALSE;
-	
+
 		memcpy(&destaddr.sin_addr.s_addr, &TCP->CMSAddr[n], 4);
 
 		setsockopt (sock, SOL_SOCKET, SO_REUSEADDR, (const char FAR *)&bcopt,4);
@@ -5158,7 +5158,7 @@ BOOL CMSCheck(struct TNCINFO * TNC, struct TCPINFO * TCP)
 }
 
 
-					
+
 int CMSConnect(struct TNCINFO * TNC, struct TCPINFO * TCP, struct STREAMINFO * STREAM, int Stream)
 {
 	int err;
@@ -5166,14 +5166,14 @@ int CMSConnect(struct TNCINFO * TNC, struct TCPINFO * TCP, struct STREAMINFO * S
 	BOOL bcopt=TRUE;
 	struct ConnectionInfo * sockptr;
 	SOCKET sock;
-	struct sockaddr_in sinx; 
+	struct sockaddr_in sinx;
 	struct sockaddr_in destaddr;
 	int addrlen=sizeof(sinx);
 	int n;
 	char Msg[80];
 
 	sockptr = STREAM->ConnectionInfo;
-		
+
 	sock = sockptr->socket = socket(AF_INET, SOCK_STREAM, 0);
 
 	if (sock == INVALID_SOCKET)
@@ -5192,7 +5192,7 @@ int CMSConnect(struct TNCINFO * TNC, struct TCPINFO * TCP, struct STREAMINFO * S
 	sockptr->FBBMode = TRUE;		// Raw Data
 	sockptr->NeedLF = FALSE;
 
-	destaddr.sin_family = AF_INET; 
+	destaddr.sin_family = AF_INET;
 	destaddr.sin_port = htons(8772);
 
 	// See if current CMS is down
@@ -5209,7 +5209,7 @@ int CMSConnect(struct TNCINFO * TNC, struct TCPINFO * TCP, struct STREAMINFO * S
 		{
 			TCP->CMSOK = FALSE;
 #ifndef LINBPQ
-			DrawMenuBar(TNC->hDlg);	
+			DrawMenuBar(TNC->hDlg);
 #endif
 			ReportError(STREAM, "All CMS Servers are inaccessible");
 			closesocket(sock);
@@ -5240,15 +5240,15 @@ int CMSConnect(struct TNCINFO * TNC, struct TCPINFO * TCP, struct STREAMINFO * S
 
 	if (bind(sockptr->socket, (struct sockaddr *) &sinx, addrlen) != 0 )
 	{
-		ReportError(STREAM, "Bind Failed");	
-  	 	return FALSE; 
+		ReportError(STREAM, "Bind Failed");
+  	 	return FALSE;
 	}
 
 #ifndef LINBPQ
 	ModifyMenu(TCP->hDisMenu, Stream - 1, MF_BYPOSITION | MF_STRING, IDM_DISCONNECT + Stream, "CMS");
 #endif
 
-	Report(STREAM, Msg);	
+	Report(STREAM, Msg);
 
 	if (connect(sockptr->socket,(struct sockaddr *) &destaddr, sizeof(destaddr)) == 0)
 	{
@@ -5256,7 +5256,7 @@ int CMSConnect(struct TNCINFO * TNC, struct TCPINFO * TCP, struct STREAMINFO * S
 		//	Connected successful
 		//
 
-		ReportError(STREAM, "*** Connected");	
+		ReportError(STREAM, "*** Connected");
 		return TRUE;
 	}
 	else
@@ -5340,11 +5340,11 @@ VOID SaveCMSHostInfo(int port, struct TCPINFO * TCP, int CMSNo)
 	{
 		c = strchr(buf, ' ');
 		if (c) *c = '\0';
-			
+
 		if (strcmp(buf, TCP->CMSName[CMSNo]) != 0)
 		{
 			if (c) *c = ' ';
-				
+
 			fputs(buf, out);
 		}
 	}
@@ -5364,7 +5364,7 @@ VOID SaveCMSHostInfo(int port, struct TCPINFO * TCP, int CMSNo)
 	int retCode, disp;
 
 	sprintf(Key, "SOFTWARE\\G8BPQ\\BPQ32\\PACTOR\\PORT%d\\CMSInfo", port);
-	
+
 	retCode = RegCreateKeyEx(REGTREE, Key, 0, 0, 0,
             KEY_ALL_ACCESS, NULL, &hKey, &disp);
 
@@ -5389,13 +5389,13 @@ int TCPConnect(struct TNCINFO * TNC, struct TCPINFO * TCP, struct STREAMINFO * S
 	BOOL bcopt=TRUE;
 	struct ConnectionInfo * sockptr;
 	SOCKET sock;
-	struct sockaddr_in sinx; 
+	struct sockaddr_in sinx;
 	struct sockaddr_in destaddr;
 	int addrlen=sizeof(sinx);
 	int i;
 
 	sockptr = STREAM->ConnectionInfo;
-		
+
 	sock = sockptr->socket = socket(AF_INET, SOCK_STREAM, 0);
 
 	if (sock == INVALID_SOCKET)
@@ -5403,7 +5403,7 @@ int TCPConnect(struct TNCINFO * TNC, struct TCPINFO * TCP, struct STREAMINFO * S
 		ReportError(STREAM, "Create Socket Failed");
 		return FALSE;
 	}
-	
+
 	sockptr->SocketActive = TRUE;
 	sockptr->InputLen = 0;
 	sockptr->LoginState = 2;
@@ -5411,10 +5411,10 @@ int TCPConnect(struct TNCINFO * TNC, struct TCPINFO * TCP, struct STREAMINFO * S
 	sockptr->DoEcho = FALSE;
 
 	sockptr->FBBMode = FBB;		// Raw Data
-	
+
 	// Resolve Name if needed
 
-	destaddr.sin_family = AF_INET; 
+	destaddr.sin_family = AF_INET;
 	destaddr.sin_port = htons(Port);
 
 	destaddr.sin_addr.s_addr = inet_addr(Host);
@@ -5426,7 +5426,7 @@ int TCPConnect(struct TNCINFO * TNC, struct TCPINFO * TCP, struct STREAMINFO * S
 		//	Resolve name to address
 
 		HostEnt = gethostbyname(Host);
-		 
+
 		if (!HostEnt)
 		{
 			ReportError(STREAM, "Resolve HostName Failed");
@@ -5442,7 +5442,7 @@ int TCPConnect(struct TNCINFO * TNC, struct TCPINFO * TCP, struct STREAMINFO * S
 	}
 
 	ioctl (sockptr->socket, FIONBIO, &param);
- 
+
 	setsockopt (sockptr->socket, SOL_SOCKET, SO_REUSEADDR, (const char FAR *)&bcopt,4);
 
 	sinx.sin_family = AF_INET;
@@ -5451,8 +5451,8 @@ int TCPConnect(struct TNCINFO * TNC, struct TCPINFO * TCP, struct STREAMINFO * S
 
 	if (bind(sockptr->socket, (struct sockaddr *) &sinx, addrlen) != 0 )
 	{
-		ReportError(STREAM, "Bind Failed");	
-  	 	return FALSE; 
+		ReportError(STREAM, "Bind Failed");
+  	 	return FALSE;
 	}
 
 	if (connect(sockptr->socket,(struct sockaddr *) &destaddr, sizeof(destaddr)) == 0)
@@ -5483,7 +5483,7 @@ int TCPConnect(struct TNCINFO * TNC, struct TCPINFO * TCP, struct STREAMINFO * S
 			//	Connect failed
 
 			closesocket(sockptr->socket);
-			ReportError(STREAM, "Connect Failed");	
+			ReportError(STREAM, "Connect Failed");
 			STREAM->Connecting = FALSE;
 			sockptr->SocketActive = FALSE;
 			ShowConnections(TNC);
@@ -5532,15 +5532,15 @@ VOID Tel_Format_Addr(struct ConnectionInfo * sockptr, char * dst)
 	}
 
 	// COnvert 16 bytes to 8 words
-	
+
 	for (i = 0; i < 16; i += 2)
 	    words[i / 2] = (src[i] << 8) | src[i + 1];
 
 	// Look for longest run of zeros
-	
+
 	best.base = -1;
 	cur.base = -1;
-	
+
 	for (i = 0; i < 8; i++)
 	{
 		if (words[i] == 0)
@@ -5557,26 +5557,26 @@ VOID Tel_Format_Addr(struct ConnectionInfo * sockptr, char * dst)
 			if (cur.base != -1)
 			{
 				// See if this run is longer
-				
+
 				if (best.base == -1 || cur.len > best.len)
 					best = cur;
-				
+
 				cur.base = -1;	// Start again
 			}
 		}
 	}
-	
+
 	if (cur.base != -1)
 	{
 		if (best.base == -1 || cur.len > best.len)
 			best = cur;
 	}
-	
+
 	if (best.base != -1 && best.len < 2)
 	    best.base = -1;
-	
+
 	ptr = dst;
-	  
+
 	for (i = 0; i < 8; i++)
 	{
 		/* Are we inside the best run of 0x00's? */
@@ -5584,26 +5584,26 @@ VOID Tel_Format_Addr(struct ConnectionInfo * sockptr, char * dst)
 		if (best.base != -1 && i >= best.base && i < (best.base + best.len))
 		{
 			// Just output one : for whole string of zeros
-			
+
 			*ptr++ = ':';
 			i = best.base + best.len - 1;	// skip rest of zeros
 			continue;
 		}
-	    
+
 		/* Are we following an initial run of 0x00s or any real hex? */
-		
+
 		if (i != 0)
 			*ptr++ = ':';
-		
+
 		ptr += sprintf (ptr, "%x", words[i]);
-	        
+
 		//	Was it a trailing run of 0x00's?
 	}
 
 	if (best.base != -1 && (best.base + best.len) == 8)
 		*ptr++ = ':';
-	
-	*ptr++ = '\0';	
+
+	*ptr++ = '\0';
 }
 
 BOOL TelSendPacket(int Stream, struct STREAMINFO * STREAM, UINT * buffptr)
@@ -5642,7 +5642,7 @@ BOOL TelSendPacket(int Stream, struct STREAMINFO * STREAM, UINT * buffptr)
 				u = Convert1251toUTF8(MsgPtr, datalen, UTF);
 			else
 				u = Convert1252toUTF8(MsgPtr, datalen, UTF);
-			
+
 			SendAndCheck(sockptr, UTF, u, 0);
 			ReleaseBuffer(buffptr);
 			return TRUE;
@@ -5658,13 +5658,13 @@ BOOL TelSendPacket(int Stream, struct STREAMINFO * STREAM, UINT * buffptr)
 		{
 			char * ptr2, * ptr = &MsgPtr[0];
 			int i;
-			do 
+			do
 			{
 				ptr2 = memchr(ptr, 255, datalen);
 
 				if (ptr2 == 0)
 				{
-					//	no ff, so just send as is 
+					//	no ff, so just send as is
 
 					xxxsend(sock, ptr, datalen, 0);
 					i=0;
@@ -5688,7 +5688,7 @@ BOOL TelSendPacket(int Stream, struct STREAMINFO * STREAM, UINT * buffptr)
 		ReleaseBuffer(buffptr);
 		return ret;
 	}
-	
+
 	// Not FBB mode, or FBB and NEEDLF Replace cr with crlf
 
 	{
@@ -5700,7 +5700,7 @@ BOOL TelSendPacket(int Stream, struct STREAMINFO * STREAM, UINT * buffptr)
 		while (datalen--)
 		{
 			c = (*ptr++);
-			
+
 			if (c == 13)
 			{
 				*(ptr2++) = 13;
@@ -5721,7 +5721,7 @@ VOID ProcessTrimodeCommand(struct TNCINFO * TNC, struct ConnectionInfo * sockptr
 	int Port = 4;
 
 	Debugprintf(MsgPtr);
-	
+
 	if (strcmp(MsgPtr, "CLOSE") == 0)
 	{
 		if (STREAM->Connected)
@@ -5735,7 +5735,7 @@ VOID ProcessTrimodeCommand(struct TNCINFO * TNC, struct ConnectionInfo * sockptr
 	if (memcmp(MsgPtr, "MYCALLSIGN", 10) == 0)
 	{
 		char * call = &MsgPtr[11];
-		
+
 		if (strlen(call) > 9)
 			call[9] = 0;
 
@@ -5752,7 +5752,7 @@ VOID ProcessTrimodeCommand(struct TNCINFO * TNC, struct ConnectionInfo * sockptr
 	if (memcmp(MsgPtr, "TARGETCALLSIGN", 14) == 0)
 	{
 		char * call = &MsgPtr[15];
-		
+
 		if (strlen(call) > 9)
 			call[9] = 0;
 
@@ -5764,7 +5764,7 @@ VOID ProcessTrimodeCommand(struct TNCINFO * TNC, struct ConnectionInfo * sockptr
 	{
 		char Cmd[80];
 		int n;
-		
+
 		n = sprintf(Cmd,"C %s\r", STREAM->RemoteCall);
 
 		SendtoNode(TNC, sockptr->Number, Cmd, n);
@@ -5780,7 +5780,7 @@ VOID ProcessTrimodeCommand(struct TNCINFO * TNC, struct ConnectionInfo * sockptr
 		int n;
 
 		strcpy(sockptr->Callsign, "G8BPQ");
-		
+
 		n = sprintf(Radiocmd,"RADIO %f %s\r", Freq/1000000, "USB");
 
 		SendtoNode(TNC, sockptr->Number, Radiocmd, n);
@@ -5825,7 +5825,7 @@ VOID ProcessTrimodeResponse(struct TNCINFO * TNC, struct STREAMINFO * STREAM, un
 	{
 		char Cmd[80];
 		int n;
-		
+
 		n = sprintf(Cmd,"CONNECTED %s\r", &MsgPtr[17]);
 
 		STREAM->ConnectionInfo->TriModeConnected = TRUE;
@@ -5843,7 +5843,7 @@ VOID ProcessTriModeDataMessage(struct TNCINFO * TNC, struct ConnectionInfo * soc
 	unsigned char Buffer[256];
 
 	ioctl(sock,FIONREAD,&len);
-	
+
 	if (len > 256) len = 256;
 
 	len = recv(sock, Buffer, len, 0);

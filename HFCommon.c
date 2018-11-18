@@ -15,7 +15,7 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with LinBPQ/BPQ32.  If not, see http://www.gnu.org/licenses
-*/	
+*/
 
 
 #pragma data_seg("_BPQDATA")
@@ -96,7 +96,7 @@ VOID MoveWindows(struct TNCINFO * TNC)
 	RECT rcClient;
 	int ClientHeight, ClientWidth;
 
-	GetClientRect(TNC->hDlg, &rcClient); 
+	GetClientRect(TNC->hDlg, &rcClient);
 
 	ClientHeight = rcClient.bottom;
 	ClientWidth = rcClient.right;
@@ -131,7 +131,7 @@ LRESULT CALLBACK PacWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 		TNC = TNCInfo[i];
 		if (TNC == NULL)
 			continue;
-		
+
 		if (TNC->hDlg == hWnd)
 			break;
 	}
@@ -139,7 +139,7 @@ LRESULT CALLBACK PacWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 	if (TNC == NULL)
 			return DefMDIChildProc(hWnd, message, wParam, lParam);
 
-	switch (message) { 
+	switch (message) {
 
 	case WM_CREATE:
 
@@ -148,14 +148,14 @@ LRESULT CALLBACK PacWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 	case WM_PAINT:
 
 //			hdc = BeginPaint (hWnd, &ps);
-			
+
 //			SelectObject( hdc, hFont) ;
-			
+
 //			EndPaint (hWnd, &ps);
 //
 //			wParam = hdc;
-	
-			break;        
+
+			break;
 
 
 	case WM_GETMINMAXINFO:
@@ -174,9 +174,9 @@ LRESULT CALLBACK PacWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 
 	case WM_MDIACTIVATE:
 	{
-			 
+
 		// Set the system info menu when getting activated
-			 
+
 		if (lParam == (LPARAM) hWnd)
 		{
 			// Activate
@@ -185,7 +185,7 @@ LRESULT CALLBACK PacWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 
 			if (TNC->hMenu)
 				AppendMenu(hBaseMenu, MF_STRING + MF_POPUP, (UINT)TNC->hMenu, "Actions");
-			
+
 			SendMessage(ClientWnd, WM_MDISETMENU, (WPARAM) hBaseMenu, (LPARAM) hWndMenu);
 
 //			SendMessage(ClientWnd, WM_MDISETMENU, (WPARAM) TNC->hMenu, (LPARAM) TNC->hWndMenu);
@@ -193,10 +193,10 @@ LRESULT CALLBACK PacWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 		else
 		{
 			 // Deactivate
-	
+
 			SendMessage(ClientWnd, WM_MDISETMENU, (WPARAM) hMainFrameMenu, (LPARAM) NULL);
 		 }
-			 
+
 		// call DrawMenuBar after the menu items are set
 		DrawMenuBar(FrameWnd);
 
@@ -215,14 +215,14 @@ LRESULT CALLBACK PacWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 				{
 					EnableMenuItem(TNC->hMenu, WINMOR_RESTART, MF_BYCOMMAND | MF_ENABLED);
 					EnableMenuItem(TNC->hMenu, WINMOR_KILL, MF_BYCOMMAND | MF_ENABLED);
-		
+
 					break;
 				}
 			}
 			EnableMenuItem(TNC->hMenu, WINMOR_RESTART, MF_BYCOMMAND | MF_GRAYED);
 			EnableMenuItem(TNC->hMenu, WINMOR_KILL, MF_BYCOMMAND | MF_GRAYED);
 		}
-			
+
 		break;
 
 	case WM_COMMAND:
@@ -249,7 +249,7 @@ LRESULT CALLBACK PacWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 			CheckMenuItem(TNC->hMenu, WINMOR_RESTARTAFTERFAILURE, (TNC->RestartAfterFailure) ? MF_CHECKED : MF_UNCHECKED);
 
 			sprintf(Key, "SOFTWARE\\G8BPQ\\BPQ32\\PACTOR\\PORT%d", TNC->Port);
-	
+
 			retCode = RegCreateKeyEx(REGTREE, Key, 0, 0, 0, KEY_ALL_ACCESS, NULL, &hKey, &disp);
 
 			if (retCode == ERROR_SUCCESS)
@@ -272,34 +272,34 @@ LRESULT CALLBACK PacWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 	case WM_SIZE:
 
 		MoveWindows(TNC);
-			
+
 		return DefMDIChildProc(hWnd, message, wParam, lParam);
 
 	case WM_SYSCOMMAND:
 
 		wmId    = LOWORD(wParam);
 		wmEvent = HIWORD(wParam);
-		
+
 		switch (wmId)
-		{ 
+		{
 
 		case SC_RESTORE:
 
 			TNC->Minimized = FALSE;
 			break;
 
-		case SC_MINIMIZE: 
+		case SC_MINIMIZE:
 
 			TNC->Minimized = TRUE;
 			break;
 		}
-		
+
 		return DefMDIChildProc(hWnd, message, wParam, lParam);
 
 	case WM_CTLCOLORDLG:
 		return (LONG)bgBrush;
 
-		 
+
 	case WM_CTLCOLORSTATIC:
 	{
 			HDC hdcStatic = (HDC)wParam;
@@ -309,7 +309,7 @@ LRESULT CALLBACK PacWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 	}
 
 	case WM_DESTROY:
-		
+
 		break;
 	}
 	return DefMDIChildProc(hWnd, message, wParam, lParam);
@@ -339,15 +339,15 @@ BOOL CreatePactorWindow(struct TNCINFO * TNC, char * ClassName, char * WindowTit
 	}
 
 	wc.style = CS_HREDRAW | CS_VREDRAW | CS_NOCLOSE;
-    wc.lpfnWndProc = WndProc;                                      
-    wc.cbClsExtra = 0;                
+    wc.lpfnWndProc = WndProc;
+    wc.cbClsExtra = 0;
     wc.cbWndExtra = DLGWINDOWEXTRA;
 	wc.hInstance = hInstance;
     wc.hIcon = LoadIcon( hInstance, MAKEINTRESOURCE(BPQICON) );
     wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-    wc.hbrBackground = bgBrush; 
-	wc.lpszMenuName = NULL;	
-	wc.lpszClassName = ClassName; 
+    wc.hbrBackground = bgBrush;
+	wc.lpszMenuName = NULL;
+	wc.lpszClassName = ClassName;
 
 	RegisterClass(&wc);
 
@@ -364,19 +364,19 @@ BOOL CreatePactorWindow(struct TNCINFO * TNC, char * ClassName, char * WindowTit
 
 	TNC->hDlg = hDlg =  CreateMDIWindow(ClassName, Title, 0,
 		  0, 0, Width, Height, ClientWnd, hInstance, ++LP);
-	
+
 	//	CreateDialog(hInstance,ClassName,0,NULL);
-	
+
 
 	sprintf(Key, "SOFTWARE\\G8BPQ\\BPQ32\\PACTOR\\PORT%d", TNC->Port);
-	
+
 	retCode = RegOpenKeyEx (REGTREE, Key, 0, KEY_QUERY_VALUE, &hKey);
 
 	if (retCode == ERROR_SUCCESS)
 	{
 		Vallen=80;
 
-		retCode = RegQueryValueEx(hKey,"Size",0,			
+		retCode = RegQueryValueEx(hKey,"Size",0,
 			(ULONG *)&Type,(UCHAR *)&Size,(ULONG *)&Vallen);
 
 		if (retCode == ERROR_SUCCESS)
@@ -399,8 +399,8 @@ BOOL CreatePactorWindow(struct TNCINFO * TNC, char * ClassName, char * WindowTit
 			}
 		}
 
-		if (TNC->Hardware == H_WINMOR || TNC->Hardware == H_ARDOP)	
-			retCode = RegQueryValueEx(hKey,"TNC->RestartAfterFailure",0,			
+		if (TNC->Hardware == H_WINMOR || TNC->Hardware == H_ARDOP)
+			retCode = RegQueryValueEx(hKey,"TNC->RestartAfterFailure",0,
 				(ULONG *)&Type,(UCHAR *)&TNC->RestartAfterFailure,(ULONG *)&Vallen);
 
 		RegCloseKey(hKey);
@@ -412,7 +412,7 @@ BOOL CreatePactorWindow(struct TNCINFO * TNC, char * ClassName, char * WindowTit
 //	GetWindowRect(hDlg, &Rect);	// Get the real size
 
 	MoveWindow(hDlg, Left - (OffsetW /2), Top - OffsetH, Rect.right - Rect.left, Rect.bottom - Rect.top, TRUE);
-	
+
 	if (TNC->Minimized)
 		ShowWindow(hDlg, SW_SHOWMINIMIZED);
 	else
@@ -431,7 +431,7 @@ BOOL CreatePactorWindow(struct TNCINFO * TNC, char * ClassName, char * WindowTit
 
 // WL2K Reporting Code.
 
-static SOCKADDR_IN sinx; 
+static SOCKADDR_IN sinx;
 
 
 VOID SendReporttoWL2KThread();
@@ -448,7 +448,7 @@ VOID CheckWL2KReportTimer()
 		return;
 
 	WL2KTimer = 32910;			// Every Hour
-		
+
 	if (CheckAppl(NULL, "RMS         ") == NULL)
 		if (CheckAppl(NULL, "RELAY       ") == NULL)
 			return;
@@ -484,7 +484,7 @@ VOID GetJSONValue(char * _REPLYBUFFER, char * Name, char * Value)
 	ptr1 += (strlen(Name) + 1);
 
 	ptr2 = strchr(ptr1, '"');
-			
+
 	if (ptr2)
 	{
 		int ValLen = ptr2 - ptr1;
@@ -535,7 +535,7 @@ VOID SendHTTPRequest(SOCKET sock, char * Host, int Port, char * Request, char * 
 		//	for complete message
 
 		inptr += InputLen;
-		
+
 		ptr = strstr(Buffer, "\r\n\r\n");
 
 		if (ptr)
@@ -543,7 +543,7 @@ VOID SendHTTPRequest(SOCKET sock, char * Host, int Port, char * Request, char * 
 			// got header
 
 			int Hddrlen = ptr - Buffer;
-					
+
 			ptr1 = strstr(Buffer, "Content-Length:");
 
 			if (ptr1)
@@ -560,7 +560,7 @@ VOID SendHTTPRequest(SOCKET sock, char * Host, int Port, char * Request, char * 
 					{
 						if (Return)
 						{
-							memcpy(Return, ptr + 4, ContentLen); 
+							memcpy(Return, ptr + 4, ContentLen);
 							Return[ContentLen] = 0;
 						}
 						else
@@ -572,11 +572,11 @@ VOID SendHTTPRequest(SOCKET sock, char * Host, int Port, char * Request, char * 
 			else
 			{
 				ptr1 = strstr(_strlwr(Buffer), "transfer-encoding:");
-				
+
 				if (ptr1)
 				{
 					// Just accept anything until I've sorted things with Lee
-				
+
 					Debugprintf("WL2K Database update ok");
 					return;
 				}
@@ -613,10 +613,10 @@ VOID SendHTTPReporttoWL2KThread()
 			goto SameHost;
 
 		// New Host - Connect to it
-	
+
 		LastHost = WL2KReport->Host;
-	
-		destaddr.sin_family = AF_INET; 
+
+		destaddr.sin_family = AF_INET;
 		destaddr.sin_addr.s_addr = inet_addr(WL2KReport->Host);
 		destaddr.sin_port = htons(WL2KReport->WL2KPort);
 
@@ -626,7 +626,7 @@ VOID SendHTTPReporttoWL2KThread()
 
 			Debugprintf("Resolving %s", WL2KReport->Host);
 			HostEnt = gethostbyname (WL2KReport->Host);
-		 
+
 			if (!HostEnt)
 			{
 				err = WSAGetLastError();
@@ -634,8 +634,8 @@ VOID SendHTTPReporttoWL2KThread()
 				Debugprintf("Resolve Failed for %s %d %x", WL2KReport->Host, err, err);
 				return;			// Resolve failed
 			}
-	
-			memcpy(&destaddr.sin_addr.s_addr,HostEnt->h_addr,4);	
+
+			memcpy(&destaddr.sin_addr.s_addr,HostEnt->h_addr,4);
 		}
 
 		//   Allocate a Socket entry
@@ -646,10 +646,10 @@ VOID SendHTTPReporttoWL2KThread()
 		sock = socket(AF_INET, SOCK_STREAM, 0);
 
 		if (sock == INVALID_SOCKET)
-  	 		return; 
+  	 		return;
 
 //		ioctlsocket(sock, FIONBIO, &param);
- 
+
 		setsockopt(sock, SOL_SOCKET, SO_BROADCAST, (const char FAR *)&bcopt, 4);
 
 		destaddr.sin_family = AF_INET;
@@ -657,7 +657,7 @@ VOID SendHTTPReporttoWL2KThread()
 		if (sock == INVALID_SOCKET)
 		{
 			sock = 0;
-			return; 
+			return;
 		}
 
 		setsockopt (sock, SOL_SOCKET, SO_REUSEADDR, (const char FAR *)&bcopt,4);
@@ -701,28 +701,28 @@ VOID SendHTTPReporttoWL2KThread()
 
 		Debugprintf("Sending %s", Message);
 
-		SendHTTPRequest(sock, WL2KReport->Host, WL2KReport->WL2KPort, 
+		SendHTTPRequest(sock, WL2KReport->Host, WL2KReport->WL2KPort,
 				"/channel/add", Message, Len, NULL);
-	
-		
+
+
 		//	Send Version Message
 
 
 		if (LastRMSCall == NULL || strcmp(WL2KReport->RMSCall, LastRMSCall) != 0)
 		{
 			int Len;
-			
+
 			LastRMSCall = WL2KReport->RMSCall;
 
 	//	"Callsign":"String","Program":"String","Version":"String","Comments":"String"
-		
+
 			Len = sprintf(Message, "\"Callsign\":\"%s\",\"Program\":\"BPQ32\","
 				"\"Version\":\"%d.%d.%d.%d\",\"Comments\":\"Test Comment\"",
 				WL2KReport->RMSCall, Ver[0], Ver[1], Ver[2], Ver[3]);
 
 			Debugprintf("Sending %s", Message);
 
-			SendHTTPRequest(sock, WL2KReport->Host, WL2KReport->WL2KPort, 
+			SendHTTPRequest(sock, WL2KReport->Host, WL2KReport->WL2KPort,
 				"/version/add", Message, Len, NULL);
 		}
 
@@ -741,7 +741,7 @@ struct WL2KInfo * DecodeWL2KReportLine(char *  buf)
 	// <antenna height>, <antenna gain>, <antenna direction>, '<hours>', <group reference>, '<service code>'
 
 	 // WL2KREPORT  service, www.winlink.org, 8778, GM8BPQ, IO68VL, 00-23, 144800000, PKT1200, 10, 20, 5, 0, BPQTEST
-	
+
 	char * Context;
 	char * p_cmd;
 	char * param;
@@ -754,22 +754,22 @@ struct WL2KInfo * DecodeWL2KReportLine(char *  buf)
 
 	memset(Param, 0, 2048);
 
-	strcpy(errbuf, buf); 
+	strcpy(errbuf, buf);
 
 	p_cmd = strtok_s(&buf[10], ", \t\n\r", &Context);
 	if (p_cmd == NULL) goto BadLine;
-	
+
 	strcpy(WL2KReport->ServiceCode, p_cmd);
 
 	// Can default Host and Port, so cant use strtok for them
-	
+
 	ptr1 = Context;
 
 	while (ptr1 && *ptr1 && n < 2)
 	{
 		while(ptr1 && *ptr1 && *ptr1 == ' ')
-			ptr1++;	
-		
+			ptr1++;
+
 		ptr2 = strchr(ptr1, ',');
 		if (ptr2) *ptr2++ = 0;
 
@@ -812,20 +812,20 @@ struct WL2KInfo * DecodeWL2KReportLine(char *  buf)
 	strcpy(WL2KReport->RMSCall, p_cmd);
 	strcpy(WL2KReport->BaseCall, p_cmd);
 	strlop(WL2KReport->BaseCall, '-');					// Remove any SSID
-	
+
 	strcpy(WL2KCall, WL2KReport->BaseCall);				// For SYSOP Update
 
-	p_cmd = strtok_s(NULL, " ,\t\n\r", &Context);		
+	p_cmd = strtok_s(NULL, " ,\t\n\r", &Context);
 	if (p_cmd == NULL) goto BadLine;
 	if (strlen(p_cmd) != 6) goto BadLine;
-	
+
 	strcpy(WL2KReport->GridSquare, p_cmd);
 	strcpy(WL2KLoc, p_cmd);
 
 	p_cmd = strtok_s(NULL, " ,\t\n\r", &Context);
 	if (p_cmd == NULL) goto BadLine;
 	if (strlen(p_cmd) > 79) goto BadLine;
-	
+
 	// Convert any : in times to comma
 
 	ptr = strchr(p_cmd, ':');
@@ -844,7 +844,7 @@ struct WL2KInfo * DecodeWL2KReportLine(char *  buf)
 	WL2KReport->Freq = atoi(p_cmd);
 
 	if (WL2KReport->Freq == 0)	// Invalid
-		goto BadLine;					
+		goto BadLine;
 
 	param = strtok_s(NULL, " ,\t\n\r", &Context);
 
@@ -863,7 +863,7 @@ struct WL2KInfo * DecodeWL2KReportLine(char *  buf)
 		Speed = atoi(&param[3]);
 
 		 WL2KReport->baud = Speed;
-			
+
 		 if (Speed <= 1200)
 			 Mode = 0;					// 1200
 		 else if (Speed <= 2400)
@@ -924,7 +924,7 @@ struct WL2KInfo * DecodeWL2KReportLine(char *  buf)
 		WL2KReport->mode = 50;
 	else
 		goto BadLine;
-	
+
 	param = strtok_s(NULL, " ,\t\n\r", &Context);
 
 	// Optional Params
@@ -991,7 +991,7 @@ VOID UpdateMHSupport(struct TNCINFO * TNC, UCHAR * Call, char Mode, char Directi
 		_gcvt(Freq, 9, ReportFreq);
 	}
 
-	if (TNC->Hardware == H_ARDOP)	
+	if (TNC->Hardware == H_ARDOP)
 	{
 		LOC = memchr(Call, '[', 20);
 
@@ -1010,7 +1010,7 @@ VOID UpdateMHSupport(struct TNCINFO * TNC, UCHAR * Call, char Mode, char Directi
 					LOC = NoLOC;
 				}
 				goto NOLOC;
-			}		
+			}
 		}
 	}
 
@@ -1037,7 +1037,7 @@ VOID UpdateMHSupport(struct TNCINFO * TNC, UCHAR * Call, char Mode, char Directi
 				Debugprintf("Corrupt LOC %s %s", Call, LOC);
 				LOC = NoLOC;
 			}
-		}		
+		}
 	}
 	else
 		LOC = NoLOC;
@@ -1066,7 +1066,7 @@ NOLOC:
 	//	TABLE FULL AND ENTRY NOT FOUND - MOVE DOWN ONE, AND ADD TO TOP
 
 	i = MHENTRIES - 1;
-		
+
 	// Move others down and add at front
 DoMove:
 	if (i != 0)				// First
@@ -1083,19 +1083,19 @@ DoMove:
 
 	if (Mode == '*')
 		return;							// Digi'ed Packet
-	
+
 	if (Mode == ' ') 					// Packet Data
 	{
 		if (TNC->PktUpdateMap == 1)
 			Mode = '!';
-		else	
+		else
 			return;
 	}
-			
+
 	ReportMode[0] = TNC->Hardware + '@';
 	ReportMode[1] = Mode;
 	if (TNC->Hardware == H_HAL)
-		ReportMode[2] = TNC->CurrentMode; 
+		ReportMode[2] = TNC->CurrentMode;
 	else
 		ReportMode[2] = (TNC->RIG->CurrentBandWidth) ? TNC->RIG->CurrentBandWidth : '?';
 	ReportMode[3] = Direction;
@@ -1141,7 +1141,7 @@ VOID SaveWindowPos(int port)
 
 	if (TNC->hDlg == NULL)
 		return;
-	
+
 	sprintf(Key, "PACTOR\\PORT%d", port);
 
 	SaveMDIWindowPos(TNC->hDlg, Key, "Size", TNC->Minimized);
@@ -1154,7 +1154,7 @@ VOID ShowTraffic(struct TNCINFO * TNC)
 {
 	char Status[80];
 
-	sprintf(Status, "RX %d TX %d ACKED %d ", 
+	sprintf(Status, "RX %d TX %d ACKED %d ",
 		TNC->Streams[0].BytesRXed, TNC->Streams[0].BytesTXed, TNC->Streams[0].BytesAcked);
 #ifndef LINBPQ
 	SetDlgItemText(TNC->hDlg, IDC_TRAFFIC, Status);
@@ -1170,21 +1170,21 @@ BOOL InterlockedCheckBusy(struct TNCINFO * ThisTNC)
 
 	if (ThisTNC->Busy)
 		return TRUE;				// Our port is busy
-		
+
 	if (Interlock == 0)
 		return ThisTNC->Busy;		// No Interlock
 
 	for (i=1; i<33; i++)
 	{
 		TNC = TNCInfo[i];
-	
+
 		if (TNC == NULL)
 			continue;
 
 		if (TNC == ThisTNC)
 			continue;
 
-		if (Interlock == TNC->Interlock)	// Same Group	
+		if (Interlock == TNC->Interlock)	// Same Group
 			if (TNC->Busy)
 				return TRUE;				// Interlocked port is busy
 
@@ -1221,7 +1221,7 @@ char * GetChallengeResponse(char * Call, char *  ChallengeString)
 	{
 		CallSum += CallCopy[i];
 	}
-	
+
 	Mask = CallSum + CallSum * 4963 + CallSum * 782386;
 
 	Response = (Challenge % 930249781);
@@ -1236,20 +1236,20 @@ SOCKET OpenWL2KHTTPSock()
 {
 	SOCKET sock = 0;
 	struct sockaddr_in destaddr;
-	struct sockaddr_in sinx; 
+	struct sockaddr_in sinx;
 	int addrlen=sizeof(sinx);
 	struct hostent * HostEnt;
 	int err;
 	u_long param=1;
 	BOOL bcopt=TRUE;
-		
-	destaddr.sin_family = AF_INET; 
+
+	destaddr.sin_family = AF_INET;
 	destaddr.sin_port = htons(8085);
 
 	//	Resolve name to address
 
 	HostEnt = gethostbyname ("server.winlink.org");
-		 
+
 	if (!HostEnt)
 	{
 		err = WSAGetLastError();
@@ -1257,16 +1257,16 @@ SOCKET OpenWL2KHTTPSock()
 		Debugprintf("Resolve Failed for %s %d %x", "server.winlink.org", err, err);
 		return 0 ;			// Resolve failed
 	}
-	
-	memcpy(&destaddr.sin_addr.s_addr,HostEnt->h_addr,4);	
-	
+
+	memcpy(&destaddr.sin_addr.s_addr,HostEnt->h_addr,4);
+
 	//   Allocate a Socket entry
 
 	sock = socket(AF_INET,SOCK_STREAM,0);
 
 	if (sock == INVALID_SOCKET)
-  	 	return 0; 
- 
+  	 	return 0;
+
 	setsockopt (sock, SOL_SOCKET, SO_REUSEADDR, (const char FAR *)&bcopt,4);
 
 	sinx.sin_family = AF_INET;
@@ -1274,7 +1274,7 @@ SOCKET OpenWL2KHTTPSock()
 	sinx.sin_port = 0;
 
 	if (bind(sock, (struct sockaddr *) &sinx, addrlen) != 0 )
-  	 	return FALSE; 
+  	 	return FALSE;
 
 	if (connect(sock,(struct sockaddr *) &destaddr, sizeof(destaddr)) != 0)
 	{
@@ -1291,17 +1291,17 @@ BOOL GetWL2KSYSOPInfo(char * Call, char * _REPLYBUFFER)
 	SOCKET sock = 0;
 	int Len;
 	char Message[1000];
-		
+
 	sock = OpenWL2KHTTPSock();
 
 	if (sock == 0)
 		return 0;
-	
+
 	// {"Callsign":"String"}
-			
+
 	Len = sprintf(Message, "\"Callsign\":\"%s\"", Call);
-		
-	SendHTTPRequest(sock, "server.winlink.org", 8085, 
+
+	SendHTTPRequest(sock, "server.winlink.org", 8085,
 				"/sysop/get", Message, Len, _REPLYBUFFER);
 
 	closesocket(sock);
@@ -1314,7 +1314,7 @@ BOOL UpdateWL2KSYSOPInfo(char * Call, char * SQL)
 
 	SOCKET sock = 0;
 	struct sockaddr_in destaddr;
-	struct sockaddr_in sinx; 
+	struct sockaddr_in sinx;
 	int len = 100;
 	int addrlen=sizeof(sinx);
 	struct hostent * HostEnt;
@@ -1323,8 +1323,8 @@ BOOL UpdateWL2KSYSOPInfo(char * Call, char * SQL)
 	BOOL bcopt=TRUE;
 	char Buffer[1000];
 	char SendBuffer[1000];
-		
-	destaddr.sin_family = AF_INET; 
+
+	destaddr.sin_family = AF_INET;
 	destaddr.sin_addr.s_addr = inet_addr("statusreport.winlink.org");
 	destaddr.sin_port = htons(8775);
 
@@ -1332,7 +1332,7 @@ BOOL UpdateWL2KSYSOPInfo(char * Call, char * SQL)
 	{
 		//	Resolve name to address
 		HostEnt = gethostbyname ("www.winlink.org");
-		 
+
 		if (!HostEnt)
 		{
 			err = WSAGetLastError();
@@ -1340,8 +1340,8 @@ BOOL UpdateWL2KSYSOPInfo(char * Call, char * SQL)
 			Debugprintf("Resolve Failed for %s %d %x", "halifax.winlink.org", err, err);
 			return 0 ;			// Resolve failed
 		}
-	
-		memcpy(&destaddr.sin_addr.s_addr,HostEnt->h_addr,4);	
+
+		memcpy(&destaddr.sin_addr.s_addr,HostEnt->h_addr,4);
 	}
 
 	//   Allocate a Socket entry
@@ -1349,8 +1349,8 @@ BOOL UpdateWL2KSYSOPInfo(char * Call, char * SQL)
 	sock = socket(AF_INET,SOCK_STREAM,0);
 
 	if (sock == INVALID_SOCKET)
-  	 	return 0; 
- 
+  	 	return 0;
+
 	setsockopt (sock, SOL_SOCKET, SO_REUSEADDR, (const char FAR *)&bcopt,4);
 
 	sinx.sin_family = AF_INET;
@@ -1358,7 +1358,7 @@ BOOL UpdateWL2KSYSOPInfo(char * Call, char * SQL)
 	sinx.sin_port = 0;
 
 	if (bind(sock, (struct sockaddr *) &sinx, addrlen) != 0 )
-  	 	return FALSE; 
+  	 	return FALSE;
 
 	if (connect(sock,(struct sockaddr *) &destaddr, sizeof(destaddr)) != 0)
 	{

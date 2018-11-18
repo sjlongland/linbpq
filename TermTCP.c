@@ -646,9 +646,9 @@ gint PollTimer(gpointer data)
 
 	if (!ChatMode)
 		return TRUE;
-		
+
 	SlowTimer++;
-	
+
 	if (SlowTimer > 5 * 60 * 9)				// About 9 mins
 	{
 		SlowTimer = 0;

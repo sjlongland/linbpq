@@ -113,7 +113,7 @@
 #endif
 
 #ifdef CHAT
- 
+
 #define Vers 1,0,9,1
 #define Verstring "1.0.9.1\0"
 #define VerComments "Chat server for G8BPQ Packet Switch\0"

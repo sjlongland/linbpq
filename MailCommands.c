@@ -15,7 +15,7 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with LinBPQ/BPQ32.  If not, see http://www.gnu.org/licenses
-*/	
+*/
 
 #include "BPQMail.h"
 
@@ -28,7 +28,7 @@ static char seps[] = " \t\r";
 VOID DoAuthCmd(CIRCUIT * conn, struct UserInfo * user, char * Arg1, char * Context)
 {
 	int AuthInt = 0;
-	
+
 	if (!(user->flags & F_SYSOP))
 	{
 		nodeprintf(conn, "AUTH can only be used by SYSOPs\r");
@@ -100,9 +100,9 @@ VOID DoEditUserCmd(CIRCUIT * conn, struct UserInfo * user, char * Arg1, char * C
 
 	if (Arg1 == NULL)
 		goto UDisplay;
-					
+
 	// A set of flags to change +Flag or -Flag
-		
+
 	while(Arg1 && strlen(Arg1) > 2)
 	{
 		_strupr(Arg1);
@@ -156,10 +156,10 @@ UDisplay:
 	if (EUser->flags & F_Temp_B2_BBS)
 		strcat(Line, " RMS");
 
-	
-	strcat(Line, "\r");	
+
+	strcat(Line, "\r");
 	nodeprintf(conn, Line);
-	
+
 	SendPrompt(conn, user);
 	return;
 }
@@ -177,7 +177,7 @@ VOID DoShowRMSCmd(CIRCUIT * conn, struct UserInfo * inuser, char * Arg1, char * 
 		SendPrompt(conn, inuser);
 		return;
 	}
-			
+
 	for (i = 0; i <= NumberofUsers; i++)
 	{
 		user = UserRecPtr[i];
@@ -198,13 +198,13 @@ VOID DoShowRMSCmd(CIRCUIT * conn, struct UserInfo * inuser, char * Arg1, char * 
 					}
 					else
 						strcat(FWLine, user->Call);
-							
+
 				}
 			}
 		}
 	}
-			
-	strcat(FWLine, "\r");	
+
+	strcat(FWLine, "\r");
 
 	nodeprintf(conn, FWLine);
 }
@@ -220,7 +220,7 @@ VOID DoPollRMSCmd(CIRCUIT * conn, struct UserInfo * user, char * Arg1, char * Co
 Loop:
 	if (Arg1)
 	{
-		// Update	
+		// Update
 		if (_stricmp(Arg1, "Enable") == 0)
 		{
 			RMSUser->flags |= F_POLLRMS;
@@ -256,13 +256,13 @@ Loop:
 
 			if (Arg1 == NULL)
 				goto Display;
-				
+
 			if (_stricmp(Arg1, "Enable") == 0 || _stricmp(Arg1, "Disable") == 0 || (strlen(Arg1) < 3))
 				goto Loop;
 
 			goto Display;
 		}
-	
+
 		// A list of SSID's to poll
 
 		RMSUser->RMSSSIDBits = 0;
@@ -298,11 +298,11 @@ Display:
 					}
 					else
 						strcat(RMSLine, RMSUser->Call);
-						
+
 				}
 			}
 		}
-		strcat(RMSLine, "\r");	
+		strcat(RMSLine, "\r");
 		nodeprintf(conn, RMSLine);
 	}
 	else
@@ -310,7 +310,7 @@ Display:
 
 	if (Arg1)
 		goto Loop;
-	
+
 	SaveUserDatabase();
 	SendPrompt(conn, user);
 }
@@ -413,7 +413,7 @@ VOID DoExportCmd(CIRCUIT * conn, struct UserInfo * user, char * Arg1, char * Con
 	}
 
 	msgno = atoi(Arg1);
-	
+
 	FN = strtok_s(NULL, " \r", &Context);
 
 	if (FN == NULL)
@@ -428,7 +428,7 @@ VOID DoExportCmd(CIRCUIT * conn, struct UserInfo * user, char * Arg1, char * Con
 
 	if (Msg == NULL)
 	{
-		nodeprintf(conn, "Message %d not found\r", msgno);		
+		nodeprintf(conn, "Message %d not found\r", msgno);
 		SendPrompt(conn, user);
 		return;
 	}
@@ -439,7 +439,7 @@ VOID DoExportCmd(CIRCUIT * conn, struct UserInfo * user, char * Arg1, char * Con
 
 	if (Handle == NULL)
 	{
-		nodeprintf(conn, "File %s could not be opened\r", FN);		
+		nodeprintf(conn, "File %s could not be opened\r", FN);
 		SendPrompt(conn, user);
 		return;
 	}
@@ -590,27 +590,27 @@ VOID DoFwdCmd(CIRCUIT * conn, struct UserInfo * user, char * Arg1, char * Contex
 			while (ptr && strlen(ptr))
 			{
 				ptr1 = strchr(ptr, '|');
-			
+
 				if (ptr1)
 					*(ptr1++) = 0;
 
 				Value = realloc(Value, (Count+2)*4);
-			
+
 				Value[Count++] = _strdup(ptr);
-			
+
 				ptr = ptr1;
 			}
-	
+
 			Value[Count] = NULL;
 		}
 
 		StartForwarding(FwdBBS->BBSNumber, Value);
-		
+
 		if (ForwardingInfo->Forwarding)
 			nodeprintf(conn, "Forwarding Started\r");
 		else
 			nodeprintf(conn, "Start Forwarding failed\r");
-		
+
 		SendPrompt(conn, user);
 		return;
 	}

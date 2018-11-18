@@ -79,7 +79,7 @@
 #define IDC_FWDINT 505
 #define IDC_UTC 506
 #define IDC_LOCAL 507
-#define IDC_MSGS 508 
+#define IDC_MSGS 508
 #define IDC_HELD 509
 
 #define IDD_USEREDIT 200
@@ -341,10 +341,10 @@ typedef struct cn_t
 
 struct UserInfo{
 
-	char	Call[10];			//	Connected call without SSID	
+	char	Call[10];			//	Connected call without SSID
 	char	Name[18];			/* 18 1st Name */
 
-}; 
+};
 
 typedef struct ChatConnectionInfo_S
 {
@@ -388,7 +388,7 @@ typedef struct ChatConnectionInfo_S
 	int OutputGetPointer;		// Next byte to send. When Getpointer = Queue Length all is sent - free the buffer and start again.
 
 	int CloseAfterFlush;		// Close session when all sent. Set to 100ms intervals to wait.
-	
+
 	BOOL sysop;					// Set if user is authenticated as a sysop
 	BOOL Secure_Session;		// Set if Local Terminal, or Telnet connect with SYSOP status
 
@@ -469,16 +469,16 @@ char RTFHeader[4000];
 
 int RTFHddrLen;
 
-struct ConsoleInfo 
+struct ConsoleInfo
 {
 	struct ConsoleInfo * next;
 	ChatCIRCUIT * Console;
 	int BPQStream;
-	WNDPROC wpOrigInputProc; 
+	WNDPROC wpOrigInputProc;
 	HWND hConsole;
 	HWND hwndInput;
 	HWND hwndOutput;
-	HMENU hMenu;		// handle of menu 
+	HMENU hMenu;		// handle of menu
 	RECT ConsoleRect;
 	RECT OutputRect;
 
@@ -510,13 +510,13 @@ struct ConsoleInfo
 	int PartLinePtr;
 	int PartLineIndex;		// Listbox index of (last) incomplete line
 
-	DWORD dwCharX;      // average width of characters 
-	DWORD dwCharY;      // height of characters 
-	DWORD dwClientX;    // width of client area 
-	DWORD dwClientY;    // height of client area 
-	DWORD dwLineLen;    // line length 
-	int nCaretPosX; // horizontal position of caret 
-	int nCaretPosY; // vertical position of caret 
+	DWORD dwCharX;      // average width of characters
+	DWORD dwCharY;      // height of characters
+	DWORD dwClientX;    // width of client area
+	DWORD dwClientY;    // height of client area
+	DWORD dwLineLen;    // line length
+	int nCaretPosX; // horizontal position of caret
+	int nCaretPosY; // vertical position of caret
 
 	COLORREF FGColour;		// Text Colour
 	COLORREF BGColour;		// Background Colour
@@ -537,7 +537,7 @@ struct ConsoleInfo
 	int Thumb;
 	int FirstTime;
 	BOOL Scrolled;				// Set if scrolled back
-	int RTFHeight;				// Height of RTF control in pixels 
+	int RTFHeight;				// Height of RTF control in pixels
 
 };
 
@@ -740,7 +740,7 @@ extern int MaxStreams;
 extern UCHAR * OtherNodes;
 								// Forward Menu Handle
 extern char zeros[];						// For forward bitmask tests
-extern char *month[]; 
+extern char *month[];
 
 extern HWND hDebug;
 extern RECT MonitorRect;

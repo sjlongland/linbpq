@@ -15,7 +15,7 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with LinBPQ/BPQ32.  If not, see http://www.gnu.org/licenses
-*/	
+*/
 
 
 #include "bpqchat.h"
@@ -48,7 +48,7 @@ extern char OtherNodesList[1000];
 extern char ChatWelcomeMsg[1000];
 
 extern USER *user_hd;
-extern LINK *link_hd;	
+extern LINK *link_hd;
 
 extern UCHAR BPQDirectory[260];
 
@@ -125,8 +125,8 @@ char ChatSignon[] = "<html><head><title>BPQ32 Chat Server Access</title></head><
 	"<h3 align=center>Please enter Callsign and Password to access the Chat Server</h3>"
 	"<form method=post action=/Chat/Signon?Chat>"
 	"<table align=center  bgcolor=white>"
-	"<tr><td>User</td><td><input type=text name=user tabindex=1 size=20 maxlength=50 /></td></tr>" 
-	"<tr><td>Password</td><td><input type=password name=password tabindex=2 size=20 maxlength=50 /></td></tr></table>"  
+	"<tr><td>User</td><td><input type=text name=user tabindex=1 size=20 maxlength=50 /></td></tr>"
+	"<tr><td>Password</td><td><input type=password name=password tabindex=2 size=20 maxlength=50 /></td></tr></table>"
 	"<p align=center><input type=submit value=Submit /><input type=submit value=Cancel name=Cancel /></form>";
 
 
@@ -186,7 +186,7 @@ void ProcessChatHTTPMessage(struct HTTPConnectionInfo * Session, char * Method, 
 				free(ChatConfigTemplate);
 
 			ChatConfigTemplate = GetTemplateFromFile(2, "ChatConfig.txt");
-			
+
 			NodeURL[strlen(NodeURL)] = ' ';				// Undo strtok
 			SaveChatInfo(Session, input, Reply, RLen, Key);
 			return ;
@@ -212,7 +212,7 @@ void ProcessChatHTTPMessage(struct HTTPConnectionInfo * Session, char * Method, 
 	{
 		if (ChatStatusTemplate)
 			free(ChatStatusTemplate);
-	
+
 		ChatStatusTemplate = GetTemplateFromFile(1, "ChatStatus.txt");
 		SendChatStatusPage(Reply, RLen, Key);
 
@@ -312,7 +312,7 @@ VOID SaveChatInfo(struct HTTPConnectionInfo * Session, char * MsgPtr, char * Rep
  			return;
 		}
 
-	
+
 		GetParam(input, "ApplNum=", Temp);
 		ChatApplNum = atoi(Temp);
 		GetParam(input, "Streams=", Temp);
@@ -347,14 +347,14 @@ VOID SaveChatInfo(struct HTTPConnectionInfo * Session, char * MsgPtr, char * Rep
 	scan2:
 
 		ptr1 = strstr(ptr1, "\r\n");
-    
+
 		if (ptr1)
-		{    
+		{
 			*(ptr1++)='$';			// put in cr
 			*(ptr1++)='W';			// put in lf
 
 			goto scan2;
-		} 
+		}
 
 		GetCheckBox(input, "PopType=Click", &PopupMode);
 
@@ -365,18 +365,18 @@ VOID SaveChatInfo(struct HTTPConnectionInfo * Session, char * MsgPtr, char * Rep
 			node_close();
 
 			Sleep(2);
-			
+
 			// Dont call removelinks - they may still be attached to a circuit. Just clear header
 
 			link_hd = NULL;
-	 
+
 			// Set up other nodes list. rtlink messes with the string so pass copy
-	
+
 			ptr2 = ptr1 = strtok_s(_strdup(OtherNodesList), " ,\r", &Context);
 
 			while (ptr1)
 			{
-				rtlink(ptr1);			
+				rtlink(ptr1);
 				ptr1 = strtok_s(NULL, " ,\r", &Context);
 			}
 
@@ -398,13 +398,13 @@ VOID SaveChatInfo(struct HTTPConnectionInfo * Session, char * MsgPtr, char * Rep
 
 		}
 
-				
+
 #ifdef LINBPQ
 		SaveChatConfig(ChatConfigName);
 		GetChatConfig(ChatConfigName);
 #endif
 	}
-	
+
 	SendChatConfigPage(Reply, RLen, Key);
 	return;
 }
@@ -424,7 +424,7 @@ VOID ProcessChatDisUser(struct HTTPConnectionInfo * Session, char * MsgPtr, char
 			int Stream = atoi(ptr + 7);
 			SessionControl(Stream, 2, 0);
 		}
-	}	
+	}
 	SendChatStatusPage(Reply, RLen, Rest);
 }
 
@@ -454,8 +454,8 @@ VOID SendChatConfigPage(char * Reply, int * ReplyLen, char * Key)
 
 	*ptr2 = 0;
 
-	// Replace " in Text with &quot; 
-		
+	// Replace " in Text with &quot;
+
 	ptr1 = PopupText;
 	ptr2 = Text;
 
@@ -484,19 +484,19 @@ VOID SendChatConfigPage(char * Reply, int * ReplyLen, char * Key)
 scan:
 
 	ptr1 = strstr(ptr1, "$W");
-    
+
 	if (ptr1)
-	{    
+	{
 		*(ptr1++)=13;			// put in cr
 		*(ptr1++)=10;			// put in lf
 
 		goto scan;
-	} 
-	
+	}
+
 	Len = sprintf(Reply, ChatConfigTemplate,
 		OurNode, Key, Key, Key,
 		ChatApplNum, MaxChatStreams, Nodes, Position,
-		(PopupMode) ? UNC  : CHKD, 
+		(PopupMode) ? UNC  : CHKD,
 		(PopupMode) ? CHKD  : UNC,  Text, ptr2);
 
 	free(ptr2);
@@ -517,7 +517,7 @@ VOID SendChatStatusPage(char * Reply, int * ReplyLen, char * Key)
 	char Links[8192];
 
 	ChatCIRCUIT * conn;
-	int i = 0, n; 
+	int i = 0, n;
 
 	Users[0] = 0;
 
@@ -535,7 +535,7 @@ VOID SendChatStatusPage(char * Reply, int * ReplyLen, char * Key)
 
 		Len += sprintf(&Users[Len], "<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%d</td><td>%s</td></tr>",
 			user->call, Alias, user->name, Topic, (int)(time(NULL) - user->lastrealmsgtime), user->qth);
-	
+
 	}
 
 	Links[0] = 0;
@@ -647,8 +647,8 @@ static DWORD WINAPI InstanceThread(LPVOID lpvParam)
 // the main loop to continue executing, potentially creating more threads of
 // of this procedure to run concurrently, depending on the number of incoming
 // client connections.
-{ 
-   DWORD cbBytesRead = 0, cbReplyBytes = 0, cbWritten = 0; 
+{
+   DWORD cbBytesRead = 0, cbReplyBytes = 0, cbWritten = 0;
    BOOL fSuccess = FALSE;
    HANDLE hPipe  = NULL;
    char Buffer[4096];
@@ -665,22 +665,22 @@ static DWORD WINAPI InstanceThread(LPVOID lpvParam)
 
 //	Debugprintf("InstanceThread created, receiving and processing messages.");
 
-// The thread's parameter is a handle to a pipe object instance. 
- 
-   hPipe = (HANDLE) lpvParam; 
+// The thread's parameter is a handle to a pipe object instance.
+
+   hPipe = (HANDLE) lpvParam;
 
    // Read client requests from the pipe. This simplistic code only allows messages
    // up to BUFSIZE characters in length.
- 
+
    n = ReadFile(hPipe, &Session, sizeof (struct HTTPConnectionInfo), &n, NULL);
    fSuccess = ReadFile(hPipe, Buffer, 4096, &InputLen, NULL);
 
 	if (!fSuccess || InputLen == 0)
-	{   
+	{
 		if (GetLastError() == ERROR_BROKEN_PIPE)
-			Debugprintf("InstanceThread: client disconnected.", GetLastError()); 
+			Debugprintf("InstanceThread: client disconnected.", GetLastError());
 		else
-			Debugprintf("InstanceThread ReadFile failed, GLE=%d.", GetLastError()); 
+			Debugprintf("InstanceThread ReadFile failed, GLE=%d.", GetLastError());
 	}
 	else
 	{
@@ -700,10 +700,10 @@ static DWORD WINAPI InstanceThread(LPVOID lpvParam)
 		ProcessChatHTTPMessage(&Session, Method, Context, MsgPtr, OutBuffer, &OutputLen);
 
 		WriteFile(hPipe, &Session, sizeof (struct HTTPConnectionInfo), &n, NULL);
-		WriteFile(hPipe, OutBuffer, OutputLen, &cbWritten, NULL); 
+		WriteFile(hPipe, OutBuffer, OutputLen, &cbWritten, NULL);
 
-		FlushFileBuffers(hPipe); 
-		DisconnectNamedPipe(hPipe); 
+		FlushFileBuffers(hPipe);
+		DisconnectNamedPipe(hPipe);
 		CloseHandle(hPipe);
 	}
 	return 1;
@@ -711,68 +711,68 @@ static DWORD WINAPI InstanceThread(LPVOID lpvParam)
 
 static DWORD WINAPI PipeThreadProc(LPVOID lpvParam)
 {
-	BOOL   fConnected = FALSE; 
-	DWORD  dwThreadId = 0; 
-	HANDLE hPipe = INVALID_HANDLE_VALUE, hThread = NULL; 
- 
-// The main loop creates an instance of the named pipe and 
-// then waits for a client to connect to it. When the client 
-// connects, a thread is created to handle communications 
+	BOOL   fConnected = FALSE;
+	DWORD  dwThreadId = 0;
+	HANDLE hPipe = INVALID_HANDLE_VALUE, hThread = NULL;
+
+// The main loop creates an instance of the named pipe and
+// then waits for a client to connect to it. When the client
+// connects, a thread is created to handle communications
 // with that client, and this loop is free to wait for the
 // next client connect request. It is an infinite loop.
- 
-	for (;;) 
-	{ 
-      hPipe = CreateNamedPipe( 
-          PipeFileName,             // pipe name 
-          PIPE_ACCESS_DUPLEX,       // read/write access 
-          PIPE_TYPE_BYTE |       // message type pipe 
-          PIPE_WAIT,                // blocking mode 
-          PIPE_UNLIMITED_INSTANCES, // max. instances  
-          4096,                  // output buffer size 
-          4096,                  // input buffer size 
-          0,                        // client time-out 
-          NULL);                    // default security attribute 
 
-      if (hPipe == INVALID_HANDLE_VALUE) 
+	for (;;)
+	{
+      hPipe = CreateNamedPipe(
+          PipeFileName,             // pipe name
+          PIPE_ACCESS_DUPLEX,       // read/write access
+          PIPE_TYPE_BYTE |       // message type pipe
+          PIPE_WAIT,                // blocking mode
+          PIPE_UNLIMITED_INSTANCES, // max. instances
+          4096,                  // output buffer size
+          4096,                  // input buffer size
+          0,                        // client time-out
+          NULL);                    // default security attribute
+
+      if (hPipe == INVALID_HANDLE_VALUE)
       {
-          Debugprintf("CreateNamedPipe failed, GLE=%d.\n", GetLastError()); 
+          Debugprintf("CreateNamedPipe failed, GLE=%d.\n", GetLastError());
           return -1;
       }
- 
-      // Wait for the client to connect; if it succeeds, 
-      // the function returns a nonzero value. If the function
-      // returns zero, GetLastError returns ERROR_PIPE_CONNECTED. 
- 
-      fConnected = ConnectNamedPipe(hPipe, NULL) ? 
-         TRUE : (GetLastError() == ERROR_PIPE_CONNECTED); 
- 
-      if (fConnected) 
-	  {
-         // Create a thread for this client. 
-   
-		 hThread = CreateThread( 
-            NULL,              // no security attribute 
-            0,                 // default stack size 
-            InstanceThread,    // thread proc
-            (LPVOID) hPipe,    // thread parameter 
-            0,                 // not suspended 
-            &dwThreadId);      // returns thread ID 
 
-         if (hThread == NULL) 
+      // Wait for the client to connect; if it succeeds,
+      // the function returns a nonzero value. If the function
+      // returns zero, GetLastError returns ERROR_PIPE_CONNECTED.
+
+      fConnected = ConnectNamedPipe(hPipe, NULL) ?
+         TRUE : (GetLastError() == ERROR_PIPE_CONNECTED);
+
+      if (fConnected)
+	  {
+         // Create a thread for this client.
+
+		 hThread = CreateThread(
+            NULL,              // no security attribute
+            0,                 // default stack size
+            InstanceThread,    // thread proc
+            (LPVOID) hPipe,    // thread parameter
+            0,                 // not suspended
+            &dwThreadId);      // returns thread ID
+
+         if (hThread == NULL)
          {
-            Debugprintf("CreateThread failed, GLE=%d.\n", GetLastError()); 
+            Debugprintf("CreateThread failed, GLE=%d.\n", GetLastError());
             return -1;
          }
-         else CloseHandle(hThread); 
-       } 
-      else 
-        // The client could not connect, so close the pipe. 
-         CloseHandle(hPipe); 
-   } 
+         else CloseHandle(hThread);
+       }
+      else
+        // The client could not connect, so close the pipe.
+         CloseHandle(hPipe);
+   }
 
-   return 0; 
-} 
+   return 0;
+}
 
 BOOL CreateChatPipeThread()
 {

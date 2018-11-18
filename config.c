@@ -15,7 +15,7 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with LinBPQ/BPQ32.  If not, see http://www.gnu.org/licenses
-*/	
+*/
 
 
 //	July 2010
@@ -54,7 +54,7 @@ along with LinBPQ/BPQ32.  If not, see http://www.gnu.org/licenses
 //		Display input and output filenames
 //		Wait before exit, even if ok
 
-// March 2006 
+// March 2006
 
 //		Add L4APPL param
 
@@ -114,7 +114,7 @@ along with LinBPQ/BPQ32.  If not, see http://www.gnu.org/licenses
 
 // Spetember 2010
 
-// Add option of embedded port configuration 
+// Add option of embedded port configuration
 
 
 
@@ -139,7 +139,7 @@ along with LinBPQ/BPQ32.  If not, see http://www.gnu.org/licenses
 #define PITNC 64				// PITNC Mode - can reset TNC with FEND 15 2
 #define NOPARAMS 128			// Don't send SETPARAMS frame
 #define FLDIGI 256				// Support FLDIGI COmmand Frames
-#define TRACKER 512				// SCS Tracker. Need to set KISS Mode 
+#define TRACKER 512				// SCS Tracker. Need to set KISS Mode
 #define FASTI2C 1024			// Use BLocked I2C Reads (like ARDOP)
 
 
@@ -300,7 +300,7 @@ char option[250];
 /*      STATIC VARIABLES                                                */
 /************************************************************************/
 
-static char *keywords[] = 
+static char *keywords[] =
 {
 "OBSINIT", "OBSMIN", "NODESINTERVAL", "L3TIMETOLIVE", "L4RETRIES", "L4TIMEOUT",
 "BUFFERS", "PACLEN", "TRANSDELAY", "T3", "IDLETIME", "BBS",
@@ -339,7 +339,7 @@ ApplOffset, 66, 2048, 71, 70, 67,
 121, 256, 111, 113, 114,						// BTEXT was UNPROTO+1
 116};		/* offset for corresponding data in config file */
 
-static int routine[] = 
+static int routine[] =
 {
 1, 1, 1, 1, 1, 1,
 1, 1, 1, 1, 1, 2,
@@ -366,7 +366,7 @@ int PARAMLIM = sizeof(routine)/sizeof(int);
 
 static char eof_message[] = "Unexpected end of file on input\n";
 
-static char *pkeywords[] = 
+static char *pkeywords[] =
 {
 "ID", "TYPE", "PROTOCOL", "IOADDR", "INTLEVEL", "SPEED", "CHANNEL",
 "BBSFLAG", "QUALITY", "MAXFRAME", "TXDELAY", "SLOTTIME", "PERSIST",
@@ -383,7 +383,7 @@ static int poffset[] =
 {
 2, 32, 34, 36, 38, 40, 42,
 44, 46, 48, 50, 52, 54,
-56, 58, 60, 62, 64, 
+56, 58, 60, 62, 64,
 66, 80, 90, 100, 127, 256,
 68, 70, 71 ,74, 128, 0,
 76, 78, 110, 112, 114, 116,
@@ -392,7 +392,7 @@ static int poffset[] =
 36, 236, 38, 36, 36, 126, 243,
 111, 242, 244};					/* offset for corresponding data in config file */
 
-static int proutine[] = 
+static int proutine[] =
 {
 4, 5, 8, 3, 1, 1, 7,
 6, 1, 1, 1, 1, 1,
@@ -447,7 +447,7 @@ BOOL LocSpecified = FALSE;
 /************************************************************************/
 /*   MAIN PROGRAM							*/
 /************************************************************************/
- 
+
 VOID WarnThread();
 
 int LineNo = 0;
@@ -522,7 +522,7 @@ BOOL ProcessConfig()
 	App = (struct APPLCONFIG *)&ConfigBuffer[ApplOffset];
 
 	memset(CfgBridgeMap, 0, sizeof(CfgBridgeMap));
-	
+
 	for (i=0; i < NumberofAppls; i++)
 	{
 		memset(App->Command, ' ', 12);
@@ -577,14 +577,14 @@ BOOL ProcessConfig()
 		for (i=0; i<10; i++)
 		{
 			if (bbscall[i] == 0)
-				
+
 				bputc(32,fp2);
 			else
 				bputc(bbscall[i],fp2);
 		}
-			
+
 	}
-	
+
 	if (paramok[53]==1)
 	{
 		paramok[14]=1;	//  APPL1ALIAS overrides BBSALIAS
@@ -593,25 +593,25 @@ BOOL ProcessConfig()
 		for (i=0; i<10; i++)
 		{
 			if (bbsalias[i] == 0)
-				
+
 				bputc(32,fp2);
 			else
 				bputc(bbsalias[i],fp2);
 
 		}
-			
+
 	}
 
-	if (paramok[61]==1) 
+	if (paramok[61]==1)
 	{
 		paramok[33]=1;	//  APPL1QUAL overrides BBSQUAL
 		bseek(fp2,(long) 118,SEEK_SET);
 		bputi(bbsqual,fp2);
 	}
-			
-	
+
+
 	for (i=0;i<24;i++)
-		
+
 		paramok[45+i]=1;	/* or APPLCALLS, APPLALIASS APPLQUAL */
 
 	paramok[69]=1;			// BText optional
@@ -678,9 +678,9 @@ BOOL ProcessConfig()
 
 /*
 	// Dump to file for debugging
-	
+
 	sprintf_s(inputname, sizeof(inputname), "CFG%d", time(NULL));
-	
+
 	fp1 = fopen(inputname, "wb");
 
 	if (fp1)
@@ -712,7 +712,7 @@ int decode_rec(char * rec)
 
 		char * ptr;
 		struct CONFIGTABLE * cfg = (struct CONFIGTABLE *)ConfigBuffer;
-		
+
 		PortConfig[33] = ptr = malloc(50000);
 
 		*ptr = 0;
@@ -739,7 +739,7 @@ int decode_rec(char * rec)
 		return 0;
 	}
 
-	if (_memicmp(rec, "PORTMAPPER", 10) == 0)	
+	if (_memicmp(rec, "PORTMAPPER", 10) == 0)
 	{
 		// Create Embedded portmapper Config
 
@@ -747,7 +747,7 @@ int decode_rec(char * rec)
 
 		char * ptr;
 		struct CONFIGTABLE * cfg = (struct CONFIGTABLE *)ConfigBuffer;
-		
+
 		PortConfig[35] = ptr = malloc(50000);
 
 		*ptr = 0;
@@ -775,20 +775,20 @@ int decode_rec(char * rec)
 	}
 
 	if (_memicmp(rec, "APRSDIGI", 8) == 0)
-	{		
+	{
 		// Create Embedded APRS Config
 
 		// Copy all subsequent lines up to **** to a memory buffer
 
 		char * ptr;
 		struct CONFIGTABLE * cfg = (struct CONFIGTABLE * )ConfigBuffer;
-		
+
 		PortConfig[34] = ptr = malloc(50000);
 
 		*ptr = 0;
 
 		// Don't use GetNextLine - we need to keep ; in messages
-		
+
 		fgets(rec,MAXLINE,fp1);
 		LineNo++;
 
@@ -813,7 +813,7 @@ int decode_rec(char * rec)
 					goto NextAPRS;
 				}
 			}
-			
+
 			if (Comment)
 				goto NextAPRS;
 
@@ -840,7 +840,7 @@ NextAPRS:
 		if (strlen(rec) > 88) rec[88] = 0;
 
 		_strupr(rec);
-		
+
 		strcpy(PWTEXT, &rec[9]);
 		return 0;
 	}
@@ -880,7 +880,7 @@ NextAPRS:
 	{
 		// Station Maidenhead Locator or Lat/Long
 
-		char * Context;		
+		char * Context;
 		char * ptr1 = strtok_s(&rec[7], " ,=\t\n\r:", &Context);
 		char * ptr2 = strtok_s(NULL, " ,=\t\n\r:", &Context);
 
@@ -960,18 +960,18 @@ NextAPRS:
 
 		if (Context == NULL)
 			return FALSE;
-	
+
 		ptr = strtok_s(NULL, ",\t\n\r", &Context);
 
 		while (ptr)
 		{
 			DigiTo = atoi(ptr);
-	
+
 			if (DigiTo > 32)
 				return 0;
 
 			if (Port != DigiTo)				// Not to our port!
-				CfgBridgeMap[Port][DigiTo] = TRUE;	
+				CfgBridgeMap[Port][DigiTo] = TRUE;
 
 			ptr = strtok_s(NULL, " ,\t\n\r", &Context);
 		}
@@ -1018,7 +1018,7 @@ NextAPRS:
 		char save[300];
 
 		strcpy(save, rec);			// Save in case error
-		
+
 		if (!ProcessAPPLDef(&rec[12]))
 		{
 			Consoleprintf("Invalid Record %s", save);
@@ -1128,7 +1128,7 @@ NextAPRS:
 		break;
 
              case 10:
-             	cn = channel(i,value,rec);	     /* SINGLE CHAR  */	
+             	cn = channel(i,value,rec);	     /* SINGLE CHAR  */
 		break;
 
              case 11:
@@ -1150,10 +1150,10 @@ NextAPRS:
 		   break;
 
 
-	   case 15:   
+	   case 15:
 		  cn = doBText(i,key_word);             /* BTEXT */
 		  break;
- 
+
 	     }
 
 	   paramok[i] = cn;
@@ -1173,8 +1173,8 @@ char rec[];
 	int Appl;
 	struct APPLCONFIG * App;
 
-	// Appl1Call is 0, Appl1Alias 800, 10 byte values 
-	
+	// Appl1Call is 0, Appl1Alias 800, 10 byte values
+
 	Appl = fileoffset/10;
 
 	if (call_check_internal(value))
@@ -1212,8 +1212,8 @@ char rec[];
 	int j, k, Appl;
 	struct APPLCONFIG * App;
 
-	// Appl1Qual is 160, 2 byte values 
-	
+	// Appl1Qual is 160, 2 byte values
+
 	Appl = (fileoffset - 160) / 2;
 
 	App = (struct APPLCONFIG *)&ConfigBuffer[ApplOffset + Appl * sizeof(struct APPLCONFIG) ];
@@ -1226,7 +1226,7 @@ char rec[];
 	   Consoleprintf("%s\r\n",rec);
 	   return(0);
 	}
-	
+
 	if (i==61) bbsqual=j;
 
 	App->ApplQual = j;
@@ -1385,7 +1385,7 @@ char rec[];
 	int j15 = 0;
 	int j16 = 0;
 	int num;
-	
+
         bseek(fp2,(long) fileoffset,SEEK_SET);
 
 	num = sscanf(value," %d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d",&j1,&j2,&j3,&j4,&j5,&j6,&j7,&j8,&j9,&j10,&j11,&j12,&j13,&j14,&j15,&j16);
@@ -1434,7 +1434,7 @@ char rec[];
 	   appl[249] = 0;
 
 	   ptr2=appl;
- 		
+
        j = *ptr1++;
 
        while (j != ',' && j)
@@ -1453,11 +1453,11 @@ char rec[];
 		   memcpy(App->CommandAlias, ptr2, 48);
 		   strcat(appl, "            ");
 	   }
-	   
+
 	   memcpy(App->Command, appl, 12);
 	   cfg->C_BBS = 1;
 
-	   
+
 	   if (*(ptr1 - 1) == 0)
 		   return 1;
    }
@@ -1557,7 +1557,7 @@ int routes(int i)
 	char rec[MAXLINE];
 
 	int quality, port;
-	int pwind, pfrack, ppacl;	
+	int pwind, pfrack, ppacl;
 	int inp3, farQual;
 
 	bseek(fp2,(long) fileoffset,SEEK_SET);
@@ -1667,7 +1667,7 @@ int routes(int i)
 	{
 	   Consoleprintf(eof_message);
 	   return(0);
-	}	
+	}
 
 	if (main_err == 1)
 	   return(0);
@@ -1724,8 +1724,8 @@ int ports(int i)
 
 	portoffset = portoffset + 1024;
 	portnum++;
-	
-	return(1); 
+
+	return(1);
 
 }
 
@@ -1754,11 +1754,11 @@ int tncports(int i)
 	}
 
 	C_Q_ADD_NP(&TNCCONFIGTABLE, TNC2ENTRY);		// Add to chain
-	
+
 	NUMBEROFTNCPORTS++;
 
    	tncportoffset = tncportoffset + 8;
-	return(1); 
+	return(1);
 
 
 }
@@ -1787,9 +1787,9 @@ int i;
 	{
 	   Consoleprintf("Error in DEDHOST definition");
 	   return(0);
-	} 
+	}
    	tncportoffset = tncportoffset + 8;
-	return(1); 
+	return(1);
 
 
 }
@@ -1885,13 +1885,13 @@ int GetNextLine(char *rec)
 		if (j > 0)
 		{
 			// Remove Leading Spaces
-				
+
 			for (i=0; rec[j] != '\0'; i++, j++)
 				rec[i] = rec[j];
 
 			rec[i] = '\0';
 		}
-			
+
 		strlop(rec, ';');
 
 		if (strlen(rec) > 1)
@@ -1936,7 +1936,7 @@ int GetNextLine(char *rec)
 			return 0;
 		}
 
-	} 
+	}
 
 	return 0;
 }
@@ -1977,7 +1977,7 @@ int call_check_internal(char * callsign)
 		  Consoleprintf("%s\r\n",callsign);
 	      err_flag = 1;
 	   }
-	}  
+	}
 
 	strcat(callsign,"          ");
 	callsign[10] = '\0';
@@ -2015,7 +2015,7 @@ char rec[];
 }
 
 /*
-		RADIO PORT PROCESSING 
+		RADIO PORT PROCESSING
 */
 
 
@@ -2049,14 +2049,14 @@ int decode_port_rec(char * rec)
 
 		PortConfig[LogicalPortNum] = ptr = malloc(50000);
 		*ptr = 0;
-	
+
 		GetNextLine(rec);
 
 		while (!feof(fp1))
 		{
 			if (_memicmp(rec, "ENDPORT", 7) == 0)
 			{
-				PortConfig[LogicalPortNum] = realloc(PortConfig[LogicalPortNum], (strlen(ptr) + 1));		
+				PortConfig[LogicalPortNum] = realloc(PortConfig[LogicalPortNum], (strlen(ptr) + 1));
 				endport = 1;
 				return 0;
 			}
@@ -2087,7 +2087,7 @@ int decode_port_rec(char * rec)
 					// Multiline config, ending in ****
 
 					char * rptr;
-					
+
 					RigConfigMsg[LogicalPortNum] = rptr = zalloc(50000);
 
 					strcpy(rptr, "RIGCONTROL ");
@@ -2098,7 +2098,7 @@ int decode_port_rec(char * rec)
 					{
 						if (memcmp(rec, "***", 3) == 0)
 						{
-							RigConfigMsg[LogicalPortNum] = realloc(RigConfigMsg[LogicalPortNum], (strlen(rptr) + 1));		
+							RigConfigMsg[LogicalPortNum] = realloc(RigConfigMsg[LogicalPortNum], (strlen(rptr) + 1));
 							break;
 						}
 						strcat(rptr, rec);
@@ -2141,7 +2141,7 @@ int decode_port_rec(char * rec)
 
 		struct XDIGI * Digi = zalloc(sizeof(struct XDIGI));	//  Chain
 		char * call, * pport, * Context;
-		
+
 		call = strtok_s(value, ",", &Context);
 		pport = strtok_s(NULL, ",", &Context);
 
@@ -2161,7 +2161,7 @@ int decode_port_rec(char * rec)
 
 				if (PortRec->XDIGIS)
 					Digi->Next = PortRec->XDIGIS;
-		
+
 				PortRec->XDIGIS = Digi;
 				return 0;
 			}
@@ -2187,7 +2187,7 @@ int decode_port_rec(char * rec)
 
 	   switch (proutine[i])
 	   {
-	   
+
 	   case 0:
 		   cn = callsign(i,value,rec);          /* CALLSIGNS */
 		   break;
@@ -2253,11 +2253,11 @@ int decode_port_rec(char * rec)
 			WL2K = DecodeWL2KReportLine(rec);
 			memcpy(&ConfigBuffer[fileoffset], &WL2K, 4);
 			break;
-		
+
 		case 17:
 
 			// IP Address for KISS over UDP
-			
+
 #ifdef WIN32
 			WSAStartup(MAKEWORD(2, 0), &WsaData);
 #endif
@@ -2274,7 +2274,7 @@ int decode_port_rec(char * rec)
 
 
 		case 9:
-			
+
 			cn = 1;
 			endport=1;
 
@@ -2297,7 +2297,7 @@ char rec[];
 {
 	unsigned int j;
 	for (j = 3;( j < strlen(rec)+1); j++)
-	    
+
 	workstring[j-3] = rec[j];
 
 	// Remove trailing spaces before checking length
@@ -2345,7 +2345,7 @@ char rec[];
 	   Consoleprintf("%s\r\n",rec);
 
 	}
-		
+
 	_strupr(workstring);
 	strcat(workstring,"                ");
 
@@ -2482,7 +2482,7 @@ char rec[];
 		UCHAR * ptr = ConfigBuffer + portoffset;
 
 		struct PORTCONFIG * PORT = (struct PORTCONFIG *)ptr;
-	
+
 		// Set some defaults
 
 		PORT->CHANNEL = 'A';
@@ -2640,9 +2640,9 @@ char rec[];
 
 
 /*
-		TNC PORT PROCESSING 
+		TNC PORT PROCESSING
 */
-static char *tkeywords[] = 
+static char *tkeywords[] =
 {
 "COM", "TYPE", "APPLMASK", "KISSMASK", "APPLFLAGS", "ENDPORT"
 };           /* parameter keywords */
@@ -2652,7 +2652,7 @@ static int toffset[] =
 0, 1, 2, 3, 5, 8
 };		/* offset for corresponding data in config file */
 
-static int troutine[] = 
+static int troutine[] =
 {
 1, 5, 1, 3, 1, 9
 };		/* routine to process parameter */
@@ -2834,9 +2834,9 @@ int do_kiss (char * value,char * rec)
 
 
 /*
-		DEDHOST PORT PROCESSING 
+		DEDHOST PORT PROCESSING
 */
-static char *dkeywords[] = 
+static char *dkeywords[] =
 {
 "INT", "STREAMS", "_APPLMASK", "BUFFERPOOL", "CONNECTS", "ENDPORT"
 };           /* parameter keywords */
@@ -2846,7 +2846,7 @@ static int doffset[] =
 0, 1, 2, 3, 5, 8
 };		/* offset for corresponding data in config file */
 
-static int droutine[] = 
+static int droutine[] =
 {
 1, 5, 1, 3, 1, 9
 };		/* routine to process parameter */
@@ -2963,7 +2963,7 @@ int simple(int i)
 
 	memcpy(ConfigBuffer, &Cfg, sizeof(Cfg));
 
-	paramok[15] = 0;		// Must have callsign 
+	paramok[15] = 0;		// Must have callsign
 	paramok[45] = 0;		// Dont Have Appl1Call
 	paramok[53] = 0;		// or APPL1ALIAS
 
@@ -3026,7 +3026,7 @@ BOOL ProcessAPPLDef(char * buf)
 	memcpy(App->Command, Param[1], strlen(Param[1]));
 
 	cfg->C_BBS = 1;
-		
+
 	if (strlen(Param[2]) > 48) return FALSE;
 
 	memcpy(App->CommandAlias, Param[2], strlen(Param[2]));
@@ -3069,7 +3069,7 @@ double xfmod(double p1, double p2)
 
 	#pragma warning(push)
 	#pragma warning(disable : 4244)
-	
+
 	i = Lon / 20;
 	Locator[0] = 65 + i;
 

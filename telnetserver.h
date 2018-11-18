@@ -14,7 +14,7 @@ struct ConnectionInfo
     SOCKET socket;
 	union
 	{
-		struct sockaddr_in6 sin6;  
+		struct sockaddr_in6 sin6;
 		struct sockaddr_in sin;
 	};
 	BOOL SocketActive;
@@ -58,7 +58,7 @@ struct ConnectionInfo
 	BOOL RelaySession;			// Set if connection to RMS Relay
 	BOOL LogonSent;				// To ignore second callsign: prompt
 	char Signon[100];			// User/Pass/Appl for Outgoing Connects
-	BOOL Keepalive;				// For HOST (esp CCC) Keepalives 
+	BOOL Keepalive;				// For HOST (esp CCC) Keepalives
 	time_t LastSendTime;
 	UCHAR * ResendBuffer;		// Used if send() returns EWOULDBLOCK
 	int	ResendLen;				// Len to resend

@@ -15,14 +15,14 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with LinBPQ/BPQ32.  If not, see http://www.gnu.org/licenses
-*/	
+*/
 
 //
 //	C replacement for TNCCode.asm
 //
 #define Kernel
 
-#define _CRT_SECURE_NO_DEPRECATE 
+#define _CRT_SECURE_NO_DEPRECATE
 #define _USE_32BIT_TIME_T
 
 #pragma data_seg("_BPQDATA")
@@ -69,7 +69,7 @@ VOID TNCTimerProc()
 #endif
 				continue;
 			}
-		
+
 			if (Session->L4CROSSLINK)
 				Session->L4CROSSLINK->STAYFLAG = DISCFLAG;
 
@@ -80,7 +80,7 @@ VOID TNCTimerProc()
 
 			CloseSessionPartner(Session);	// SEND CLOSE TO PARTNER (IF PRESENT)
 		}
-	
+
 		// Check Trace Q
 
 		if (HOSTSESS->HOSTAPPLFLAGS & 0x80)
@@ -109,11 +109,11 @@ VOID SENDIDMSG()
 		if (PORT->PROTOCOL < 10)			// Not Pactor-style
 		{
 			Buffer = GetBuff();
-		
+
 			if (Buffer)
 			{
 				memcpy(Buffer, ID, ID->LENGTH);
-			
+
 				Buffer->PORT = PORT->PORTNUMBER;
 
 				//	IF PORT HAS A CALLSIGN DEFINED, SEND THAT INSTEAD
@@ -145,7 +145,7 @@ VOID SENDBTMSG()
 			PORT = PORT->PORTPOINTER;
 			continue;
 		}
-		
+
 		Buffer = GetBuff();
 
 		if (Buffer)
@@ -157,7 +157,7 @@ VOID SENDBTMSG()
 
 			if (PORT->PORTBCALL[0] > 32)
 				memcpy(Buffer->ORIGIN, PORT->PORTBCALL, 7);
-			else if (APPLCALLTABLE->APPLCALL[0] > 32) 
+			else if (APPLCALLTABLE->APPLCALL[0] > 32)
 				memcpy(Buffer->ORIGIN, APPLCALLTABLE->APPLCALL, 7);
 			else
 				memcpy(Buffer->ORIGIN, MYCALL, 7);
@@ -176,12 +176,12 @@ VOID SENDBTMSG()
 
 			*(ptr2 - 1) |= 1;					// Set End of Address
 			*(ptr2++) = UI;
-	
+
 			memcpy(ptr2, &BTHDDR.PID, BTHDDR.LENGTH);
 			ptr2 += BTHDDR.LENGTH;
-			Buffer->LENGTH = ptr2 - (char *)Buffer;			
+			Buffer->LENGTH = ptr2 - (char *)Buffer;
 			Buffer->PORT = PORT->PORTNUMBER;
- 	
+
 			C_Q_ADD(&IDMSG_Q, Buffer);
 		}
 		PORT = PORT->PORTPOINTER;
@@ -215,7 +215,7 @@ VOID SENDUIMESSAGE(struct DATAMESSAGE * Msg)
 
 			if (PORT->PORTBCALL[0] > 32)
 				memcpy(Buffer->ORIGIN, PORT->PORTBCALL, 7);
-			else if (APPLCALLTABLE->APPLCALL[0] > 32) 
+			else if (APPLCALLTABLE->APPLCALL[0] > 32)
 				memcpy(Buffer->ORIGIN, APPLCALLTABLE->APPLCALL, 7);
 			else
 				memcpy(Buffer->ORIGIN, MYCALL, 7);
@@ -234,10 +234,10 @@ VOID SENDUIMESSAGE(struct DATAMESSAGE * Msg)
 
 			*(ptr2 - 1) |= 1;					// Set End of Address
 			*(ptr2++) = UI;
-	
+
 			memcpy(ptr2, &Msg->PID, Msg->LENGTH);
 			ptr2 += Msg->LENGTH;
-			Buffer->LENGTH = ptr2 - (char *)Buffer;			
+			Buffer->LENGTH = ptr2 - (char *)Buffer;
 			Buffer->PORT = PORT->PORTNUMBER;
 
 			if (PORT->PROTOCOL == 10)
@@ -289,7 +289,7 @@ Dll VOID APIENTRY Send_AX(UCHAR * Block, DWORD Len, UCHAR Port)
 		return;
 	}
 
-	Copy->PORT = Port; 
+	Copy->PORT = Port;
 
 	PUT_ON_PORT_Q(PORT, Copy);
 }
@@ -302,7 +302,7 @@ TRANSPORTENTRY * SetupSessionFromHost(PBPQVECSTRUC HOST, UINT ApplMask)
 	TRANSPORTENTRY * NewSess = L4TABLE;
 	int Index = 0;
 
-	
+
 	while (Index < MAXCIRCUITS)
 	{
 		if (NewSess->L4USER[0] == 0)
@@ -310,7 +310,7 @@ TRANSPORTENTRY * SetupSessionFromHost(PBPQVECSTRUC HOST, UINT ApplMask)
 			// Got One
 
 			UCHAR * ourcall = &MYCALL[0];
-		
+
 			// IF APPL PORT USE APPL CALL, ELSE NODE CALL
 
 			if (ApplMask)
@@ -341,7 +341,7 @@ TRANSPORTENTRY * SetupSessionFromHost(PBPQVECSTRUC HOST, UINT ApplMask)
 			NewSess->L4TARGET.HOST = HOST;
 			NewSess->L4STATE = 5;
 
-			
+
 			NewSess->SESSIONT1 = L4T1;
 			NewSess->L4WINDOW = (UCHAR)L4DEFAULTWINDOW;
 			NewSess->SESSPACLEN = PACLEN;				// Default;

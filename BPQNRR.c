@@ -15,7 +15,7 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with LinBPQ/BPQ32.  If not, see http://www.gnu.org/licenses
-*/	
+*/
 
 //
 //	Netrom Record ROute Suport Code for BPQ32 Switch
@@ -26,14 +26,14 @@ along with LinBPQ/BPQ32.  If not, see http://www.gnu.org/licenses
 //	Shared data can be used for Config Info.
 
 
-#define _CRT_SECURE_NO_DEPRECATE 
+#define _CRT_SECURE_NO_DEPRECATE
 #define _USE_32BIT_TIME_T
 
 #pragma data_seg("_BPQDATA")
 
 #include "time.h"
 #include "stdio.h"
-#include <fcntl.h>					 
+#include <fcntl.h>
 //#include "vmm.h"
 
 
@@ -48,21 +48,21 @@ VOID __cdecl Debugprintf(const char * format, ...);
 TRANSPORTENTRY * NRRSession;
 
 /*
-datagrams (and other things) to be transported in Netrom L3 frames. 
-When the frametype is 0x00, the "circuit index" and "circuit id" (first 2 
-bytes of the transport header) take on a different meaning, something like 
-"protocol family" and "protocol id". IP over netrom uses 0x0C for both 
-bytes, TheNet uses 0x00 for both bytes when making L3RTT measurements, and 
-Xnet uses family 0x00, protocol id 0x01 for Netrom Record Route. I believe 
-there are authors using other values too. Unfortunately there is no 
-co-ordinating authority for these numbers, so authors just pick an unused 
-one. 
+datagrams (and other things) to be transported in Netrom L3 frames.
+When the frametype is 0x00, the "circuit index" and "circuit id" (first 2
+bytes of the transport header) take on a different meaning, something like
+"protocol family" and "protocol id". IP over netrom uses 0x0C for both
+bytes, TheNet uses 0x00 for both bytes when making L3RTT measurements, and
+Xnet uses family 0x00, protocol id 0x01 for Netrom Record Route. I believe
+there are authors using other values too. Unfortunately there is no
+co-ordinating authority for these numbers, so authors just pick an unused
+one.
 */
 
 VOID NRRecordRoute(char * Buff, int Len)
 {
 	// NRR frame for us. If We originated it, report outcome, else put our call on end, and send back
-	
+
 	L3MESSAGEBUFFER * Msg = (L3MESSAGEBUFFER *)Buff;
 	struct DEST_LIST * DEST;
 	char Temp[7];
@@ -82,7 +82,7 @@ VOID NRRecordRoute(char * Buff, int Len)
 			return;
 
 		ptr1 = &BUFFER[7];
-		
+
 		*ptr1++ = 0xf0;			// PID
 
 		ptr1 += sprintf(ptr1, "NRR Response:");
@@ -97,7 +97,7 @@ VOID NRRecordRoute(char * Buff, int Len)
 			ptr1 += sprintf(ptr1, " %s", call);
 			if ((Buff[7] & 0x80) == 0x80)			// Check turnround bit
 				*ptr1++ = '*';
-	
+
 			Buff+=8;
 			Len -= 8;
 		}
@@ -113,7 +113,7 @@ VOID NRRecordRoute(char * Buff, int Len)
 		Len = ptr1 - BUFFER;
 
 		Msg = (struct _MESSAGE *)BUFFER;
-		
+
 		Msg->LENGTH = Len;
 
 		Msg->CHAIN = NULL;
@@ -155,15 +155,15 @@ VOID NRRecordRoute(char * Buff, int Len)
 		ReleaseBuffer(Msg);			// CANT FIND DESTINATION
 		return;
 	}
-		
+
 	Msg->LENGTH = NRRLen + 20 + 8;
-	
+
 	C_Q_ADD(&DEST->DEST_Q, Msg);
 }
 
-	
+
 VOID SendNRRecordRoute(struct DEST_LIST * DEST, TRANSPORTENTRY * Session)
-{	
+{
 	L3MESSAGEBUFFER * Msg = GetBuff();
 	int Stream = 1;
 
@@ -177,7 +177,7 @@ VOID SendNRRecordRoute(struct DEST_LIST * DEST, TRANSPORTENTRY * Session)
 
 	memcpy(Msg->L3DEST, DEST->DEST_CALL, 7);
 	memcpy(Msg->L3SRCE, MYCALL, 7);
-		
+
 	Msg->L3TTL = L3LIVES;
 	Msg->L4ID = 1;
 	Msg->L4INDEX = 0;
@@ -185,8 +185,8 @@ VOID SendNRRecordRoute(struct DEST_LIST * DEST, TRANSPORTENTRY * Session)
 
 	memcpy(Msg->L4DATA, MYCALL, 7);
 	Msg->L4DATA[7] = Stream + 28;
-		
+
 	Msg->LENGTH = 8 + 20 + 8;
-	
+
 	C_Q_ADD(&DEST->DEST_Q, Msg);
 }

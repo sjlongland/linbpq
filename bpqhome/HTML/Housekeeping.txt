@@ -1,21 +1,21 @@
 <!-- Version 2 2/1/2016 -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"><head>
-  
+
 <meta content="text/html; charset=ISO-8859-1" http-equiv="content-type" />
 <title>Housekeeping</title>
-<script type="text/javascript"> 
- 
+<script type="text/javascript">
+
 var Main
 var fromleft;
 
 function initialize()
-{	
+{
 	var w=window,d=document,e=d.documentElement,g=d.getElementsByTagName('body')[0];
 	x=w.innerWidth||e.clientWidth||g.clientWidth;
 	fromleft = (x / 2) - 440;
 	if (fromleft < 0) {fromleft = 0;}
-	Main = document.getElementById("main"); 
+	Main = document.getElementById("main");
 	Main.style.left = fromleft + "px";
 
 //	Main.style.width = (x - fromleft) + "px";
@@ -120,7 +120,7 @@ style="font-family: monospace; font-weight: bold;">Bulletins</span>
     </tbody>
   </table>
   </div>
-  
+
     <div style="border: 2px solid ; overflow: auto; position: absolute; top: 20px; left: 390px; width: 180px; height: 150px;"><div style="text-align: center;"><span
 style="font-family: monospace; font-weight: bold;">NTS</span>
 </div>
@@ -142,9 +142,9 @@ style="font-family: monospace; font-weight: bold;">NTS</span>
   </table>
   </div>
 
-  
-  
-  
+
+
+
   <div style="border: 0px solid ; overflow: auto; position: absolute; top: 180px; left: 10px; width: 550px; height: 310px;">The following boxes allow you to specify different
 values for different Bulletin origins and destinations. Normally these apply to Sent Messages. To apply to unsent, check box below.<br><br>
 Specify Call, Lifetime....eg ALL, 10<br><br>

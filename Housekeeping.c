@@ -15,7 +15,7 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with LinBPQ/BPQ32.  If not, see http://www.gnu.org/licenses
-*/	
+*/
 
 // Mail and Chat Server for BPQ32 Packet Switch
 //
@@ -84,7 +84,7 @@ void DeletetoRecycle(char * FN)
 VOID FreeOverride(struct Override ** Hddr)
 {
 	struct Override ** Save;
-	
+
 	if (Hddr)
 	{
 		Save = Hddr;
@@ -120,15 +120,15 @@ VOID * GetOverrides(config_setting_t * group, char * ValueName)
 	Value[0] = NULL;
 
 	setting = config_setting_get_member (group, ValueName);
-	
+
 	if (setting)
 	{
 		ptr =  (char *)config_setting_get_string (setting);
-	
+
 		while (ptr && strlen(ptr))
 		{
 			ptr1 = strchr(ptr, '|');
-			
+
 			if (ptr1)
 				*(ptr1++) = 0;
 
@@ -169,12 +169,12 @@ VOID * RegGetOverrides(HKEY hKey, char * ValueName)
 
 	retCode = RegQueryValueEx(hKey, ValueName, 0, (ULONG *)&Type, NULL, (ULONG *)&Vallen);
 
-	if ((retCode != 0)  || (Vallen == 0)) 
+	if ((retCode != 0)  || (Vallen == 0))
 		return FALSE;
 
 	MultiString = malloc(Vallen);
 
-	retCode = RegQueryValueEx(hKey, ValueName, 0,			
+	retCode = RegQueryValueEx(hKey, ValueName, 0,
 			(ULONG *)&Type,(UCHAR *)MultiString,(ULONG *)&Vallen);
 
 	ptr=0;
@@ -211,7 +211,7 @@ int BIDSRemoved;
 INT_PTR CALLBACK HKDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	int Command;
-		
+
 	switch (message)
 	{
 	case WM_INITDIALOG:
@@ -240,7 +240,7 @@ INT_PTR CALLBACK HKDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPa
 		}
 		break;
 	}
-	
+
 	return 0;
 }
 #endif
@@ -257,7 +257,7 @@ VOID DoHouseKeeping(BOOL Manual)
 
 	RemoveKilledMessages();
 	ExpireMessages();
-	
+
 	GetSemaphore(&AllocSemaphore, 0);
 	ExpireBIDs();
 	FreeSemaphore(&AllocSemaphore);
@@ -268,14 +268,14 @@ VOID DoHouseKeeping(BOOL Manual)
 		GetSemaphore(&AllocSemaphore, 0);
 
 		Renumber_Messages();
-	
+
 		FreeSemaphore(&AllocSemaphore);
 		FreeSemaphore(&MsgNoSemaphore);
 	}
 
 	if (!SuppressMaintEmail)
 		MailHousekeepingResults();
-	
+
 	LastHouseKeepingTime = NOW = time(NULL);
 
 #ifndef LINBPQ
@@ -360,7 +360,7 @@ VOID ExpireMessages()
 				{
 					if (Msg->datecreated < PURLimit)
 					{
-						if (SendNonDeliveryMsgs) 
+						if (SendNonDeliveryMsgs)
 							SendNonDeliveryMessage(Msg, TRUE, PUR);
 
 						KillMsg(Msg);
@@ -370,19 +370,19 @@ VOID ExpireMessages()
 				{
 					if (Msg->datecreated < PNFLimit)
 					{
-						if (SendNonDeliveryMsgs) 
+						if (SendNonDeliveryMsgs)
 							SendNonDeliveryMessage(Msg, FALSE, PNF);
 
 						KillMsg(Msg);
 					}
 				}
-				continue;	
-	
+				continue;
+
 			case 'F':
 
 				if (Msg->datechanged < PFLimit) KillMsg(Msg);
 
-				continue;	
+				continue;
 
 			case 'Y':
 
@@ -394,18 +394,18 @@ VOID ExpireMessages()
 
 				continue;
 
-			}			
-			
+			}
+
 		case 'T':
 
 			switch (Msg->status)
-			{	
+			{
 			case 'F':
 
 				if (Msg->datechanged < NTSFLimit)
 					KillMsg(Msg);
 
-				continue;	
+				continue;
 
 			case 'D':
 
@@ -418,7 +418,7 @@ VOID ExpireMessages()
 
 				if (Msg->datecreated < NTSULimit)
 				{
-					if (SendNonDeliveryMsgs) 
+					if (SendNonDeliveryMsgs)
 						SendNonDeliveryMessage(Msg, TRUE, PUR);
 
 					KillMsg(Msg);
@@ -426,7 +426,7 @@ VOID ExpireMessages()
 
 				continue;
 
-			}			
+			}
 
 		case 'B':
 
@@ -502,15 +502,15 @@ VOID ExpireMessages()
 
 				if (Msg->datecreated < BNFLimit)
 					KillMsg(Msg);
-				break;	
+				break;
 
 			case 'F':
 			case 'Y':
 
-				if (Msg->datecreated < BFLimit) 
+				if (Msg->datecreated < BFLimit)
 					KillMsg(Msg);
-				break;	
-			}			
+				break;
+			}
 		}
 	}
 }
@@ -553,7 +553,7 @@ BOOL RemoveKilledMessages()
 			else
 				DeleteFile(MsgFile);
 
-			MsgnotoMsg[Msg->number] = NULL;	
+			MsgnotoMsg[Msg->number] = NULL;
 			free(Msg);
 
 			Removed++;
@@ -662,7 +662,7 @@ VOID Renumber_Messages()
 			Msg->number = i;
 			MsgnotoMsg[i] = Msg;
 		}
-		
+
 	}
 
 	for (n = 0; n <= NumberofUsers; n++)
@@ -786,11 +786,11 @@ int DeleteLogFiles()
 
    hFind = FindFirstFile(szDir, &ffd);
 
-   if (INVALID_HANDLE_VALUE == hFind) 
+   if (INVALID_HANDLE_VALUE == hFind)
    {
       return dwError;
-   } 
-   
+   }
+
    // List all the files in the directory with some info about them.
 
    do
@@ -807,7 +807,7 @@ int DeleteLogFiles()
 		 ft.QuadPart -=  116444736000000000;
 		 ft.QuadPart /= 10000000;
 
-		 Age = (now - ft.LowPart) / 86400; 
+		 Age = (now - ft.LowPart) / 86400;
 
 		 if (Age > LogAge)
 		 {
@@ -820,7 +820,7 @@ int DeleteLogFiles()
       }
    }
    while (FindNextFile(hFind, &ffd) != 0);
- 
+
    dwError = GetLastError();
 
    FindClose(hFind);
@@ -844,20 +844,20 @@ int DeleteLogFiles()
 	time_t now = time(NULL);
 	int Age = 0, res;
 	char FN[256];
-     	
+
     n = scandir("logs", &namelist, Filter, alphasort);
 
-	if (n < 0) 
+	if (n < 0)
 		perror("scandir");
-	else  
-	{ 
+	else
+	{
 		while(n--)
 		{
 			sprintf(FN, "logs/%s", namelist[n]->d_name);
 			if (stat(FN, &STAT) == 0)
 			{
 				Age = (now - STAT.st_mtime) / 86400;
-				
+
 				if (Age > LogAge)
 				{
 					printf("Deleting  %s\n", FN);
@@ -920,7 +920,7 @@ VOID SendNonDeliveryMessage(struct MsgInfo * OldMsg, BOOL Unread, int Age)
 	MsgnotoMsg[Msg->number] = Msg;
 
 	FreeSemaphore(&MsgNoSemaphore);
- 
+
 	strcpy(Msg->from, SYSOPCall);
 
 	Via = strlop(From, '@');
@@ -945,7 +945,7 @@ VOID SendNonDeliveryMessage(struct MsgInfo * OldMsg, BOOL Unread, int Age)
 		return;
 
 	strcpy(Msg->title, "Non-delivery Notification");
-	
+
 	if (Unread)
 		Msg->length = sprintf(MailBuffer, "Your Message ID %s Subject %s to %s has not been read for %d days.\r\nMessage had been deleted.\r\n", OldMsg->bid, OldMsg->title, OldMsg->to, Age);
 	else
@@ -965,7 +965,7 @@ VOID SendNonDeliveryMessage(struct MsgInfo * OldMsg, BOOL Unread, int Age)
 	BIDRec->u.timestamp = LOWORD(time(NULL)/86400);
 
 	sprintf_s(MsgFile, sizeof(MsgFile), "%s/m_%06d.mes", MailDir, Msg->number);
-	
+
 	hFile = fopen(MsgFile, "wb");
 
 	if (hFile)
@@ -1011,11 +1011,11 @@ VOID CreateBBSTrafficReport()
 	struct tm tm;
 	struct tm last;
 
-	memcpy(&tm, gmtime(&NOW), sizeof(tm));	
+	memcpy(&tm, gmtime(&NOW), sizeof(tm));
 	memcpy(&last, gmtime((const time_t *)&LastTrafficTime), sizeof(tm));
 
 	sprintf(File, "%s/Traffic_%02d%02d%02d.txt", BaseDir, tm.tm_year-100, tm.tm_mon+1, tm.tm_mday);
-	
+
 	hFile = fopen(File, "wb");
 
 	if (hFile == NULL)
@@ -1035,7 +1035,7 @@ VOID CreateBBSTrafficReport()
 	len = sprintf(Line, "               In        Out      Rxed(P/B/T)       Sent             Rxed            Sent            In              Out\r\n\r\n");
 
 	fwrite(Line, 1, len, hFile);
-		
+
 	for (i=1; i <= NumberofUsers; i++)
 	{
 		User = UserRecPtr[i];
@@ -1048,7 +1048,7 @@ VOID CreateBBSTrafficReport()
 
 		for (n = 0; n < 4; n++)
 		{
-			MsgsReceived +=	User->Total.MsgsReceived[n] - User->Last.MsgsReceived[n];	
+			MsgsReceived +=	User->Total.MsgsReceived[n] - User->Last.MsgsReceived[n];
 			MsgsSent += User->Total.MsgsSent[n] - User->Last.MsgsSent[n];
 			BytesForwardedIn += User->Total.BytesForwardedIn[n] - User->Last.BytesForwardedIn[n];
 			BytesForwardedOut += User->Total.BytesForwardedOut[n] - User->Last.BytesForwardedOut[n];
@@ -1061,7 +1061,7 @@ VOID CreateBBSTrafficReport()
 			User->Call, ConnectsIn,
 			ConnectsOut,
 			MsgsReceived,
-			MsgsSent, 
+			MsgsSent,
 			BytesForwardedIn,
 			BytesForwardedOut,
 			MsgsRejectedIn,
@@ -1106,7 +1106,7 @@ VOID CreateBBSTrafficReport()
 			User->Call, ConnectsIn,
 			ConnectsOut,
 			MsgsIn,
-			MsgsOut, 
+			MsgsOut,
 			BytesIn,
 			BytesOut,
 			RejIn,
@@ -1119,7 +1119,7 @@ VOID CreateBBSTrafficReport()
 
 		for (n = 0; n < 4; n++)
 		{
-			User->Last.MsgsReceived[n] = User->Total.MsgsReceived[n];	
+			User->Last.MsgsReceived[n] = User->Total.MsgsReceived[n];
 			User->Last.MsgsSent[n] = User->Total.MsgsSent[n];
 			User->Last.BytesForwardedIn[n] = User->Total.BytesForwardedIn[n];
 			User->Last.BytesForwardedOut[n] = User->Total.BytesForwardedOut[n];

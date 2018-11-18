@@ -15,10 +15,10 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with LinBPQ/BPQ32.  If not, see http://www.gnu.org/licenses
-*/	
+*/
 
 //
-//	DLL to provide interface to allow G8BPQ switch to use the V4 TNC as a Port Driver 
+//	DLL to provide interface to allow G8BPQ switch to use the V4 TNC as a Port Driver
 //
 //	Uses BPQ EXTERNAL interface
 //
@@ -124,9 +124,9 @@ static int ProcessLine(char * buf, int Port)
 		p_ipad = strtok(NULL, " \t\n\r");
 
 	if (p_ipad == NULL) return (FALSE);
-	
+
 	p_port = strtok(NULL, " \t\n\r");
-			
+
 	if (p_port == NULL) return (FALSE);
 
 	WINMORport = atoi(p_port);
@@ -169,7 +169,7 @@ static int ProcessLine(char * buf, int Port)
 			}
 		}
 	}
-		
+
 	if (ptr)
 	{
 		if (_memicmp(ptr, "PATH", 4) == 0)
@@ -197,7 +197,7 @@ static int ProcessLine(char * buf, int Port)
 			*ptr++ = 13;
 			*ptr = 0;
 		}
-				
+
 		if ((_memicmp(buf, "CAPTURE", 7) == 0) || (_memicmp(buf, "PLAYBACK", 8) == 0))
 		{}		// Ignore
 		else
@@ -208,7 +208,7 @@ static int ProcessLine(char * buf, int Port)
 		strcat (TNC->InitScript, buf);
 	}
 
-	return (TRUE);	
+	return (TRUE);
 }
 
 
@@ -228,7 +228,7 @@ static time_t ltime;
 
 #pragma pack()
 
-static SOCKADDR_IN sinx; 
+static SOCKADDR_IN sinx;
 static SOCKADDR_IN rxaddr;
 
 static int addrlen=sizeof(sinx);
@@ -413,7 +413,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 			{
 				char FREQMsg[80];
 				int Len;
-				
+
 				TNC->LastFreq = TNC->RIG->RigFreq;
 				Len = sprintf(FREQMsg, "DISPLAY CF:%1.4f\r\n", TNC->LastFreq + .0015);
 				send(TNC->TCPSock,FREQMsg, Len, 0);
@@ -423,19 +423,19 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 		if (TNC->TimeSinceLast++ > 700)			// Allow 10 secs for Keepalive
 		{
 			// Restart TNC
-		
+
 			if (TNC->ProgramPath)
 			{
 				if (strstr(TNC->ProgramPath, "V4 TNC"))
 				{
 					struct tm * tm;
 					char Time[80];
-				
+
 					TNC->Restarts++;
 					TNC->LastRestart = time(NULL);
 
-					tm = gmtime(&TNC->LastRestart);	
-				
+					tm = gmtime(&TNC->LastRestart);
+
 					sprintf_s(Time, sizeof(Time),"%04d/%02d/%02d %02d:%02dZ",
 						tm->tm_year +1900, tm->tm_mon+1, tm->tm_mday, tm->tm_hour, tm->tm_min);
 
@@ -483,7 +483,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 			// Stop Scanning
 
 			sprintf(Msg, "%d SCANSTOP", TNC->Port);
-	
+
 			Rig_Command(-1, Msg);
 
 		}
@@ -501,7 +501,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 			if (TNC->CONNECTED == FALSE && TNC->CONNECTING == FALSE)
 			{
 				//	See if time to reconnect
-		
+
 				time(&ltime);
 				if (ltime - TNC->lasttime >9 )
 				{
@@ -510,17 +510,17 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 					TNC->lasttime = ltime;
 				}
 			}
-		
+
 			FD_ZERO(&readfs);
-			
+
 			if (TNC->CONNECTED) FD_SET(TNC->TCPDataSock,&readfs);
-			
+
 			FD_ZERO(&writefs);
 
 			if (TNC->BPQtoWINMOR_Q) FD_SET(TNC->TCPDataSock,&writefs);	// Need notification of busy clearing
 
 			FD_ZERO(&errorfs);
-		
+
 			if (TNC->CONNECTING || TNC->CONNECTED) FD_SET(TNC->TCPDataSock,&errorfs);
 
 			if (select(3,&readfs,&writefs,&errorfs,&timeout) > 0)
@@ -528,8 +528,8 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 				//	See what happened
 
 				if (readfs.fd_count == 1)
-					V4ProcessDataSocketData(port);			
-				
+					V4ProcessDataSocketData(port);
+
 				if (writefs.fd_count == 1)
 				{
 					// Write block has cleared. Send rest of packet
@@ -540,7 +540,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 					bytes=send(TNC->TCPSock,(const char FAR *)&txbuff,txlen,0);
 					ReleaseBuffer(buffptr);
 				}
-					
+
 				if (errorfs.fd_count == 1)
 				{
 					i=sprintf(ErrMsg, "V4 Data Connection lost for BPQ Port %d\n", port);
@@ -550,7 +550,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 					TNC->Streams[0].ReportDISC = TRUE;
 				}
 			}
-		
+
 		// See if any frames for this port
 
 		if (TNC->WINMORtoBPQ_Q != 0)
@@ -565,7 +565,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 			datalen+=8;
 			buff[5]=(datalen & 0xff);
 			buff[6]=(datalen >> 8);
-		
+
 			ReleaseBuffer(buffptr);
 
 			return (1);
@@ -587,7 +587,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 			memcpy(buffptr + 2, "No Connection to V4 TNC\r", 24);
 
 			C_Q_ADD(&TNC->WINMORtoBPQ_Q, buffptr);
-			
+
 			return 0;		// Don't try if not connected
 		}
 
@@ -600,8 +600,8 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 			return 0;
 		}
 
-		txlen=(buff[6]<<8) + buff[5]-8;	
-		
+		txlen=(buff[6]<<8) + buff[5]-8;
+
 		if (TNC->Streams[0].Connected)
 			bytes=send(TNC->TCPDataSock,(const char FAR *)&buff[8],txlen,0);
 		else
@@ -611,7 +611,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 				TNC->Streams[0].ReportDISC = TRUE;		// Tell Node
 				return 0;
 			}
-	
+
 			if (TNC->FECMode)
 			{
 				char Buffer[300];
@@ -694,7 +694,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 				_strupr(Connect);
 
 				// See if Busy
-				
+
 				if (TNC->Busy & CDBusy)
 				{
 					// Channel Busy. Unless override set, wait
@@ -732,19 +732,19 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 		{
 
 			// WINMOR doesn't seem to recover from a blocked write. For now just reset
-			
+
 //			if (bytes == SOCKET_ERROR)
 //			{
 				winerr=WSAGetLastError();
-				
+
 				i=sprintf(ErrMsg, "V4 Write Failed for port %d - error code = %d\n", port, winerr);
 				WritetoConsole(ErrMsg);
-					
-	
+
+
 //				if (winerr != WSAEWOULDBLOCK)
 //				{
 				closesocket(TNC->TCPSock);
-					
+
 					TNC->CONNECTED = FALSE;
 
 					return (0);
@@ -758,9 +758,9 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 
 			// Partial Send or WSAEWOULDBLOCK. Save data, and send once busy clears
 
-			
+
 			// Get a buffer
-						
+
 //			buffptr=GetBuff();
 
 //			if (buffptr == 0)
@@ -768,33 +768,33 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 				// No buffers, so can only break connection and try again
 
 //				closesocket(TCPSock[MasterPort[port]]);
-					
+
 //				CONNECTED[MasterPort[port]]=FALSE;
 
 //				return (0);
 //			}
-	
+
 //			buffptr[1]=txlen-bytes;			// Bytes still to send
 
 //			memcpy(buffptr+2,&txbuff[bytes],txlen-bytes);
 
 //			C_Q_ADD(&BPQtoWINMOR_Q[MasterPort[port]],buffptr);
-	
+
 //			return (0);
 		}
 
 
 		return (0);
 
-	case 3:	
-		
+	case 3:
+
 		// CHECK IF OK TO SEND (And check TNC Status)
 
 		if (TNC->Streams[0].Attached == 0)
 			return TNC->CONNECTED << 8 | 1;
 
 		return (TNC->CONNECTED << 8 | TNC->Streams[0].Disconnecting << 15);		// OK
-			
+
 		break;
 
 	case 4:				// reinit
@@ -821,7 +821,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 
 	case 6:				// Scan Stop Interface
 
-		_asm 
+		_asm
 		{
 			MOV	EAX,buff
 			mov Param,eax
@@ -871,19 +871,19 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 VOID V4ProcessDataSocketData(int port)
 {
 	// Info on Data Socket - just packetize and send on
-	
+
 	struct TNCINFO * TNC = TNCInfo[port];
 	int InputLen, PacLen = 236, i;
 	UINT * buffptr;
 	char * msg;
-		
+
 	TNC->TimeSinceLast = 0;
 
 loop:
 	buffptr = GetBuff();
 
 	if (buffptr == NULL) return;			// No buffers, so ignore
-			
+
 	InputLen=recv(TNC->TCPDataSock, (char *)&buffptr[2], PacLen, 0);
 
 	if (InputLen == -1)
@@ -898,17 +898,17 @@ loop:
 	if (InputLen == 0)
 	{
 		// Does this mean closed?
-		
+
 		strcpy(TNC->WEB_COMMSSTATE, "Connection to TNC lost");
 		MySetWindowText(TNC->xIDC_COMMSSTATE, TNC->WEB_COMMSSTATE);
 
-	
+
 		TNC->CONNECTING = FALSE;
 		TNC->CONNECTED = FALSE;
 		TNC->Streams[0].ReportDISC = TRUE;
 
 		ReleaseBuffer(buffptr);
-		return;					
+		return;
 	}
 
 
@@ -941,12 +941,12 @@ loop:
 	}
 
 
-	msg[InputLen] = 0;	
-	
+	msg[InputLen] = 0;
+
 	WritetoTrace(TNC, msg, InputLen);
-		
+
 	// V4 Sends null padded blocks
-	
+
 	InputLen = strlen((char *)&buffptr[2]);
 
 	if (msg[InputLen - 1] == 10)		// LF
@@ -976,9 +976,9 @@ static VOID ReleaseTNC(struct TNCINFO * TNC)
 
 	MySetWindowText(TNC->xIDC_TNCSTATE, "Free");
 	strcpy(TNC->WEB_TNCSTATE, "Free");
-	
+
 	//	Start Scanner
-				
+
 	ReleaseOtherPorts(TNC);
 
 }
@@ -1020,7 +1020,7 @@ UINT V4ExtInit(EXTPORTDATA * PortEntry)
 	char * ptr;
 	struct TNCINFO * TNC;
 	char * TempScript;
-	
+
 	port = PortEntry->PORTCONTROL.PORTNUMBER;
 
 	ReadConfigFile(port, ProcessLine);
@@ -1055,7 +1055,7 @@ UINT V4ExtInit(EXTPORTDATA * PortEntry)
 
 	PortEntry->PORTCONTROL.PROTOCOL = 10;
 	PortEntry->PORTCONTROL.PORTQUALITY = 0;
-	PortEntry->MAXHOSTMODESESSIONS = 1;	
+	PortEntry->MAXHOSTMODESESSIONS = 1;
 //	PortEntry->SCANCAPABILITIES = SIMPLE;			// Scan Control - pending connect only
 
 	if (PortEntry->PORTCONTROL.PORTPACLEN == 0)
@@ -1105,7 +1105,7 @@ UINT V4ExtInit(EXTPORTDATA * PortEntry)
 
 		TNC->HostName=malloc(10);
 
-		if (TNC->HostName != NULL) 
+		if (TNC->HostName != NULL)
 			strcpy(TNC->HostName,"127.0.0.1");
 
 	}
@@ -1135,16 +1135,16 @@ UINT V4ExtInit(EXTPORTDATA * PortEntry)
 
 	CreateWindowEx(0, "STATIC", "Comms State", WS_CHILD | WS_VISIBLE, 10,6,120,20, TNC->hDlg, NULL, hInstance, NULL);
 	TNC->xIDC_COMMSSTATE = CreateWindowEx(0, "STATIC", "", WS_CHILD | WS_VISIBLE, 116,6,386,20, TNC->hDlg, NULL, hInstance, NULL);
-	
+
 	CreateWindowEx(0, "STATIC", "TNC State", WS_CHILD | WS_VISIBLE, 10,28,106,20, TNC->hDlg, NULL, hInstance, NULL);
 	TNC->xIDC_TNCSTATE = CreateWindowEx(0, "STATIC", "", WS_CHILD | WS_VISIBLE, 116,28,520,20, TNC->hDlg, NULL, hInstance, NULL);
 
 	CreateWindowEx(0, "STATIC", "Mode", WS_CHILD | WS_VISIBLE, 10,50,80,20, TNC->hDlg, NULL, hInstance, NULL);
 	TNC->xIDC_MODE = CreateWindowEx(0, "STATIC", "", WS_CHILD | WS_VISIBLE, 116,50,200,20, TNC->hDlg, NULL, hInstance, NULL);
- 
+
 	CreateWindowEx(0, "STATIC", "Channel State", WS_CHILD | WS_VISIBLE, 10,72,110,20, TNC->hDlg, NULL, hInstance, NULL);
 	TNC->xIDC_CHANSTATE = CreateWindowEx(0, "STATIC", "", WS_CHILD | WS_VISIBLE, 116,72,144,20, TNC->hDlg, NULL, hInstance, NULL);
- 
+
 	CreateWindowEx(0, "STATIC", "Traffic", WS_CHILD | WS_VISIBLE,10,94,80,20, TNC->hDlg, NULL, hInstance, NULL);
 	TNC->xIDC_TRAFFIC = CreateWindowEx(0, "STATIC", "0 0 0 0", WS_CHILD | WS_VISIBLE,116,94,374,20 , TNC->hDlg, NULL, hInstance, NULL);
 
@@ -1153,7 +1153,7 @@ UINT V4ExtInit(EXTPORTDATA * PortEntry)
 	CreateWindowEx(0, "STATIC", "Last Restart", WS_CHILD | WS_VISIBLE,140,116,100,20, TNC->hDlg, NULL, hInstance, NULL);
 	TNC->xIDC_RESTARTTIME = CreateWindowEx(0, "STATIC", "Never", WS_CHILD | WS_VISIBLE,250,116,200,20, TNC->hDlg, NULL, hInstance, NULL);
 
-	TNC->hMonitor= CreateWindowEx(0, "LISTBOX", "", WS_CHILD |  WS_VISIBLE  | LBS_NOINTEGRALHEIGHT | 
+	TNC->hMonitor= CreateWindowEx(0, "LISTBOX", "", WS_CHILD |  WS_VISIBLE  | LBS_NOINTEGRALHEIGHT |
             LBS_DISABLENOSCROLL | WS_HSCROLL | WS_VSCROLL,
 			0,138,250,300, TNC->hDlg, NULL, hInstance, NULL);
 
@@ -1169,7 +1169,7 @@ UINT V4ExtInit(EXTPORTDATA * PortEntry)
 //	CheckMenuItem(TNC->hPopMenu, WINMOR_RESTARTAFTERFAILURE, (TNC->RestartAfterFailure) ? MF_CHECKED : MF_UNCHECKED);
 	AppendMenu(TNC->hMenu, MF_STRING, ARDOP_ABORT, "Abort Current Session");
 
-	
+
 	MoveWindows(TNC);
 #endif
 	i=sprintf(Msg,"V4 Host %s %d\n", TNC->HostName, htons(TNC->destaddr.sin_port));
@@ -1189,7 +1189,7 @@ UINT V4ExtInit(EXTPORTDATA * PortEntry)
 static BOOL CALLBACK EnumTNCWindowsProc(HWND hwnd, LPARAM  lParam)
 {
 	char wtext[100];
-	struct TNCINFO * TNC = (struct TNCINFO *)lParam; 
+	struct TNCINFO * TNC = (struct TNCINFO *)lParam;
 	UINT ProcessId;
 
 	GetWindowText(hwnd,wtext,99);
@@ -1212,7 +1212,7 @@ static BOOL CALLBACK EnumTNCWindowsProc(HWND hwnd, LPARAM  lParam)
 	//		return FALSE;
 		}
 	}
-	
+
 	return (TRUE);
 }
 #endif
@@ -1256,7 +1256,7 @@ static VOID ProcessResponse(struct TNCINFO * TNC, UCHAR * Buffer, int MsgLen)
 	}
 
 	if (_memicmp(Buffer, "BUSY TRUE", 9) == 0)
-	{	
+	{
 		TNC->Busy |= CDBusy;
 		MySetWindowText(TNC->xIDC_CHANSTATE, "Busy");
 		strcpy(TNC->WEB_CHANSTATE, "Busy");
@@ -1290,11 +1290,11 @@ static VOID ProcessResponse(struct TNCINFO * TNC, UCHAR * Buffer, int MsgLen)
 
 		WritetoTrace(TNC, Buffer, MsgLen - 2);
 
-		STREAM->ConnectTime = time(NULL); 
+		STREAM->ConnectTime = time(NULL);
 
 		memcpy(Call, &Buffer[10], 10);
 
-		ptr = strchr(Call, ' ');	
+		ptr = strchr(Call, ' ');
 		if (ptr) *ptr = 0;
 
 		TNC->HadConnect = TRUE;
@@ -1328,7 +1328,7 @@ static VOID ProcessResponse(struct TNCINFO * TNC, UCHAR * Buffer, int MsgLen)
 
 				if (ptr)
 					*ptr = 0;
-	
+
 				if (_stricmp(TNC->CurrentMYC, Appl) == 0)
 					break;
 			}
@@ -1345,8 +1345,8 @@ static VOID ProcessResponse(struct TNCINFO * TNC, UCHAR * Buffer, int MsgLen)
 				if (CheckAppl(TNC, AppName))
 				{
 					MsgLen = sprintf(Buffer, "%s\r", AppName);
-	
-					GetSemaphore(&Semaphore, 50);			
+
+					GetSemaphore(&Semaphore, 50);
 
 					buffptr = GetBuff();
 
@@ -1360,17 +1360,17 @@ static VOID ProcessResponse(struct TNCINFO * TNC, UCHAR * Buffer, int MsgLen)
 					memcpy(buffptr+2, Buffer, MsgLen);
 
 					C_Q_ADD(&TNC->WINMORtoBPQ_Q, buffptr);
-					
+
 					FreeSemaphore(&Semaphore);
-					
+
 					TNC->SwallowSignon = TRUE;
 				}
 				else
 				{
 					char Msg[] = "Application not available\r\n";
-					
+
 					// Send a Message, then a disconenct
-					
+
 					send(TNC->TCPDataSock, Msg, strlen(Msg), 0);
 					STREAM->NeedDisc = 100;	// 10 secs
 				}
@@ -1384,7 +1384,7 @@ static VOID ProcessResponse(struct TNCINFO * TNC, UCHAR * Buffer, int MsgLen)
 
 			char Reply[80];
 			int ReplyLen;
-			
+
 			buffptr = GetBuff();
 
 			if (buffptr == 0) return;			// No buffers, so ignore
@@ -1452,14 +1452,14 @@ static VOID ProcessResponse(struct TNCINFO * TNC, UCHAR * Buffer, int MsgLen)
 		TNC->Streams[0].Connected = FALSE;		// Back to Command Mode
 		TNC->Streams[0].ReportDISC = TRUE;		// Tell Node
 
-		if (TNC->Streams[0].Disconnecting)		// 
+		if (TNC->Streams[0].Disconnecting)		//
 			ReleaseTNC(TNC);
 
 		TNC->Streams[0].Disconnecting = FALSE;
 
 		return;
 	}
-		
+
 	if (_memicmp(Buffer, "CMD", 3) == 0)
 	{
 		return;
@@ -1474,14 +1474,14 @@ static VOID ProcessResponse(struct TNCINFO * TNC, UCHAR * Buffer, int MsgLen)
 	{
 		// If in response to ARQEND, assume Disconnected was missed
 
-		if (TNC->Streams[0].Disconnecting) 
+		if (TNC->Streams[0].Disconnecting)
 		{
 			TNC->Streams[0].Connecting = FALSE;
 			TNC->Streams[0].Connected = FALSE;		// Back to Command Mode
 			TNC->Streams[0].ReportDISC = TRUE;		// Tell Node
 
 			ReleaseTNC(TNC);
-		
+
 			TNC->Streams[0].Disconnecting = FALSE;
 		}
 	}
@@ -1499,7 +1499,7 @@ static VOID ProcessResponse(struct TNCINFO * TNC, UCHAR * Buffer, int MsgLen)
 		if (TNC->Streams[0].BytesOutstanding == 0)
 		{
 			// all sent
-			
+
 			if (TNC->Streams[0].Disconnecting)						// Disconnect when all sent
 			{
 				if (TNC->Streams[0].ARQENDSent == FALSE)
@@ -1542,7 +1542,7 @@ static VOID ProcessResponse(struct TNCINFO * TNC, UCHAR * Buffer, int MsgLen)
 		if (GetModuleFileNameExPtr)
 		{
 			hProc =  OpenProcess(PROCESS_QUERY_INFORMATION |PROCESS_VM_READ, FALSE, TNC->PID);
-	
+
 			if (hProc)
 			{
 				GetModuleFileNameExPtr(hProc, 0,  ExeName, 255);
@@ -1604,7 +1604,7 @@ static VOID ProcessResponse(struct TNCINFO * TNC, UCHAR * Buffer, int MsgLen)
 
 					if (ptr)
 						*ptr = 0;
-	
+
 					if (strcmp(Appl, Target) == 0)
 					{
 						ChangeMYC(TNC, Target);
@@ -1629,7 +1629,7 @@ static VOID ProcessResponse(struct TNCINFO * TNC, UCHAR * Buffer, int MsgLen)
 	buffptr[1] = sprintf((UCHAR *)&buffptr[2], "V4} %s\r", Buffer);
 
 	C_Q_ADD(&TNC->WINMORtoBPQ_Q, buffptr);
-			
+
 }
 
 int V4ProcessReceivedData(struct TNCINFO * TNC)
@@ -1644,13 +1644,13 @@ int V4ProcessReceivedData(struct TNCINFO * TNC)
 
 	if (TNC->InputLen > 1000)	// Shouldnt have lines longer  than this on command connection
 		TNC->InputLen=0;
-				
+
 	InputLen=recv(TNC->TCPSock, &TNC->TCPBuffer[TNC->InputLen], 1000 - TNC->InputLen, 0);
 
 	if (InputLen == 0 || InputLen == SOCKET_ERROR)
 	{
 		// Does this mean closed?
-		
+
 		if (!TNC->CONNECTING)
 		{
 			sprintf(ErrMsg, "V4TNC Connection lost for BPQ Port %d\r\n", TNC->Port);
@@ -1660,13 +1660,13 @@ int V4ProcessReceivedData(struct TNCINFO * TNC)
 		TNC->CONNECTED = FALSE;
 		TNC->Streams[0].ReportDISC = TRUE;
 
-		return 0;					
+		return 0;
 	}
 
 	TNC->InputLen += InputLen;
 
 loop:
-	
+
 	ptr = memchr(TNC->TCPBuffer, '\n', TNC->InputLen);
 
 	if (ptr)	//  CR in buffer
@@ -1677,7 +1677,7 @@ loop:
 		if (ptr == ptr2)
 		{
 			// Usual Case - single meg in buffer
-	
+
 			ProcessResponse(TNC, TNC->TCPBuffer, TNC->InputLen);
 			TNC->InputLen=0;
 		}
@@ -1733,13 +1733,13 @@ INT_PTR CALLBACK ConfigDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM
 		}
 		Line[ptr3] = 0;
 		strcat(Line, ptr1);
-	
+
 		SetDlgItemText(hDlg, IDC_CAPTURE, Line);
 
 		ptr3 = 0;
 
 		ptr1 = TNC->PlaybackDevices;
-	
+
 		if (!ptr1)
 			return 0;				// No Devices
 
@@ -1756,14 +1756,14 @@ INT_PTR CALLBACK ConfigDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM
 		}
 		Line[ptr3] = 0;
 		strcat(Line, ptr1);
-	
+
 		SetDlgItemText(hDlg, IDC_PLAYBACK, Line);
 
 		SendDlgItemMessage(hDlg, IDC_PLAYBACK, EM_SETSEL, -1, 0);
 
 //		KillTNC(TNC);
 
-		return TRUE; 
+		return TRUE;
 	}
 
 	case WM_SIZING:
@@ -1797,7 +1797,7 @@ INT_PTR CALLBACK ConfigDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM
 static VOID TidyClose(struct TNCINFO * TNC, int Stream)
 {
 	// If all acked, send disc
-	
+
 	if (TNC->Streams[0].BytesOutstanding == 0)
 	{
 		send(TNC->TCPSock,"ARQEND\r\n", 8, 0);

@@ -15,7 +15,7 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with LinBPQ/BPQ32.  If not, see http://www.gnu.org/licenses
-*/	
+*/
 
 // Mail and Chat Server for BPQ32 Packet Switch
 //
@@ -64,7 +64,7 @@ VOID BuildNNTPList(struct MsgInfo * Msg)
 	struct NNTPRec * PREVREC = 0;
 
 	char FullGroup[100];
-					
+
 	if (Msg->type != 'B' || Msg->status == 'K' || Msg->status == 'H')
 		return;
 
@@ -102,7 +102,7 @@ VOID BuildNNTPList(struct MsgInfo * Msg)
 					else
 						FirstNNTPRec = REC;
 					goto DoneIt;
-						
+
 				}
 				else
 				{
@@ -137,10 +137,10 @@ char * GetPathFromHeaders(char * MsgBytes)
 nextline:
 
 	if (memcmp(ptr1, "R:", 2) == 0)
-	{		
+	{
 		char * ptr4 = strchr(ptr1, '\r');
 		char * ptr5 = strchr(ptr1, '.');
-		ptr1 = strchr(ptr1, '@'); 
+		ptr1 = strchr(ptr1, '@');
 
 		if (!ptr1)
 			return Path;
@@ -149,7 +149,7 @@ nextline:
 			ptr1++;			// Format 2
 
 		*(ptr5) = 0;
-		
+
 		strcat(Path, "|");
 		strcat(Path, ptr1);
 
@@ -177,7 +177,7 @@ char * FormatNNTPDateAndTime(time_t Datim)
 	tm = gmtime(&Datim);
 
 
-	
+
 	if (tm)
 		sprintf_s(Date, sizeof(Date), "%s, %02d %3s %02d %02d:%02d:%02d Z",
 			day[tm->tm_wday], tm->tm_mday, month[tm->tm_mon], tm->tm_year - 100, tm->tm_hour, tm->tm_min, tm->tm_sec);
@@ -201,9 +201,9 @@ int CreateNNTPMessage(char * From, char * To, char * MsgTitle, time_t Date, char
 	// Allocate a message Record slot
 
 	Msg = AllocateMsgRecord();
-		
+
 	// Set number here so they remain in sequence
-		
+
 	Msg->number = ++LatestMsg;
 	MsgnotoMsg[Msg->number] = Msg;
 	Msg->length = MsgLen;
@@ -245,7 +245,7 @@ int CreateNNTPMessage(char * From, char * To, char * MsgTitle, time_t Date, char
 	BuildNNTPList(Msg);				// Build NNTP Groups list
 
 	return CreateSMTPMessageFile(MsgBody, Msg);
-		
+
 }
 
 
@@ -298,7 +298,7 @@ VOID ProcessNNTPServerMessage(SocketConn * sockptr, char * Buffer, int Len)
 			if (_memicmp(ptr1, "Newsgroups:", 3) == 0)
 			{
 				char * sep = strchr(ptr1, '.');
-				
+
 				if (sep)
 					*(sep) = '@';
 
@@ -341,14 +341,14 @@ VOID ProcessNNTPServerMessage(SocketConn * sockptr, char * Buffer, int Len)
 						break;
 					}
 				}
-		
+
 				sscanf(Context, "%04d %02d:%02d:%02d%s",
 					&rtime.tm_year, &rtime.tm_hour, &rtime.tm_min, &rtime.tm_sec, Offset);
 
 				rtime.tm_year -= 1900;
 
 				Date = mktime(&rtime) - (time_t)_MYTIMEZONE;
-				
+
 				if (Date == (time_t)-1)
 					Date = 0;
 				else
@@ -381,7 +381,7 @@ VOID ProcessNNTPServerMessage(SocketConn * sockptr, char * Buffer, int Len)
 			MsgLen = sockptr->MailSize - (ptr2 - ptr1);
 
 			ptr1 = strchr(MsgFrom, '<');
-			
+
 			if (ptr1)
 			{
 				char * ptr3 = strchr(ptr1, '@');
@@ -410,7 +410,7 @@ VOID ProcessNNTPServerMessage(SocketConn * sockptr, char * Buffer, int Len)
 		{
 			sockptr->MailBufferSize += 10000;
 			sockptr->MailBuffer = realloc(sockptr->MailBuffer, sockptr->MailBufferSize);
-	
+
 			if (sockptr->MailBuffer == NULL)
 			{
 				CriticalErrorHandler("Failed to extend Message Buffer");
@@ -455,7 +455,7 @@ VOID ProcessNNTPServerMessage(SocketConn * sockptr, char * Buffer, int Len)
 				if (strcmp(user->pass, &Buffer[14]) == 0)
 				{
 					sockprintf(sockptr, "281 Authentication accepted");
-	
+
 					sockptr->State = Authenticated;
 					sockptr->POP3User = user;
 					return;
@@ -486,7 +486,7 @@ VOID ProcessNNTPServerMessage(SocketConn * sockptr, char * Buffer, int Len)
 			}
 			REC =REC->Next;
 		}
-	
+
 		sockprintf(sockptr, "411 no such news group");
 		return;
 	}
@@ -507,7 +507,7 @@ VOID ProcessNNTPServerMessage(SocketConn * sockptr, char * Buffer, int Len)
 
 		if (Buffer[10] == 0)
 			goto GotGroup;
-		
+
 		REC = FirstNNTPRec;
 
 		while(REC)
@@ -554,7 +554,7 @@ VOID ProcessNNTPServerMessage(SocketConn * sockptr, char * Buffer, int Len)
 		struct NNTPRec * REC = FirstNNTPRec;
 
 		SendSock(sockptr, "215 list of newsgroups follows");
-	
+
 		while (REC)
 		{
 			sockprintf(sockptr, "%s %d %d y", REC->NewsGroup, REC->LastMsg, REC->FirstMsg);
@@ -566,7 +566,7 @@ VOID ProcessNNTPServerMessage(SocketConn * sockptr, char * Buffer, int Len)
 	}
 
 	//NEWGROUPS YYMMDD HHMMSS [GMT] [<distributions>]
-	
+
 	if(_memicmp(Buffer, "NEWGROUPS", 9) == 0)
 	{
 		struct NNTPRec * REC = FirstNNTPRec;
@@ -587,7 +587,7 @@ VOID ProcessNNTPServerMessage(SocketConn * sockptr, char * Buffer, int Len)
 			Time = mktime(&rtime) - (time_t)_MYTIMEZONE;
 		else
 			Time = mktime(&rtime);
-		
+
 		SendSock(sockptr, "231 list of new newsgroups follows");
 
 		while(REC)
@@ -706,7 +706,7 @@ VOID ProcessNNTPServerMessage(SocketConn * sockptr, char * Buffer, int Len)
 			free(Path);
 
 			return;
-			
+
 		}
 		SendSock(sockptr,"423 No such article in this newsgroup");
 		return;
@@ -759,7 +759,7 @@ VOID ProcessNNTPServerMessage(SocketConn * sockptr, char * Buffer, int Len)
 			free(Path);
 
 			return;
-			
+
 		}
 		SendSock(sockptr,"423 No such article in this newsgroup");
 		return;
@@ -881,7 +881,7 @@ VOID ProcessNNTPServerMessage(SocketConn * sockptr, char * Buffer, int Len)
 				sprintf(FullGroup, "%s.%s", Msg->to, Msg->via );
 				if (_stricmp(FullGroup, REC->NewsGroup) == 0)
 				{
-					 // subject, author, date, message-id, references, byte count, and line count. 
+					 // subject, author, date, message-id, references, byte count, and line count.
 					sockprintf(sockptr, "%d\t%s\t%s\t%s\t%s\t%s\t%d\t%d",
 						MsgNo, Msg->title, Msg->from, FormatNNTPDateAndTime(Msg->datecreated), Msg->bid,
 						"", Msg->length, Msg->length);
@@ -907,7 +907,7 @@ VOID ProcessNNTPServerMessage(SocketConn * sockptr, char * Buffer, int Len)
 		{
 			sockprintf(sockptr, "480 Authentication required");
 			return;
-		}		
+		}
 
 		sockptr->MailBuffer=malloc(10000);
 		sockptr->MailBufferSize=10000;
@@ -921,9 +921,9 @@ VOID ProcessNNTPServerMessage(SocketConn * sockptr, char * Buffer, int Len)
 
 			return;
 		}
-	
+
 		sockptr->Flags |= GETTINGMESSAGE;
-		
+
 		SendSock(sockptr, "340 OK");
 		return;
 	}
@@ -946,7 +946,7 @@ VOID ProcessNNTPServerMessage(SocketConn * sockptr, char * Buffer, int Len)
 		return;
 	}
 */
-	 
+
 	SendSock(sockptr, "500 command not recognized");
 
 	return;
@@ -967,7 +967,7 @@ int NNTP_Read(SocketConn * sockptr, SOCKET sock)
 	{
 		sockptr->InputLen=0;
 	}
-				
+
 	InputLen=recv(sock, &sockptr->TCPBuffer[sockptr->InputLen], 1000, 0);
 
 	if (InputLen <= 0)
@@ -983,7 +983,7 @@ int NNTP_Read(SocketConn * sockptr, SOCKET sock)
 	sockptr->InputLen += InputLen;
 
 loop:
-	
+
 	ptr = memchr(sockptr->TCPBuffer, '\n', sockptr->InputLen);
 
 	if (ptr)	//  CR in buffer
@@ -994,9 +994,9 @@ loop:
 		if (ptr == ptr2)
 		{
 			// Usual Case - single meg in buffer
-	
+
 			ProcessNNTPServerMessage(sockptr, sockptr->TCPBuffer, sockptr->InputLen);
-			sockptr->InputLen=0;	
+			sockptr->InputLen=0;
 		}
 		else
 		{
@@ -1057,8 +1057,8 @@ int NNTP_Accept(int SocketId)
 	ioctl(sock, FIONBIO, &param);
 	sockptr->socket = sock;
 	sockptr->State = 0;
-	
-	SendSock(sockptr, "200 BPQMail NNTP Server ready");	
+
+	SendSock(sockptr, "200 BPQMail NNTP Server ready");
 	Logprintf(LOG_TCP, NULL, '|', "Incoming NNTP Connect Socket = %d", sock);
 
 	return 0;
@@ -1071,7 +1071,7 @@ int NNTP_Data(int sock, int error, int eventcode)
 	//	Find Connection Record
 
 	sockptr=Sockets;
-		
+
 	while (sockptr)
 	{
 		if (sockptr->socket == sock)
@@ -1092,10 +1092,10 @@ int NNTP_Data(int sock, int error, int eventcode)
 						SendFromQueue(sockptr);
 					else
 					{
-						SendSock(sockptr, "200 BPQMail NNTP Server ready");	
+						SendSock(sockptr, "200 BPQMail NNTP Server ready");
 //						sockptr->State = GettingUser;
 					}
-					
+
 					return 0;
 
 				case FD_OOB:
@@ -1133,7 +1133,7 @@ VOID ReleaseNNTPSock(SOCKET sock)
 
 	sockptr=Sockets;
 	lastptr=NULL;
-		
+
 	while (sockptr)
 	{
 		if (sockptr->socket == sock)
@@ -1161,7 +1161,7 @@ VOID SendFromQueue(SocketConn * sockptr)
 	int bytestosend = sockptr->SendSize - sockptr->SendPtr;
 	int bytessent;
 
-	Debugprintf("TCP - Sending %d bytes from buffer", bytestosend); 
+	Debugprintf("TCP - Sending %d bytes from buffer", bytestosend);
 
 	bytessent = send(sockptr->socket, &sockptr->SendBuffer[sockptr->SendPtr], bytestosend, 0);
 

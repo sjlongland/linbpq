@@ -15,7 +15,7 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with LinBPQ/BPQ32.  If not, see http://www.gnu.org/licenses
-*/	
+*/
 
 
 
@@ -25,7 +25,7 @@ along with LinBPQ/BPQ32.  If not, see http://www.gnu.org/licenses
 
 #pragma data_seg("_BPQDATA")
 
-#define _CRT_SECURE_NO_DEPRECATE 
+#define _CRT_SECURE_NO_DEPRECATE
 #define _USE_32BIT_TIME_T
 
 #include <stdlib.h>
@@ -33,7 +33,7 @@ along with LinBPQ/BPQ32.  If not, see http://www.gnu.org/licenses
 #include <time.h>
 
 #pragma data_seg("_BPQDATA")
-				
+
 #include "CHeaders.h"
 #include "tncinfo.h"
 
@@ -101,7 +101,7 @@ int InternalAGWDecodeFrame(MESSAGE * msg, char * buffer, int Stamp, int * FrameT
 	while ((*ptr & 1) == 0)
 	{
 		//	MORE TO COME
-	
+
 		ptr += 7;
 		n--;
 
@@ -147,12 +147,12 @@ int InternalAGWDecodeFrame(MESSAGE * msg, char * buffer, int Stamp, int * FrameT
 
 
 	Port = msg->PORT;
-	
+
 	if (Port & 0x80)
 	{
 		if (MTX == 0)
 			return 0;							//	TRANSMITTED FRAME - SEE IF MTX ON
-		
+
 		TR = 'T';
 	}
 
@@ -160,7 +160,7 @@ int InternalAGWDecodeFrame(MESSAGE * msg, char * buffer, int Stamp, int * FrameT
 
 	if (((1 << (Port - 1)) & Mask) == 0)		// Check MMASK
 		return 0;
-	
+
 
 	Stamp = Stamp % 86400;		// Secs
 	HH = Stamp / 3600;
@@ -177,7 +177,7 @@ int InternalAGWDecodeFrame(MESSAGE * msg, char * buffer, int Stamp, int * FrameT
 
 	Output += sprintf((char *)Output, "%s To %s", From, To);
 
-	//	Display any Digi-Peaters   
+	//	Display any Digi-Peaters
 
 	n = 8;					// Max number of digi-peaters
 	ptr = &msg->ORIGIN[6];	// End of Address bit
@@ -188,7 +188,7 @@ int InternalAGWDecodeFrame(MESSAGE * msg, char * buffer, int Stamp, int * FrameT
 
 		From[ConvFromAX25(ptr + 1, From)] = 0;
 		Output += sprintf((char *)Output, ",%s", From);
-	
+
 		ptr += 7;
 		n--;
 
@@ -205,10 +205,10 @@ int InternalAGWDecodeFrame(MESSAGE * msg, char * buffer, int Stamp, int * FrameT
 				if ((ptr[7] & 0x80) == 0)		// Repeased by next?
 					*(Output++) = '*';			// No, so need *
 		}
-	}		
-	
+	}
+
 	*(Output++) = ' ';
-	
+
 	// Set up CR and PF
 
 	CRCHAR[0] = 0;
@@ -258,7 +258,7 @@ int InternalAGWDecodeFrame(MESSAGE * msg, char * buffer, int Stamp, int * FrameT
 	}
 	else if (CTL == 3)
 	{
-		//	Un-numbered Information Frame 
+		//	Un-numbered Information Frame
 		//UI pid=F0 Len=20 >
 
 		Output += sprintf((char *)Output, "<UI pid=%02X Len=%d>", ADJBUFFER->PID, MsgLen - 23);
@@ -267,7 +267,7 @@ int InternalAGWDecodeFrame(MESSAGE * msg, char * buffer, int Stamp, int * FrameT
 	else if (CTL & 2)
 	{
 		// UN Numbered
-				
+
 		char SUP[5] = "??";
 
 		switch (CTL)
@@ -286,12 +286,12 @@ int InternalAGWDecodeFrame(MESSAGE * msg, char * buffer, int Stamp, int * FrameT
 
 			strcpy(SUP, "DM");
 			break;
-		
+
 		case UA:
 
 			strcpy(SUP, "UA");
 			break;
-		
+
 
 		case FRMR:
 
@@ -335,7 +335,7 @@ int InternalAGWDecodeFrame(MESSAGE * msg, char * buffer, int Stamp, int * FrameT
 
 
 	if (FRMRFLAG)
-		Output += sprintf((char *)Output, "%02X %02X %02X", ADJBUFFER->PID, ADJBUFFER->L2DATA[0], ADJBUFFER->L2DATA[1]); 
+		Output += sprintf((char *)Output, "%02X %02X %02X", ADJBUFFER->PID, ADJBUFFER->L2DATA[0], ADJBUFFER->L2DATA[1]);
 
 	if (Info)
 	{
@@ -365,11 +365,11 @@ int InternalAGWDecodeFrame(MESSAGE * msg, char * buffer, int Stamp, int * FrameT
 				C &= 0x7F;
 
 				if (C == 13 || C == 10 || C > 31)
-					*(ptr1++) = C;	
+					*(ptr1++) = C;
 			}
 
 			len = ptr1 - Infofield;
-	
+
 //			Output[0] = ':';
 			Output[0] = 13;
 			memcpy(&Output[1], Infofield, len);
@@ -378,7 +378,7 @@ int InternalAGWDecodeFrame(MESSAGE * msg, char * buffer, int Stamp, int * FrameT
 			break;
 		}
 		case NETROM_PID:
-			
+
 			Output = DISPLAY_NETROM(ADJBUFFER, Output, MsgLen);
 			break;
 
@@ -389,14 +389,14 @@ int InternalAGWDecodeFrame(MESSAGE * msg, char * buffer, int Stamp, int * FrameT
 			break;
 
 		case ARP_PID:
-			
+
 			Output = DISPLAYARPDATAGRAM(&ADJBUFFER->L2DATA[0], Output);
 			break;
 
 		case 8:					// Fragmented IP
 
 			Output += sprintf((char *)Output, "<Fragmented IP>");
-			break;	
+			break;
 		}
 	}
 
@@ -406,7 +406,7 @@ int InternalAGWDecodeFrame(MESSAGE * msg, char * buffer, int Stamp, int * FrameT
 	return Output - buffer;
 
 }
-//      Display NET/ROM data                                                 
+//      Display NET/ROM data
 
 UCHAR * DISPLAY_NETROM(MESSAGE * ADJBUFFER, UCHAR * Output, int MsgLen)
 {
@@ -422,14 +422,14 @@ UCHAR * DISPLAY_NETROM(MESSAGE * ADJBUFFER, UCHAR * Output, int MsgLen)
 
 
 		// If an INP3 RIF (type <> UI) decode as such
-	
+
 		if (ADJBUFFER->CTL != 3)		// UI
 			return DisplayINP3RIF(&ADJBUFFER->L2DATA[1], Output, MsgLen - 24);
 
 		memcpy(Alias, ++ptr, 6);
 
 		ptr += 6;
-	
+
 		Output += sprintf((char *)Output, "\rFF %s (NetRom Routing)\r", Alias);
 
 		MsgLen -= 30;					//Header, mnemonic and signature length
@@ -451,7 +451,7 @@ UCHAR * DISPLAY_NETROM(MESSAGE * ADJBUFFER, UCHAR * Output, int MsgLen)
 		return Output;
 	}
 
-	//	Display normal NET/ROM transmissions 
+	//	Display normal NET/ROM transmissions
 
 	Output += sprintf((char *)Output, " NET/ROM\r  ");
 
@@ -513,9 +513,9 @@ UCHAR * DISPLAY_NETROM(MESSAGE * ADJBUFFER, UCHAR * Output, int MsgLen)
 			char * ptr1 = Infofield;
 			UCHAR C;
 			int len;
-			
+
 			Output += sprintf((char *)Output, " <INFO S%d R%d>", TXNO, RXNO);
-			
+
 			if (Flags & L4BUSY)
 				*(Output++) = 'B';
 
@@ -524,7 +524,7 @@ UCHAR * DISPLAY_NETROM(MESSAGE * ADJBUFFER, UCHAR * Output, int MsgLen)
 
 			if (Flags & L4MORE)
 				*(Output++) = 'M';
-	
+
 			MsgLen = MsgLen - 23;
 
 			if (MsgLen < 0 || MsgLen > 257)
@@ -539,23 +539,23 @@ UCHAR * DISPLAY_NETROM(MESSAGE * ADJBUFFER, UCHAR * Output, int MsgLen)
 				C &= 0x7F;
 
 				if (C == 13 || C == 10 || C > 31)
-					*(ptr1++) = C;	
+					*(ptr1++) = C;
 			}
 
 			len = ptr1 - Infofield;
-	
+
 			Output[0] = ':';
 			Output[1] = 13;
 			memcpy(&Output[2], Infofield, len);
 			Output += (len + 2);
 		}
-		
+
 		return Output;
 
 	case L4IACK:
 
 		Output += sprintf((char *)Output, " <INFO ACK R%d> ", RXNO);
-	
+
 		if (Flags & L4BUSY)
 			*(Output++) = 'B';
 
@@ -572,13 +572,13 @@ UCHAR * DISPLAY_NETROM(MESSAGE * ADJBUFFER, UCHAR * Output, int MsgLen)
 
 		//	OPcode zero is used for several things
 
-		if (Index == 0x0c && ID == 0x0c)	// IP	
+		if (Index == 0x0c && ID == 0x0c)	// IP
 		{
 //			Output =  L3IP(Output);
 			return Output;
 		}
-	
-		if (Index == 0 && ID == 1)			// NRR	
+
+		if (Index == 0 && ID == 1)			// NRR
 		{
 			Output += sprintf((char *)Output, " <Record Route>\r");
 
@@ -606,7 +606,7 @@ UCHAR * DISPLAY_NETROM(MESSAGE * ADJBUFFER, UCHAR * Output, int MsgLen)
 }
 
 /*
-	
+
 	PUBLIC	L3IP
 L3IP:
 ;
@@ -621,7 +621,7 @@ L3IP:
 UCHAR * DISPLAYIPDATAGRAM(IPMSG * IP, UCHAR * Output, int MsgLen)
 {
 	UCHAR * ptr;
-		
+
 	ptr = (UCHAR *)&IP->IPSOURCE;
 	Output += sprintf((char *)Output, "%d.%d.%d.%d>", ptr[0], ptr[1], ptr[2], ptr[3]);
 
@@ -632,7 +632,7 @@ UCHAR * DISPLAYIPDATAGRAM(IPMSG * IP, UCHAR * Output, int MsgLen)
 	MOV	AL,IPPROTOCOL[ESI]
 	CMP AL,6
 	JNE @F
-	
+
 	MOV EBX, OFFSET TCP
 	CALL NORMSTR
 	JMP ADD_CR
@@ -640,7 +640,7 @@ UCHAR * DISPLAYIPDATAGRAM(IPMSG * IP, UCHAR * Output, int MsgLen)
 
 	CMP AL,1
 	JNE @F
-	
+
 	MOV EBX, OFFSET ICMP
 	CALL NORMSTR
 	JMP ADD_CR
@@ -671,7 +671,7 @@ UCHAR * DISPLAYARPDATAGRAM(UCHAR * Datagram, UCHAR * Output)
 {
 	UCHAR * ptr = Datagram;
 	UCHAR Dest[10];
-	
+
 	if (ptr[7] == 1)		// Request
 		return Output + sprintf((char *)Output, " < ARP Request who has %d.%d.%d.%d? Tell %d.%d.%d.%d",
 			ptr[26], ptr[27], ptr[28], ptr[29], ptr[15], ptr[16], ptr[17], ptr[18]);

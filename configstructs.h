@@ -1,5 +1,5 @@
 
-#pragma pack(1) 
+#pragma pack(1)
 
 // MAKE SURE SHORTS ARE CORRECTLY ALLIGNED FOR ARMV5
 
@@ -11,7 +11,7 @@ struct CONFIGTABLE
 
 //	LAYOUT MUST MATCH THAT IN CONFIG.C SOURCE
 
-	char C_NODECALL[10];		// OFFSET = 0 
+	char C_NODECALL[10];		// OFFSET = 0
 	char C_NODEALIAS[10];		// OFFSET = 10
 	char C_BBSCALL[10];			// OFFSET = 20
 	char C_BBSALIAS[10];		// OFFSET = 30
@@ -78,23 +78,23 @@ struct PORTCONFIG
 	unsigned short SPEED;	// 40,
 	unsigned char CHANNEL;	// 42,
 	unsigned char pad;
-	short BBSFLAG;			// 44, 
-	short QUALITY;			// 46, 
+	short BBSFLAG;			// 44,
+	short QUALITY;			// 46,
 	short MAXFRAME;			// 48,
 	short TXDELAY;			// 50,
-	short SLOTTIME;			// 52, 
+	short SLOTTIME;			// 52,
 	short PERSIST;			// 54,
 
 	short FULLDUP;			// 56,
-	short SOFTDCD;			// 58, 
-	short FRACK;			// 60, 
+	short SOFTDCD;			// 58,
+	short FRACK;			// 60,
 	short RESPTIME;			// 62,
-	short RETRIES;			// 64, 
+	short RETRIES;			// 64,
 
 	short PACLEN;			// 66,
 	short QUALADJUST;		// 68,
 	UCHAR DIGIFLAG;			// 70,
-	UCHAR DIGIPORT;			// 71 
+	UCHAR DIGIPORT;			// 71
 	short DIGIMASK;			// 72
 	short USERS;			// 74,
 	short TXTAIL;			// 76
@@ -111,12 +111,12 @@ struct PORTCONFIG
 	short TXPORT;			// 118,
 	UCHAR MHEARD;			// 120,
 	UCHAR CWIDTYPE;			// 121,
-	char MINQUAL;			// 122, 
+	char MINQUAL;			// 122,
 	char MAXDIGIS;			//  123,
 	char DefaultNoKeepAlives; // 124
 	char UIONLY;			// 125,
 	unsigned short ListenPort;	// 126
-	char UNPROTO[72];		//  128, 
+	char UNPROTO[72];		//  128,
 	char PORTALIAS2[10];	//  200,
 	char DLLNAME[16];		//  210,
 	char BCALL[10];			// 226,

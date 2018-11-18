@@ -2143,30 +2143,30 @@ SRes LzmaEnc_CodeOneMemBlock(CLzmaEncHandle pp, int reInit,
 	LZ_UInt64 nowPos64;
 	SRes res;
 	CSeqOutStreamBuf outStream;
-	
+
 	outStream.funcTable.Write = MyWrite;
 	outStream.data = dest;
 	outStream.rem = *destLen;
 	outStream.overflow = False;
-	
+
 	p->writeEndMark = False;
 	p->finished = False;
 	p->result = SZ_OK;
-	
+
 	if (reInit)
 		LzmaEnc_Init(p);
 	LzmaEnc_InitPrices(p);
 	nowPos64 = p->nowPos64;
 	RangeEnc_Init(&p->rc);
 	p->rc.outStream = &outStream.funcTable;
-	
+
 	res = LzmaEnc_CodeOneBlock(p, True, desiredPackSize, *unpackSize);
-	
+
 	*unpackSize = (LZ_UInt32)(p->nowPos64 - nowPos64);
 	*destLen -= outStream.rem;
 	if (outStream.overflow)
 		return SZ_ERROR_OUTPUT_EOF;
-	
+
 	return res;
 }
 
@@ -2175,16 +2175,16 @@ SRes LzmaEnc_Encode(CLzmaEncHandle pp, ISeqOutStream *outStream, ISeqInStream *i
 {
 	CLzmaEnc *p = (CLzmaEnc *)pp;
 	SRes res = SZ_OK;
-	
+
 #ifdef COMPRESS_MF_MT
 	Byte allocaDummy[0x300];
 	int i = 0;
 	for (i = 0; i < 16; i++)
 		allocaDummy[i] = (Byte)i;
 #endif
-	
+
 	RINOK(LzmaEnc_Prepare(pp, inStream, outStream, alloc, allocBig));
-	
+
 	for (;;)
 	{
 		res = LzmaEnc_CodeOneBlock(p, False, 0, 0);
@@ -2213,7 +2213,7 @@ SRes LzmaEnc_WriteProperties(CLzmaEncHandle pp, Byte *props, SizeT *size)
 		return SZ_ERROR_PARAM;
 	*size = LZMA_PROPS_SIZE;
 	props[0] = (Byte)((p->pb * 5 + p->lp) * 9 + p->lc);
-	
+
 	for (i = 11; i <= 30; i++)
 	{
 		if (dictSize <= ((LZ_UInt32)2 << i))
@@ -2227,7 +2227,7 @@ SRes LzmaEnc_WriteProperties(CLzmaEncHandle pp, Byte *props, SizeT *size)
 			break;
 		}
 	}
-	
+
 	for (i = 0; i < 4; i++)
 		props[1 + i] = (Byte)(dictSize >> (8 * i));
 	return SZ_OK;
@@ -2238,20 +2238,20 @@ SRes LzmaEnc_MemEncode(CLzmaEncHandle pp, Byte *dest, SizeT *destLen, const Byte
 {
 	SRes res;
 	CLzmaEnc *p = (CLzmaEnc *)pp;
-	
+
 	CSeqOutStreamBuf outStream;
-	
+
 	LzmaEnc_SetInputBuf(p, src, srcLen);
-	
+
 	outStream.funcTable.Write = MyWrite;
 	outStream.data = dest;
 	outStream.rem = *destLen;
 	outStream.overflow = False;
-	
+
 	p->writeEndMark = writeEndMark;
 	res = LzmaEnc_Encode(pp, &outStream.funcTable, &p->seqBufInStream.funcTable,
 						 progress, alloc, allocBig);
-	
+
 	*destLen -= outStream.rem;
 	if (outStream.overflow)
 		return SZ_ERROR_OUTPUT_EOF;
@@ -2266,7 +2266,7 @@ SRes LzmaEncode(Byte *dest, SizeT *destLen, const Byte *src, SizeT srcLen,
 	SRes res;
 	if (p == 0)
 		return SZ_ERROR_MEM;
-	
+
 	res = LzmaEnc_SetProps(p, props);
 	if (res == SZ_OK)
 	{
@@ -2275,7 +2275,7 @@ SRes LzmaEncode(Byte *dest, SizeT *destLen, const Byte *src, SizeT srcLen,
 			res = LzmaEnc_MemEncode(p, dest, destLen, src, srcLen,
 									writeEndMark, progress, alloc, allocBig);
 	}
-	
+
 	LzmaEnc_Destroy(p, alloc, allocBig);
 	return res;
 }

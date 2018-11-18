@@ -2,9 +2,9 @@
 #define WINVER 0x0501		// Change this to the appropriate value to target other versions of Windows.
 #endif
 
-#ifndef _WIN32_WINNT		// Allow use of features specific to Windows XP or later.                   
+#ifndef _WIN32_WINNT		// Allow use of features specific to Windows XP or later.
 #define _WIN32_WINNT 0x0501	// Change this to the appropriate value to target other versions of Windows.
-#endif						
+#endif
 
 #ifndef _WIN32_WINDOWS		// Allow use of features specific to Windows 98 or later.
 #define _WIN32_WINDOWS 0x0410 // Change this to the appropriate value to target Windows Me or later.
@@ -169,7 +169,7 @@ typedef struct ConnectionInfo_S
 
 	int Number;					// Number of record - for Connections display
 //    SOCKET socket;
-//	SOCKADDR_IN sin;  
+//	SOCKADDR_IN sin;
 	BOOL Active;
     int BPQStream;
 	int paclen;
@@ -195,7 +195,7 @@ typedef struct ConnectionInfo_S
 	int OutputGetPointer;		// Next byte to send. When Getpointer = Queue Length all is sent - free the buffer and start again.
 
 	int CloseAfterFlush;		// Close session when all sent. Set to 100ms intervals to wait.
-	
+
 	int ErrorCount;				// Invalid Command  count
 	BOOL Paging;				// Set if user wants paging
 	int LinesSent;				// Count when paging
@@ -349,10 +349,10 @@ struct TempUserInfo
 #define TMSG 3
 
 struct OldUserInfo
-{	
-	// Old format - without message type specific traffic counts 
+{
+	// Old format - without message type specific traffic counts
 
-	char	Call[10];			//	Connected call without SSID	
+	char	Call[10];			//	Connected call without SSID
 //	indicat relai[8];			/* 64 Digis path */
 	int		lastmsg;			/* 4  Last L number */
 	int		ConnectsIn;				/* 4  Number of connexions in*/
@@ -416,7 +416,7 @@ struct UserInfo
 {
 	// New Format - with stats maintained by message type and unused fields removed.
 
-	char	Call[10];			//	Connected call without SSID	
+	char	Call[10];			//	Connected call without SSID
 
 	int		Length;				// To make subsequent format changes easier
 
@@ -443,7 +443,7 @@ struct UserInfo
 
 	struct MsgStats Total;
 	struct MsgStats	Last;
-	
+
 	char CMSPass[16];			// For Secure Signon
 	int WebSeqNo;
 	char Filler[44];			// So we can add a few fields wirhout another resize
@@ -469,8 +469,8 @@ struct UserInfo
 #define F_SYSOP_IN_LM 0x8000
 #define F_Temp_B2_BBS 0x10000
 #define F_NOWINLINK	 0x20000			// Don't add Winlink.org
-#define F_NOBULLS	 0x40000	
-#define F_NTSMPS	 0x80000	
+#define F_NOBULLS	 0x40000
+#define F_NTSMPS	 0x80000
 
 /* #define F_PWD        0x1000 */
 
@@ -480,7 +480,7 @@ struct Override
 	char * Call;
 	int Days;
 };
-	
+
 struct ALIAS
 {
 	char * Alias;
@@ -540,7 +540,7 @@ struct OldMsgInfo
 	#define Attachments 2		// Set if B2 message has attachments
 	#define FromPaclink 4
 	#define FromRMS 8
-	#define FromRMSExpress 16 
+	#define FromRMSExpress 16
 
 	char	free[4];
 	unsigned short	nblu;
@@ -574,7 +574,7 @@ struct MsgInfo
 	#define Attachments 2		// Set if B2 message has attachments
 	#define FromPaclink 4
 	#define FromRMS 8
-	#define FromRMSExpress 16 
+	#define FromRMSExpress 16
 
 	time_t	datecreated ;
 	time_t	datechanged ;
@@ -614,10 +614,10 @@ struct NNTPRec
 typedef struct {
 	char	mode;
 	char	BID[13];
-	union 
+	union
 	{                   /*  array named screen */
-		struct    
-		{ 
+		struct
+		{
 			unsigned short msgno;
 			unsigned short timestamp;
 		};
@@ -691,7 +691,7 @@ struct BBSForwardingInfo
 	int MaxFBBBlockSize;
 	BOOL AllowCompressed;			// Allow FBB COmpressed
 	BOOL AllowB1;					// Enable B1
-	BOOL AllowB2;					// Enable B2 
+	BOOL AllowB2;					// Enable B2
 	BOOL SendCTRLZ;					// Send Ctrl/z instead of /ex
 	BOOL PersonalOnly;				// Only Forward Personals
 	BOOL SendNew;					// Forward new messages immediately
@@ -711,7 +711,7 @@ struct FBBHeaderLine
 	//	Holds the info from the (up to) 5 headers presented at the start of a Forward Block
 
 	char Format;					// Ascii or Binary
-	char MsgType;					// P B etc 
+	char MsgType;					// P B etc
 	char From[7];					// Sender
 	char ATBBS[41];					// BBS of recipient (@ Field)
 	char To[7];						// Recipient
@@ -720,7 +720,7 @@ struct FBBHeaderLine
 	int CSize;						// Compresses Size (B2 proto)
 	BOOL B2Message;					// Set if an FC type
 	UCHAR * CompressedMsg;			// Compressed Body fo B2
-	struct MsgInfo * FwdMsg;		// Header so we can mark as complete 
+	struct MsgInfo * FwdMsg;		// Header so we can mark as complete
 };
 
 #define MAXSTACK 20
@@ -734,16 +734,16 @@ char RTFHeader[4000];
 
 int RTFHddrLen;
 
-struct ConsoleInfo 
+struct ConsoleInfo
 {
 	struct ConsoleInfo * next;
 	CIRCUIT * Console;
 	int BPQStream;
-	WNDPROC wpOrigInputProc; 
+	WNDPROC wpOrigInputProc;
 	HWND hConsole;
 	HWND hwndInput;
 	HWND hwndOutput;
-	HMENU hMenu;		// handle of menu 
+	HMENU hMenu;		// handle of menu
 	RECT ConsoleRect;
 	RECT OutputRect;
 
@@ -775,13 +775,13 @@ struct ConsoleInfo
 	int PartLinePtr;
 	int PartLineIndex;		// Listbox index of (last) incomplete line
 
-	DWORD dwCharX;      // average width of characters 
-	DWORD dwCharY;      // height of characters 
-	DWORD dwClientX;    // width of client area 
-	DWORD dwClientY;    // height of client area 
-	DWORD dwLineLen;    // line length 
-	int nCaretPosX; // horizontal position of caret 
-	int nCaretPosY; // vertical position of caret 
+	DWORD dwCharX;      // average width of characters
+	DWORD dwCharY;      // height of characters
+	DWORD dwClientX;    // width of client area
+	DWORD dwClientY;    // height of client area
+	DWORD dwLineLen;    // line length
+	int nCaretPosX; // horizontal position of caret
+	int nCaretPosY; // vertical position of caret
 
 	COLORREF FGColour;		// Text Colour
 	COLORREF BGColour;		// Background Colour
@@ -802,7 +802,7 @@ struct ConsoleInfo
 	int Thumb;
 	int FirstTime;
 	BOOL Scrolled;				// Set if scrolled back
-	int RTFHeight;				// Height of RTF control in pixels 
+	int RTFHeight;				// Height of RTF control in pixels
 
 };
 
@@ -859,7 +859,7 @@ typedef struct SocketConnectionInfo
 	struct SocketConnectionInfo * Next;
 	int Number;					// Number of record - for Connections display
     SOCKET socket;
-	SOCKADDR_IN sin; 
+	SOCKADDR_IN sin;
 	int Type;					// SMTP or POP3
 	BOOL AMPR;					// Set if sending to an AMPR.ORG server
 	char FromDomain[50];		// Domain we are sending from
@@ -905,7 +905,7 @@ typedef struct KEYVALUES
 typedef struct WEBMAILINFO
 {
 	// Info for HTML Forms Processing
-	
+
 	struct HtmlFormDir * Dir;	// HTML Directory
 	char * txtFileName;		// Template Name for current message
 	char * InputHTMLName;	// Template to input message
@@ -1310,7 +1310,7 @@ VOID FreeWebMailMallocs();
 
 extern int _MYTIMEZONE;
 
-extern HKEY REGTREE;	
+extern HKEY REGTREE;
 extern char * REGTREETEXT;
 
 extern HBRUSH bgBrush;
@@ -1478,7 +1478,7 @@ extern char ISPAccountName[];
 extern char ISPAccountPass[];
 extern char EncryptedISPAccountPass[];
 extern int EncryptedPassLen;
-extern char *month[]; 
+extern char *month[];
 
 extern HWND hDebug;
 extern RECT MonitorRect;

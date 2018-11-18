@@ -49,7 +49,7 @@ struct RIGINFO
 
 	UINT BPQPort;				// Port this radio is attached to. Bit Map, as may be more than one port controlling radio
 	int PortNum;				// Number of port that defined this rig
-	
+
 	int IC735;					// Old ICOM with shorter freq message
 
 	char * CM108Device;			// Device to open for CM108 GPIO PTT
@@ -68,7 +68,7 @@ struct RIGINFO
 	BOOL RIGOK;					// RIG is reponding
 
 	int Session;				// BPQ L4 Record Number
-	int	DebugDelay;	
+	int	DebugDelay;
 
 	char RigName[10];
 
@@ -146,7 +146,7 @@ struct RIGINFO
 // Yease seem to have lots of variants of the same model
 
 #define FT1000D	1
-#define FT1000MP 2 
+#define FT1000MP 2
 
 
 struct RIGPORTINFO
@@ -175,10 +175,10 @@ struct RIGPORTINFO
 	int TXLen;						// Len of last sent
 	UCHAR RXBuffer[500];			// Message being received - may not arrive all at once
 	int RXLen;						// Data in RXBUffer
-	BOOL AutoPoll;					// set if last command was a Timer poll 
+	BOOL AutoPoll;					// set if last command was a Timer poll
 	// Local ScanStruct for Interactive Commands
 	struct ScanEntry * FreqPtr;		// Block we are currently sending.
-	struct ScanEntry ScanEntry;	
+	struct ScanEntry ScanEntry;
 	char Line2[10];
 	char Line3[10];
 	char Line4[10];

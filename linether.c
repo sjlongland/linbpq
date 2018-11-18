@@ -15,7 +15,7 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with LinBPQ/BPQ32.  If not, see http://www.gnu.org/licenses
-*/	
+*/
 
 //
 //	DLL to provide BPQEther support for G8BPQ switch in a Linux environment,
@@ -44,7 +44,7 @@ typedef struct PCAPStruct
    BOOL		RLITX;
    BOOL		RLIRX;
    BOOL		Promiscuous;
-	
+
    int s; /*socketdescriptor*/
 	struct sockaddr_ll socket_address;	/*target address*/
 
@@ -88,7 +88,7 @@ int ExtProc(int fn, int port,unsigned char * buff)
 		{
 			if (errno == 11)
 				return 0;	//Resource temporarily unavailable
-		
+
 			perror("Eth RX");
 			return 0;
 		}
@@ -101,7 +101,7 @@ int ExtProc(int fn, int port,unsigned char * buff)
 			return 0;
 
 		if (IF->RLIRX)
-		
+
 		//	RLI MODE - An extra 3 bytes before len, seem to be 00 00 41
 
 		{
@@ -110,9 +110,9 @@ int ExtProc(int fn, int port,unsigned char * buff)
 			if ((len < 16) || (len > 320)) return 0; // Probably BPQ Mode Frame
 
 			len-=3;
-		
+
 			memcpy(&buff[7],&rxbuff[19],len);
-		
+
 			len+=5;
 		}
 		else
@@ -122,22 +122,22 @@ int ExtProc(int fn, int port,unsigned char * buff)
 			if ((len < 16) || (len > 320)) return 0; // Probably RLI Mode Frame
 
 			len-=3;
-		
+
 			memcpy(&buff[7],&rxbuff[16],len);
-		
+
 			len+=5;
 		}
 
 		buff[5]=(len & 0xff);
 		buff[6]=(len >> 8);
-		
+
 		return 1;
 
-		
+
 	case 2:				// send
-		
+
  		if (IF->RLITX)
-		
+
 		//	RLI MODE - An extra 3 bytes before len, seem to be 00 00 41
 
 		{
@@ -150,7 +150,7 @@ int ExtProc(int fn, int port,unsigned char * buff)
 
 			if (txlen < 1 || txlen > 400)
 				return 0;
-			
+
 			memcpy(&txbuff[19],&buff[7],txlen);
 
 		}
@@ -175,17 +175,17 @@ int ExtProc(int fn, int port,unsigned char * buff)
 		memcpy(&txbuff[12], &IF->EtherType,2);
 
 		txlen+=14;
-		
+
 		if (txlen < 60) txlen = 60;
 
-		// Send down the packet 
+		// Send down the packet
 
-		res = sendto(IF->s, txbuff, txlen, 0, 
+		res = sendto(IF->s, txbuff, txlen, 0,
 	      (const struct sockaddr *)&IF->socket_address, sizeof(struct sockaddr_ll));
 
 		if (res < 0)
 		{
-			perror("Eth Send");	
+			perror("Eth Send");
 			return 3;
 		}
 
@@ -196,7 +196,7 @@ int ExtProc(int fn, int port,unsigned char * buff)
 
 	case 3:				// CHECK IF OK TO SEND
 
-		return (0);		// OK	
+		return (0);		// OK
 
 	case 4:				// reinit
 
@@ -214,7 +214,7 @@ int ExtProc(int fn, int port,unsigned char * buff)
 UINT ETHERExtInit(struct PORTCONTROL *  PortEntry)
 {
 	//	Can have multiple ports, each mapping to a different Ethernet Adapter
-	
+
 	//	The Adapter number is in IOADDR
 	//
 
@@ -232,7 +232,7 @@ UINT ETHERExtInit(struct PORTCONTROL *  PortEntry)
 	WritetoConsoleLocal("BPQEther ");
 
 	//
-	//	Read config 
+	//	Read config
 	//
 
 	if (!ReadConfigFile(port))
@@ -273,10 +273,10 @@ UINT ETHERExtInit(struct PORTCONTROL *  PortEntry)
 	/*prepare sockaddr_ll*/
 
 	/*RAW communication*/
-	IF->socket_address.sll_family = PF_PACKET;	
+	IF->socket_address.sll_family = PF_PACKET;
 
 	/*we don't use a protocoll above ethernet layer ->just use anything here*/
-	IF->socket_address.sll_protocol = htons(ETH_P_IP);	
+	IF->socket_address.sll_protocol = htons(ETH_P_IP);
 
 	//index of the network device
 
@@ -284,12 +284,12 @@ UINT ETHERExtInit(struct PORTCONTROL *  PortEntry)
 
 	/*ARP hardware identifier is ethernet*/
 	IF->socket_address.sll_hatype   = ARPHRD_ETHER;
-	
+
 	/*target is another host*/
 	IF->socket_address.sll_pkttype  = PACKET_BROADCAST;
 
 	/*address length*/
-	IF->socket_address.sll_halen    = ETH_ALEN;		
+	IF->socket_address.sll_halen    = ETH_ALEN;
 	/*MAC - begin*/
 
 	memcpy(IF->socket_address.sll_addr, IF->EthDest, 6);
@@ -318,7 +318,7 @@ static BOOL ReadConfigFile(int Port)
 
 	PCAPInfo[Port].Promiscuous = 1;				// Default
 	PCAPInfo[Port].EtherType=htons(0x08FF);		// Default
-	memset(PCAPInfo[Port].EthDest, 0xff, 6); 
+	memset(PCAPInfo[Port].EthDest, 0xff, 6);
 
 
 	if (Config)
@@ -336,7 +336,7 @@ static BOOL ReadConfigFile(int Port)
 			ptr2 = strchr(ptr1, 13);
 
 			strcpy(errbuf,buf);			// save in case of error
-	
+
 			if (!ProcessLine(buf, Port, FALSE))
 			{
 				WritetoConsoleLocal("BPQEther - Bad config record ");
@@ -346,7 +346,7 @@ static BOOL ReadConfigFile(int Port)
 		}
 		return (TRUE);
 	}
-		
+
 	n=sprintf(buf,"No config info found in bpq32.cfg\n");
 	WritetoConsoleLocal(buf);
 
@@ -376,7 +376,7 @@ static int ProcessLine(char * buf, int Port, BOOL CheckPort)
 	if (CheckPort)
 	{
 		p_port = strtok(NULL, " \t\n\r");
-			
+
 		if (p_port == NULL) return (FALSE);
 
 		port = atoi(p_port);
@@ -387,7 +387,7 @@ static int ProcessLine(char * buf, int Port, BOOL CheckPort)
 	if(_stricmp(ptr,"ADAPTER") == 0)
 	{
 		p_Adapter = strtok(NULL, " \t\n\r");
-		
+
 		strcpy(Adapter,p_Adapter);
 		return (TRUE);
 	}
@@ -395,7 +395,7 @@ static int ProcessLine(char * buf, int Port, BOOL CheckPort)
 	if(_stricmp(ptr,"TYPE") == 0)
 	{
 		p_type = strtok(NULL, " \t\n\r");
-		
+
 		if (p_type == NULL) return (FALSE);
 
 		num=sscanf(p_type,"%x",&a);
@@ -410,7 +410,7 @@ static int ProcessLine(char * buf, int Port, BOOL CheckPort)
 	if(_stricmp(ptr,"promiscuous") == 0)
 	{
 		ptr = strtok(NULL, " \t\n\r");
-		
+
 		if (ptr == NULL) return (FALSE);
 
 		PCAPInfo[Port].Promiscuous = atoi(ptr);
@@ -422,7 +422,7 @@ static int ProcessLine(char * buf, int Port, BOOL CheckPort)
 	if(_stricmp(ptr,"RXMODE") == 0)
 	{
 		p_port = strtok(NULL, " \t\n\r");
-			
+
 		if (p_port == NULL) return (FALSE);
 
 		if(_stricmp(p_port,"RLI") == 0)
@@ -438,13 +438,13 @@ static int ProcessLine(char * buf, int Port, BOOL CheckPort)
 		}
 
 		return FALSE;
-	
+
 	}
 
 	if(_stricmp(ptr,"TXMODE") == 0)
 	{
 		p_port = strtok(NULL, " \t\n\r");
-			
+
 		if (p_port == NULL) return (FALSE);
 
 		if(_stricmp(p_port,"RLI") == 0)
@@ -466,7 +466,7 @@ static int ProcessLine(char * buf, int Port, BOOL CheckPort)
 	if(_stricmp(ptr,"DEST") == 0)
 	{
 		p_mac = strtok(NULL, " \t\n\r");
-		
+
 		if (p_mac == NULL) return (FALSE);
 
 		num=sscanf(p_mac,"%x-%x-%x-%x-%x-%x",&a,&b,&c,&d,&e,&f);
@@ -493,6 +493,6 @@ static int ProcessLine(char * buf, int Port, BOOL CheckPort)
 	//	Bad line
 	//
 	return (FALSE);
-	
+
 }
-	
+

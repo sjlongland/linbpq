@@ -215,11 +215,11 @@ struct STREAMINFO
 	BOOL NoCMSFallback;			// Dont use relay if CMS not available
 	struct ARQINFO * ARQInfo;	// FLDIGI/FLARQ Stream Mode Specific Data
 
-	HWND xIDC_MYCALL; 
+	HWND xIDC_MYCALL;
 	HWND xIDC_DESTCALL;
-	HWND xIDC_STATUS; 
+	HWND xIDC_STATUS;
 	HWND xIDC_SEND;
-	HWND xIDC_RXED; 
+	HWND xIDC_RXED;
 	HWND xIDC_RESENT;
 	HWND xIDC_ACKED;
 	HWND xIDC_DIRN;
@@ -321,7 +321,7 @@ typedef struct MPSKINFO
 
 
 typedef struct TNCINFO
-{ 
+{
 	HWND hDlg;						// Status Window Handle
 	int (FAR * WebWindowProc)(struct TNCINFO * TNC, char * Buff, BOOL LOCAL);	// Routine to build web status window
 	int WebWinX;
@@ -329,7 +329,7 @@ typedef struct TNCINFO
 	char * WebBuffer;				// Buffer for logs
 	int RigControlRow;				// Rig Control Line in Dialog
 	struct _EXTPORTDATA * PortRecord; // BPQ32 port record for this port
-	struct RIGINFO * RIG;		// Pointer to Rig Control RIG record 
+	struct RIGINFO * RIG;		// Pointer to Rig Control RIG record
 	char * InitScript;			// Initialisation Commands
 	int InitScriptLen;			// Length
 
@@ -397,7 +397,7 @@ typedef struct TNCINFO
 
 	BOOL StartSent;				// Codec Start send (so will get a disconnect)
 	int ConnectPending;			// Set if Connect Pending Received. If so, mustn't allow freq change.
-	BOOL GavePermission;		// Set if we allowed freq change 
+	BOOL GavePermission;		// Set if we allowed freq change
 	BOOL DiscPending;			// Set if Disconnect Pending Received. So we can time out stuck in Disconnecting
 	BOOL HadConnect;				// Flag to say have been in session
 	BOOL FECMode;				// In FEC Mode
@@ -443,7 +443,7 @@ typedef struct TNCINFO
 
 	int Restarts;					// TNC Kill/Restarts done
 	time_t LastRestart;
-	
+
 	int TimeSinceLast;				// Time since last message from TNC (10ths of a sec)
 	int HeartBeat;
 
@@ -453,7 +453,7 @@ typedef struct TNCINFO
 //	HMENU hPopMenu;					// Actions Menu Handle
 
 	int MaxConReq;					// For ARDOP
-	int BusyHold;					// Hold Time from SCS reporting channel free till we call 
+	int BusyHold;					// Hold Time from SCS reporting channel free till we call
 	int BusyWait;					// Time to wait for clear channel before connect
 
 	BOOL OverrideBusy;
@@ -546,7 +546,7 @@ typedef struct TNCINFO
 	int MinLevel;					// Mimimum accepted Pactor Level
 	int MinLevelTimer;				// Time left to achieve Min Level
 	int PacketChannels;
-	int RobustTime;					// For PTC, Spend this part of scan cycle (in 10th secs) in Robust Packet Mode 
+	int RobustTime;					// For PTC, Spend this part of scan cycle (in 10th secs) in Robust Packet Mode
 	int SwitchToPactor;				// Countdown to switch
 
 	BOOL OldMode;					// Use PACTOR instead of TOR (for old software)
@@ -560,7 +560,7 @@ typedef struct TNCINFO
 	BOOL RobustDefault;				// Set if SCS Tracker default is Robust Packet mode
 	BOOL ForceRobust;				// Don't allow Normal Packet even if scan requests it.
 	char NormSpeed[8];				// Speed Param for Normal Packet on Tracker
-	BOOL RPBEACON;					// Send Beacon after each session 
+	BOOL RPBEACON;					// Send Beacon after each session
 
 	int TimeInRX;					// Time waiting for ISS before sending
 	char TXRXState;					// Current ISS/IRS State
@@ -582,8 +582,8 @@ typedef struct TNCINFO
 	BOOL CommandBusy;				// Waiting for Command ACK
 
 	BOOL TEXTMODE;					// Set if AEA in text mode
-	BOOL NeedTurnRound;				// Set if we have sent data, so need to send ctrl/z 
-	BOOL NeedTRANS;					// Set if we have to send TRANS when ctrl/z is acked. 
+	BOOL NeedTurnRound;				// Set if we have sent data, so need to send ctrl/z
+	BOOL NeedTRANS;					// Set if we have to send TRANS when ctrl/z is acked.
 
 	char * CmdSet;					// A series of commands to send to the TNC
 	char * CmdSave;					// Base address for free
@@ -610,13 +610,13 @@ typedef struct TNCINFO
 	int InPacket;					// FLDigi - SOH or < received.
 	int MCASTLen;					// Data still to get
 
-	int DataMode;					// How to treat data 
+	int DataMode;					// How to treat data
 
 #define RXDATA  0x30				// Switch to Receive Data characters
 #define TXDATA  0x31				// Switch to Transmit Data characters
 #define SECDATA 0x32				// Switch to RX data from secondary port
 
-	int TXMode;					// Where to send data 
+	int TXMode;					// Where to send data
 
 #define TXMODEM 0x33				// Send TX data to modem
 #define TXSEC   0x34				// Send TX data to secondary port
@@ -627,7 +627,7 @@ typedef struct TNCINFO
 	int ModemCentre;				// Modem centre frequency
 	int ClientHeight;
 	int ClientWidth;
-	HWND xIDC_TNCSTATE; 
+	HWND xIDC_TNCSTATE;
 	HWND xIDC_COMMSSTATE;
 	HWND xIDC_MODE;
 	HWND xIDC_LEDS;
@@ -642,7 +642,7 @@ typedef struct TNCINFO
 	HWND xIDC_RESTARTS;
 	HWND xIDC_PACTORLEVEL;
 
-	char * WEB_TNCSTATE; 
+	char * WEB_TNCSTATE;
 	char * WEB_COMMSSTATE;
 	char * WEB_MODE;
 	char * WEB_LEDS;
@@ -679,7 +679,7 @@ typedef struct TNCINFO
 	char * LogPath;
 	FILE * LogHandle;				// Ardop Logging File
 	FILE * DebugHandle;				// Ardop Debug File
-	char LastLogType;				// For split packets	
+	char LastLogType;				// For split packets
 
 	UCHAR * ARDOPAPRS;				// Used to reconstruct APRS datagram from FEC packets
 	int ARDOPAPRSLen;
@@ -742,7 +742,7 @@ BOOL Rig_Poll();
 VOID Rig_PTT(struct RIGINFO * RIG, BOOL PTTState);
 
 struct RIGINFO * Rig_GETPTTREC(int Port);
-	
+
 struct ScanEntry ** CheckTimeBands(struct RIGINFO * RIG);
 
 #ifndef LINBPQ
@@ -750,7 +750,7 @@ LRESULT CALLBACK PacWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 #endif
 
 #define Report_P1 11
-#define Report_P12 12 
+#define Report_P12 12
 #define Report_P123 13
 #define Report_P2 14
 #define Report_P23 15
@@ -762,9 +762,9 @@ LRESULT CALLBACK PacWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 #define Report_P4 20
 
 #define Report_WINMOR500 21
-#define Report_WINMOR1600 22 
+#define Report_WINMOR1600 22
 
-#define Report_Robust 30 
+#define Report_Robust 30
 
 #define IOCTL_SERIAL_IS_COM_OPEN CTL_CODE(FILE_DEVICE_SERIAL_PORT,0x800,METHOD_BUFFERED,FILE_ANY_ACCESS)
 #define IOCTL_SERIAL_GETDATA     CTL_CODE(FILE_DEVICE_SERIAL_PORT,0x801,METHOD_BUFFERED,FILE_ANY_ACCESS)

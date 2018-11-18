@@ -15,7 +15,7 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with LinBPQ/BPQ32.  If not, see http://www.gnu.org/licenses
-*/	
+*/
 
 #define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
 #define _CRT_SECURE_NO_DEPRECATE
@@ -37,13 +37,13 @@ char * strlop(char * buf, char delim);
 VOID APIENTRY md5 (char *arg, unsigned char * checksum);
 
 // Implementation of the WinLink password challenge/response protocol
-  
+
 unsigned char seed [] = {77, 197, 101, 206, 190, 249,
      93, 200, 51, 243, 93, 237,
      71, 94, 239, 138, 68, 108,
      70, 185, 225, 137, 217, 16,
      51, 122, 193, 48, 194, 195,
-     198, 175, 172, 169, 70, 84, 
+     198, 175, 172, 169, 70, 84,
      61, 62, 104, 186, 114, 52,
      61, 168, 66, 129, 192, 208,
      187, 249, 232, 193, 41, 113,

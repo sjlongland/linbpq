@@ -15,7 +15,7 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with LinBPQ/BPQ32.  If not, see http://www.gnu.org/licenses
-*/	
+*/
 
 //
 //	FLARQ Emulator/FLDIGI Interface for BPQ32
@@ -49,7 +49,7 @@ int (WINAPI FAR *EnumProcessesPtr)();
 #define STX 2
 #define EOT 4
 
-#define FEND 0xC0 
+#define FEND 0xC0
 #define FESC 0xDB
 #define TFEND 0xDC
 #define TFESC 0xDD
@@ -135,7 +135,7 @@ static HANDLE STDOUT=0;
 
 //SOCKET sock;
 
-static SOCKADDR_IN sinx; 
+static SOCKADDR_IN sinx;
 static SOCKADDR_IN rxaddr;
 static SOCKADDR_IN destaddr[MAXBPQPORTS+1];
 
@@ -180,7 +180,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 //	for (Stream = 0; Stream <= 1; Stream++)
 	{
 		STREAM = &TNC->Streams[Stream];
-	
+
 		if (TNC->PortRecord->ATTACHEDSESSIONS[Stream] && TNC->Streams[Stream].Attached == 0)
 		{
 			char Cmd[80];
@@ -207,7 +207,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 			SetWindowText(TNC->xIDC_TNCSTATE, TNC->WEB_TNCSTATE);
 
 /*			len = sprintf(Cmd, "%cSTOP_BEACON_ARQ_FAE\x1b", '\x1a');
-	
+
 			if (TNC->MPSKInfo->TX)
 				TNC->CmdSet = TNC->CmdSave = _strdup(Cmd);		// Savde till not transmitting
 			else
@@ -218,9 +218,9 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 
 	switch (fn)
 	{
-	case 7:			
+	case 7:
 
-		// 100 mS Timer. 
+		// 100 mS Timer.
 
 		//	See if waiting for busy to clear before sending a connect
 
@@ -237,7 +237,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 				char Reply[80];
 
 				SendLen = sprintf(Reply, "c%s:42 %s:24 %c 7 T60R5W10",
-				STREAM->MyCall, STREAM->RemoteCall, ARQ->OurStream); 
+				STREAM->MyCall, STREAM->RemoteCall, ARQ->OurStream);
 
 				strcpy(TNC->WEB_PROTOSTATE, "Connecting");
 				SetWindowText(TNC->xIDC_PROTOSTATE, TNC->WEB_PROTOSTATE);
@@ -247,7 +247,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 				ARQ->ARQTimerState = ARQ_CONNECTING;
 				SaveAndSend(TNC, ARQ, TNC->TCPDataSock, Reply, SendLen);
 
-				STREAM->Connecting = TRUE;	
+				STREAM->Connecting = TRUE;
 
 				sprintf(TNC->WEB_TNCSTATE, "%s Connecting to %s", STREAM->MyCall, STREAM->RemoteCall);
 				SetWindowText(TNC->xIDC_TNCSTATE, TNC->WEB_TNCSTATE);
@@ -308,7 +308,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 			TNC->SlowTimer = 100;
 			FLSlowTimer(TNC);			// 10 Secs
 		}
-	
+
 		return 0;
 
 	case 1:				// poll
@@ -316,7 +316,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 			if (TNC->CONNECTED == FALSE && TNC->CONNECTING == FALSE && TNC->FLInfo->KISSMODE == FALSE)
 			{
 				//	See if time to reconnect
-		
+
 				time( &ltime );
 				if (ltime-lasttime[port] >9 )
 				{
@@ -324,30 +324,30 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 					lasttime[port]=ltime;
 				}
 			}
-		
+
 			FD_ZERO(&readfs);
-			
+
 			if (TNC->CONNECTED)
 				if (TNC->TCPSock)
 					FD_SET(TNC->TCPSock,&readfs);
 
 			if (TNC->CONNECTED || TNC->FLInfo->KISSMODE)
 				FD_SET(TNC->TCPDataSock,&readfs);
-			
-			
+
+
 //			FD_ZERO(&writefs);
 
 //			if (TNC->BPQtoWINMOR_Q) FD_SET(TNC->TCPDataSock,&writefs);	// Need notification of busy clearing
 
 			FD_ZERO(&errorfs);
-		
+
 			if (TNC->CONNECTED)
 				if (TNC->TCPSock)
 					FD_SET(TNC->TCPSock,&errorfs);
-	
+
 			if (TNC->CONNECTED || TNC->FLInfo->KISSMODE)
 				FD_SET(TNC->TCPDataSock,&errorfs);
-			
+
 
 			if (select(TNC->TCPDataSock + 1, &readfs, &writefs, &errorfs, &timeout) > 0)
 			{
@@ -356,15 +356,15 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 				if (FD_ISSET(TNC->TCPDataSock,&readfs))
 				{
 					// data available
-			
-					ProcessReceivedData(port);			
+
+					ProcessReceivedData(port);
 				}
 
 				if (FD_ISSET(TNC->TCPSock,&readfs))
 				{
 					// data available
-			
-					ProcessXMLData(port);			
+
+					ProcessXMLData(port);
 				}
 
 
@@ -381,7 +381,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 						SetWindowText(TNC->xIDC_COMMSSTATE, TNC->WEB_COMMSSTATE);
 
 						// If required, send signon
-				
+
 //						SendPacket(TNC->TCPDataSock,"\x1a", 1, 0);
 //						SendPacket(TNC->TCPDataSock,"DIGITAL MODE ?", 14, 0);
 //						SendPacket(TNC->TCPDataSock,"\x1b", 1, 0);
@@ -399,13 +399,13 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 						memcpy(txbuff,buffptr+2,txlen);
 
 						SendPacket(TNC, &txbuff[0], txlen);
-					
+
 						ReleaseBuffer(buffptr);
 
 					}
 
 				}
-					
+
 				if (FD_ISSET(TNC->TCPDataSock,&errorfs) || FD_ISSET(TNC->TCPSock,&errorfs))
 				{
 					//	if connecting, then failed, if connected then has just disconnected
@@ -419,7 +419,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 
 					CONNECTING[port]=FALSE;
 					CONNECTED[port]=FALSE;
-				
+
 				}
 
 			}
@@ -432,7 +432,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 		{
 			STREAM = &TNC->Streams[Stream];
 
-			
+
 			if (STREAM->Attached)
 				CheckForDetach(TNC, Stream, STREAM, TidyClose, ForcedClose, CloseComplete);
 
@@ -445,7 +445,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 			}
 
 			// if Busy, send buffer status poll
-	
+
 			if (STREAM->PACTORtoBPQ_Q == 0)
 			{
 				if (STREAM->DiscWhenAllSent)
@@ -458,7 +458,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 			else
 			{
 				int datalen;
-			
+
 				buffptr=Q_REM(&STREAM->PACTORtoBPQ_Q);
 
 				datalen=buffptr[1];
@@ -467,11 +467,11 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 				buff[7] = 0xf0;
 				memcpy(&buff[8],buffptr+2,datalen);		// Data goes to +7, but we have an extra byte
 				datalen+=8;
-				
+
 				PutLengthinBuffer(buff, datalen);
-		
+
 				ReleaseBuffer(buffptr);
-	
+
 				return (1);
 			}
 		}
@@ -500,31 +500,31 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 			}
 			ReleaseBuffer(buffptr);
 		}
-			
+
 		return (0);
 
 	case 2:				// send
 
-		
+
 		if (!TNC->CONNECTED) return 0;		// Don't try if not connected to TNC
 
 		Stream = buff[4];
-		
-		STREAM = &TNC->Streams[Stream]; 
 
-//		txlen=(buff[6]<<8) + buff[5] - 8;	
+		STREAM = &TNC->Streams[Stream];
+
+//		txlen=(buff[6]<<8) + buff[5] - 8;
 
 		txlen = GetLengthfromBuffer(buff) - 8;
-				
+
 		if (STREAM->Connected)
 		{
 			buffptr = GetBuff();
 
 			if (buffptr == 0) return (0);			// No buffers, so ignore
-		
+
 			buffptr[1] = txlen;
 			memcpy(buffptr+2, &buff[8], txlen);
-		
+
 			C_Q_ADD(&TNC->Streams[Stream].BPQtoPACTOR_Q, buffptr);
 
 			return (0);
@@ -540,7 +540,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 					TidyClose(TNC, buff[4]);
 
 				STREAM->ReportDISC = TRUE;		// Tell Node
-				
+
 				TNC->FLInfo->MCASTMODE = FALSE;
 
 				return 0;
@@ -570,8 +570,8 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 			if (_memicmp(&buff[8], "MODEM ", 6) == 0)
 			{
 				_strupr(&buff[8]);
-				buff[7 + txlen] = 0;	
-			
+				buff[7 + txlen] = 0;
+
 				// If in KISS mode, send as a KISS command Frame
 
 				if (TNC->FLInfo->KISSMODE)
@@ -591,8 +591,8 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 			if (_memicmp(&buff[8], "FREQ ", 5) == 0)
 			{
 				_strupr(&buff[8]);
-				buff[7 + txlen] = 0;	
-			
+				buff[7 + txlen] = 0;
+
 				// If in KISS mode, send as a KISS command Frame
 
 				if (TNC->FLInfo->KISSMODE)
@@ -612,10 +612,10 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 			if (_memicmp(&buff[8], "SQUELCH ", 8) == 0)
 			{
 				_strupr(&buff[8]);
-				buff[7 + txlen] = 0;	
-			
+				buff[7 + txlen] = 0;
+
 				// Only works in KISS
-				
+
 				if (TNC->FLInfo->KISSMODE)
 				{
 					if (_memicmp(&buff[16], "ON", 2) == 0)
@@ -626,7 +626,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 					else
 						txlen = sprintf(txbuff, "KPSQLS:%s KPSQLS:", &buff[16]);
 
-					SendKISSCommand(TNC, txbuff);	
+					SendKISSCommand(TNC, txbuff);
 					TNC->InternalCmd = TRUE;
 				}
 				return 1;
@@ -652,7 +652,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 			if (STREAM->Connecting && _memicmp(&buff[8], "ABORT", 5) == 0)
 			{
 //				len = sprintf(Command,"%cSTOP_SELECTIVE_CALL_ARQ_FAE\x1b", '\x1a');
-	
+
 //				if (TNC->MPSKInfo->TX)
 //					TNC->CmdSet = TNC->CmdSave = _strdup(Command);		// Save till not transmitting
 //				else
@@ -666,7 +666,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 			{
 				UINT * buffptr = GetBuff();
 				buff[7 + txlen] = 0;		// Remove CR
-				
+
 				if (strstr(&buff[8], "RAW"))
 					TNC->FLInfo->RAW = TRUE;
 				else if (strstr(&buff[8], "KISS"))
@@ -682,7 +682,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 					(TNC->FLInfo->RAW)?"RAW":"KISS");
 
 				C_Q_ADD(&STREAM->PACTORtoBPQ_Q, buffptr);
-			
+
 				return 1;
 			}
 
@@ -694,7 +694,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 
 				buffptr[1] = sprintf((UCHAR *)&buffptr[2], "FLDigi} Ok\r");
 				C_Q_ADD(&STREAM->PACTORtoBPQ_Q, buffptr);
-			
+
 				return 1;
 			}
 
@@ -708,7 +708,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 				while(s <= 1)
 				{
 					if (s != Stream)
-					{		
+					{
 						if (TNC->PortRecord->ATTACHEDSESSIONS[s])
 						{
 							buffptr[1] = sprintf((UCHAR *)&buffptr[2], "FLDig} Error - In use\r");
@@ -720,7 +720,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 				}
 				buffptr[1] = sprintf((UCHAR *)&buffptr[2], "FLDigi} Ok - Not in use\r");
 				C_Q_ADD(&STREAM->PACTORtoBPQ_Q, buffptr);
-			
+
 				return 1;
 			}
 
@@ -740,7 +740,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 				memset(ARQ, 0, sizeof(struct ARQINFO));		// Reset ARQ State
 				ARQ->TXSeq = ARQ->TXLastACK = 63;			// Last Sent
 				ARQ->RXHighest = ARQ->RXNoGaps = 63;		// Last Received
-				ARQ->OurStream = (rand() % 78) + 49;		// To give some protection against other stuff on channel	
+				ARQ->OurStream = (rand() % 78) + 49;		// To give some protection against other stuff on channel
 				ARQ->FarStream = 48;						// Not yet defined
 				TNC->FLInfo->FLARQ = FALSE;
 
@@ -750,7 +750,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 				strcpy(STREAM->RemoteCall, ptr);
 
 				// See if Busy
-				
+
 				if (InterlockedCheckBusy(TNC))
 				{
 					// Channel Busy. Unless override set, wait
@@ -758,7 +758,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 					if (TNC->OverrideBusy == 0)
 					{
 						// Save Command, and wait up to 10 secs
-						
+
 						sprintf(TNC->WEB_TNCSTATE, "Waiting for clear channel");
 						SetWindowText(TNC->xIDC_TNCSTATE, TNC->WEB_TNCSTATE);
 
@@ -772,7 +772,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 //<SOH>00cG8BPQ:1025 G8BPQ:24 0 7 T60R5W10FA36<EOT>
 
 				SendLen = sprintf(Reply, "c%s:42 %s:24 %c 7 T60R5W10",
-					STREAM->MyCall, STREAM->RemoteCall, ARQ->OurStream); 
+					STREAM->MyCall, STREAM->RemoteCall, ARQ->OurStream);
 
 				strcpy(TNC->WEB_PROTOSTATE, "Connecting");
 				SetWindowText(TNC->xIDC_PROTOSTATE, TNC->WEB_PROTOSTATE);
@@ -782,7 +782,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 				ARQ->ARQTimerState = ARQ_CONNECTING;
 				SaveAndSend(TNC, ARQ, TNC->TCPDataSock, Reply, SendLen);
 
-				STREAM->Connecting = TRUE;	
+				STREAM->Connecting = TRUE;
 
 				sprintf(TNC->WEB_TNCSTATE, "%s Connecting to %s", STREAM->MyCall, STREAM->RemoteCall);
 				SetWindowText(TNC->xIDC_TNCSTATE, TNC->WEB_TNCSTATE);
@@ -796,8 +796,8 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 			// Send any other command to FLDIGI
 
 			_strupr(&buff[8]);
-			buff[7 + txlen] = 0;	
-			
+			buff[7 + txlen] = 0;
+
 			// If in KISS mode, send as a KISS command Frame
 
 			if (TNC->FLInfo->KISSMODE)
@@ -807,7 +807,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 
 				buff[7] = 6;				// KISS Control
 
-				newlen = KissEncode(&buff[7], outbuff, txlen);	
+				newlen = KissEncode(&buff[7], outbuff, txlen);
 				sendto(TNC->TCPDataSock, outbuff, newlen, 0, (struct sockaddr *)&TNC->Datadestaddr, sizeof(struct sockaddr));
 			}
 			else
@@ -820,7 +820,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 
 		return (0);
 
-	case 3:	
+	case 3:
 
 		Stream = (int)buff;
 
@@ -847,7 +847,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 
 		}
 		return TNCOK << 8 | STREAM->Disconnecting << 15;		// OK, but lock attach if disconnecting
-	
+
 	case 4:				// reinit
 
 		shutdown(TNC->TCPSock, SD_BOTH);
@@ -917,17 +917,17 @@ int FindFLDIGI(char * Path)
 		if (Processes[i] != 0)
 		{
 			hProc =  OpenProcess(PROCESS_TERMINATE | PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, Processes[i]);
-	
+
 			if (hProc)
 			{
 				GetModuleFileNameExPtr(hProc, 0,  ExeName, 255);
 				CloseHandle(hProc);
 
 				strlop(ExeName, '.');
-						
+
 				if (_stricmp(ExeName, FLDIGIName) == 0)
 					return Processes[i];
-						
+
 			}
 		}
 	}
@@ -972,7 +972,7 @@ static int RestartTNC(struct TNCINFO * TNC)
 	if (_memicmp(TNC->ProgramPath, "REMOTE:", 7) == 0)
 	{
 		int n;
-		
+
 		// Try to start TNC on a remote host
 
 		SOCKET sock = socket(AF_INET,SOCK_DGRAM,0);
@@ -992,7 +992,7 @@ static int RestartTNC(struct TNCINFO * TNC)
 			//	Resolve name to address
 
 			struct hostent * HostEnt = gethostbyname (TNC->HostName);
-		 
+
 			if (!HostEnt)
 				return 0;			// Resolve failed
 
@@ -1000,7 +1000,7 @@ static int RestartTNC(struct TNCINFO * TNC)
 		}
 
 		n = sendto(sock, TNC->ProgramPath, strlen(TNC->ProgramPath), 0, (struct sockaddr *)&destaddr, sizeof(destaddr));
-	
+
 		Debugprintf("Restart FLDIGI - sento returned %d", n);
 
 		Sleep(100);
@@ -1010,18 +1010,18 @@ static int RestartTNC(struct TNCINFO * TNC)
 	}
 #ifndef LINBPQ
 	{
-	STARTUPINFO  SInfo;			// pointer to STARTUPINFO 
-    PROCESS_INFORMATION PInfo; 	// pointer to PROCESS_INFORMATION 
+	STARTUPINFO  SInfo;			// pointer to STARTUPINFO
+    PROCESS_INFORMATION PInfo; 	// pointer to PROCESS_INFORMATION
 	char HomeDir[MAX_PATH];
 	int i, ret;
 
 	SInfo.cb=sizeof(SInfo);
-	SInfo.lpReserved=NULL; 
-	SInfo.lpDesktop=NULL; 
-	SInfo.lpTitle=NULL; 
-	SInfo.dwFlags=0; 
-	SInfo.cbReserved2=0; 
-  	SInfo.lpReserved2=NULL; 
+	SInfo.lpReserved=NULL;
+	SInfo.lpDesktop=NULL;
+	SInfo.lpTitle=NULL;
+	SInfo.dwFlags=0;
+	SInfo.cbReserved2=0;
+  	SInfo.lpReserved2=NULL;
 
 	if (TNC->ProgramPath)
 	{
@@ -1095,7 +1095,7 @@ VOID SendKISSCommand(struct TNCINFO * TNC, char * Msg)
 	char outbuff[256];
 
 	txlen = sprintf(txbuff, "%c%s", 6, Msg);
-	txlen = KissEncode(txbuff, outbuff, txlen);	
+	txlen = KissEncode(txbuff, outbuff, txlen);
 	rc = sendto(TNC->TCPDataSock, outbuff, txlen, 0, (struct sockaddr *)&TNC->Datadestaddr, sizeof(struct sockaddr));
 }
 
@@ -1163,8 +1163,8 @@ UINT FLDigiExtInit(EXTPORTDATA * PortEntry)
 		TNC->BusyWait = 10;
 
 	MPSKChannel[port] = PortEntry->PORTCONTROL.CHANNELNUM-65;
-	
-	PortEntry->MAXHOSTMODESESSIONS = 1;	
+
+	PortEntry->MAXHOSTMODESESSIONS = 1;
 
 	i=sprintf(Msg,"FLDigi Host %s Port %d \n",
 		TNC->HostName, TNC->TCPPort);
@@ -1191,7 +1191,7 @@ UINT FLDigiExtInit(EXTPORTDATA * PortEntry)
 		struct hostent * HostEnt = NULL;
 
 		TNC->FLInfo->CmdControl = 5;			//Send params immediately
-		
+
 		TNC->Datadestaddr.sin_addr.s_addr = inet_addr(TNC->HostName);
 
 		if (TNC->Datadestaddr.sin_addr.s_addr == INADDR_NONE)
@@ -1199,7 +1199,7 @@ UINT FLDigiExtInit(EXTPORTDATA * PortEntry)
 			//	Resolve name to address
 
 			 HostEnt = gethostbyname (TNC->HostName);
-		 
+
 			if (HostEnt)
 			{
 				memcpy(&TNC->Datadestaddr.sin_addr.s_addr,HostEnt->h_addr,4);
@@ -1213,7 +1213,7 @@ UINT FLDigiExtInit(EXTPORTDATA * PortEntry)
 		setsockopt(sock, SOL_SOCKET, SO_BROADCAST, (const char FAR *)&bcopt,4);
 
 		sinx.sin_family = AF_INET;
-		sinx.sin_addr.s_addr = INADDR_ANY;		
+		sinx.sin_addr.s_addr = INADDR_ANY;
 		sinx.sin_port = htons(TNC->TCPPort + 1);
 
 		if (bind(sock, (struct sockaddr *) &sinx, sizeof(sinx)) != 0 )
@@ -1224,7 +1224,7 @@ UINT FLDigiExtInit(EXTPORTDATA * PortEntry)
 			Consoleprintf("Bind Failed for UDP port %d - error code = %d", TNC->TCPPort, err);
 		}
 
-		TNC->Datadestaddr.sin_family = AF_INET;	
+		TNC->Datadestaddr.sin_family = AF_INET;
 		TNC->Datadestaddr.sin_port = htons(TNC->TCPPort);
 	}
 	else
@@ -1255,23 +1255,23 @@ UINT FLDigiExtInit(EXTPORTDATA * PortEntry)
 
 	CreateWindowEx(0, "STATIC", "Comms State", WS_CHILD | WS_VISIBLE, 10,6,120,20, TNC->hDlg, NULL, hInstance, NULL);
 	TNC->xIDC_COMMSSTATE = CreateWindowEx(0, "STATIC", "", WS_CHILD | WS_VISIBLE, 116,6,386,20, TNC->hDlg, NULL, hInstance, NULL);
-	
+
 	CreateWindowEx(0, "STATIC", "TNC State", WS_CHILD | WS_VISIBLE, 10,28,106,20, TNC->hDlg, NULL, hInstance, NULL);
 	TNC->xIDC_TNCSTATE = CreateWindowEx(0, "STATIC", "", WS_CHILD | WS_VISIBLE, 116,28,520,20, TNC->hDlg, NULL, hInstance, NULL);
 
 	CreateWindowEx(0, "STATIC", "Mode/CF", WS_CHILD | WS_VISIBLE, 10,50,80,20, TNC->hDlg, NULL, hInstance, NULL);
 	TNC->xIDC_MODE = CreateWindowEx(0, "STATIC", "", WS_CHILD | WS_VISIBLE, 116,50,200,20, TNC->hDlg, NULL, hInstance, NULL);
- 
+
 	CreateWindowEx(0, "STATIC", "Channel State", WS_CHILD | WS_VISIBLE, 10,72,110,20, TNC->hDlg, NULL, hInstance, NULL);
 	TNC->xIDC_CHANSTATE = CreateWindowEx(0, "STATIC", "", WS_CHILD | WS_VISIBLE, 116,72,144,20, TNC->hDlg, NULL, hInstance, NULL);
- 
+
  	CreateWindowEx(0, "STATIC", "Proto State", WS_CHILD | WS_VISIBLE,10,94,80,20, TNC->hDlg, NULL, hInstance, NULL);
 	TNC->xIDC_PROTOSTATE = CreateWindowEx(0, "STATIC", "", WS_CHILD | WS_VISIBLE,116,94,374,20 , TNC->hDlg, NULL, hInstance, NULL);
- 
+
 	CreateWindowEx(0, "STATIC", "Traffic", WS_CHILD | WS_VISIBLE,10,116,80,20, TNC->hDlg, NULL, hInstance, NULL);
 	TNC->xIDC_TRAFFIC = CreateWindowEx(0, "STATIC", "RX 0 TX 0 ACKED 0 Resent 0", WS_CHILD | WS_VISIBLE,116,116,374,20 , TNC->hDlg, NULL, hInstance, NULL);
 
-	TNC->hMonitor= CreateWindowEx(0, "LISTBOX", "", WS_CHILD |  WS_VISIBLE  | LBS_NOINTEGRALHEIGHT | 
+	TNC->hMonitor= CreateWindowEx(0, "LISTBOX", "", WS_CHILD |  WS_VISIBLE  | LBS_NOINTEGRALHEIGHT |
             LBS_DISABLENOSCROLL | WS_HSCROLL | WS_VSCROLL,
 			0,170,250,300, TNC->hDlg, NULL, hInstance, NULL);
 
@@ -1326,8 +1326,8 @@ static int ProcessLine(char * buf, int Port)
 
 	TNC = TNCInfo[BPQport] = zalloc(sizeof(struct TNCINFO));
 
-	ARQ = TNC->ARQInfo = zalloc(sizeof(struct ARQINFO)); 
-	FL = TNC->FLInfo = zalloc(sizeof(struct FLINFO)); 
+	ARQ = TNC->ARQInfo = zalloc(sizeof(struct ARQINFO));
+	FL = TNC->FLInfo = zalloc(sizeof(struct FLINFO));
 
 	TNC->Timeout = 50;		// Default retry = 5 seconds
 	TNC->Retries = 6;		// Default Retries
@@ -1337,21 +1337,21 @@ static int ProcessLine(char * buf, int Port)
 
 	TNC->InitScript = malloc(1000);
 	TNC->InitScript[0] = 0;
-	
+
 		if (p_ipad == NULL)
 			p_ipad = strtok(NULL, " \t\n\r");
 
 		if (p_ipad == NULL) return (FALSE);
-	
+
 		p_port = strtok(NULL, " \t\n\r");
-			
+
 		if (p_port == NULL) return (FALSE);
 
 		TNC->TCPPort = atoi(p_port);
 
 		TNC->destaddr.sin_family = AF_INET;
 		TNC->destaddr.sin_port = htons(TNC->TCPPort + 40);		// Defaults XML 7362 ARQ 7322
-		
+
 		TNC->Datadestaddr.sin_family = AF_INET;
 		TNC->Datadestaddr.sin_port = htons(TNC->TCPPort);
 
@@ -1403,7 +1403,7 @@ static int ProcessLine(char * buf, int Port)
 			if (_memicmp(buf, "ARQMODE", 7) == 0)
 				TNC->FLInfo->KISSMODE = FALSE;
 			else
-			if (_memicmp(buf, "DEFAULTMODEM", 12) == 0) // Send Beacon after each session 
+			if (_memicmp(buf, "DEFAULTMODEM", 12) == 0) // Send Beacon after each session
 			{
 				// Check that freq is also specified
 
@@ -1417,19 +1417,19 @@ static int ProcessLine(char * buf, int Port)
 				}
 			}
 			else
-			
+
 			strcat (TNC->InitScript, buf);
 		}
 
 
-	return (TRUE);	
+	return (TRUE);
 }
 
 static int ConnecttoFLDigi(int port)
 {
 	_beginthread(ConnecttoFLDigiThread,0,port);
 
-	
+
 	return 0;
 }
 
@@ -1442,7 +1442,7 @@ static VOID ConnecttoFLDigiThread(int port)
 	struct hostent * HostEnt = NULL;
 	struct TNCINFO * TNC = TNCInfo[port];
 
-	Sleep(5000);		// Allow init to complete 
+	Sleep(5000);		// Allow init to complete
 
 	TNC->destaddr.sin_addr.s_addr = inet_addr(TNC->HostName);
 	TNC->Datadestaddr.sin_addr.s_addr = inet_addr(TNC->HostName);
@@ -1452,7 +1452,7 @@ static VOID ConnecttoFLDigiThread(int port)
 		//	Resolve name to address
 
 		 HostEnt = gethostbyname (TNC->HostName);
-		 
+
 		 if (!HostEnt) return;			// Resolve failed
 
 		 memcpy(&TNC->destaddr.sin_addr.s_addr,HostEnt->h_addr,4);
@@ -1461,7 +1461,7 @@ static VOID ConnecttoFLDigiThread(int port)
 
 	if (TNC->TCPSock)
 	{
-		Debugprintf("FLDIGI Closing Sock %d", TNC->TCPSock); 
+		Debugprintf("FLDIGI Closing Sock %d", TNC->TCPSock);
 		closesocket(TNC->TCPSock);
 	}
 
@@ -1474,9 +1474,9 @@ static VOID ConnecttoFLDigiThread(int port)
 	{
 		i=sprintf(Msg, "Socket Failed for FLDigi Control socket - error code = %d\n", WSAGetLastError());
 		WritetoConsole(Msg);
-  	 	return; 
+  	 	return;
 	}
- 
+
 	setsockopt (TNC->TCPSock, SOL_SOCKET, SO_REUSEADDR, (const char FAR *)&bcopt, 4);
 
 	sinx.sin_family = AF_INET;
@@ -1503,7 +1503,7 @@ static VOID ConnecttoFLDigiThread(int port)
 			MySetWindowText(TNC->xIDC_COMMSSTATE, TNC->WEB_COMMSSTATE);
 			TNC->Alerted = TRUE;
 		}
-		
+
 		closesocket(TNC->TCPSock);
 		TNC->TCPSock = 0;
 		TNC->CONNECTING = FALSE;
@@ -1531,15 +1531,15 @@ static VOID ConnecttoFLDigiThread(int port)
 		TNC->TCPSock = 0;
 	 	TNC->CONNECTING = FALSE;
 
-  	 	return; 
+  	 	return;
 	}
- 
+
 	if (bind(TNC->TCPDataSock, (LPSOCKADDR) &sinx, addrlen) != 0 )
 	{
 		//
 		//	Bind Failed
 		//
-	
+
 		i=sprintf(Msg, "Bind Failed for FLDigi Data socket - error code = %d\r\n", WSAGetLastError());
 		WritetoConsole(Msg);
 
@@ -1548,7 +1548,7 @@ static VOID ConnecttoFLDigiThread(int port)
 		TNC->TCPSock = 0;
 		TNC->TCPDataSock = 0;
 	 	TNC->CONNECTING = FALSE;
-  	 	return; 
+  	 	return;
 	}
 
 	if (connect(TNC->TCPDataSock,(LPSOCKADDR) &TNC->Datadestaddr,sizeof(TNC->Datadestaddr)) == 0)
@@ -1594,7 +1594,7 @@ VOID SendPacket(struct TNCINFO * TNC, UCHAR * Msg, int MsgLen)
 
 		if (TNC->FLInfo->RAW)
 		{
-			// KISS RAW 
+			// KISS RAW
 
 			// Add CRC and Send
 
@@ -1686,7 +1686,7 @@ static int ProcessReceivedData(int port)
 		unsigned char * KissEnd;
 
 		bytesleft = recvfrom(TNC->TCPDataSock, Message, 1500, 0, (struct sockaddr *)&rxaddr, &addrlen);
-	
+
 		if (bytesleft < 0)
 		{
 			int err = WSAGetLastError();
@@ -1711,7 +1711,7 @@ static int ProcessReceivedData(int port)
 			in = out = &Message[2];
 
 			// We may have more than one KISS message in a packet
-	
+
 			KissEnd = memchr(&Message[2], FEND, bytesleft );
 
 			if (KissEnd == 0)
@@ -1746,7 +1746,7 @@ static int ProcessReceivedData(int port)
 					SetWindowText(TNC->xIDC_COMMSSTATE, TNC->WEB_COMMSSTATE);
 				}
 
-				// Trap BUSY fiest - there are lots of them, and they are likely to be confused 
+				// Trap BUSY fiest - there are lots of them, and they are likely to be confused
 				//	with tesponses to Interactive commands
 
 				if (memcmp(&Message[2], "BUSY", 4) == 0)
@@ -1768,7 +1768,7 @@ static int ProcessReceivedData(int port)
 					}
 
 					if (Changed)
-					{	
+					{
 						if (FL->TX)
 							strcpy(TNC->WEB_CHANSTATE, "TX");
 						else
@@ -1786,7 +1786,7 @@ static int ProcessReceivedData(int port)
 				if (TNC->InternalCmd)
 				{
 					ULONG * buffptr = GetBuff();
-	
+
 					TNC->InternalCmd = FALSE;
 
 					if (buffptr)
@@ -1801,7 +1801,7 @@ static int ProcessReceivedData(int port)
 				// Auto Command
 
 //				Debugprintf("%d %s", TNC->PortRecord->PORTCONTROL.PORTNUMBER, &Message[2]);
-		
+
 				if (memcmp(&Message[2], "FLSTAT", 4) == 0)
 				{
 					if (strstr(&Message[2], "FLSTAT:INIT"))
@@ -1904,7 +1904,7 @@ static int ProcessReceivedData(int port)
 
 				sprintf(TNC->WEB_MODE, "%s/%d", TNC->FLInfo->CurrentMode, TNC->FLInfo->CenterFreq);
 				SetWindowText(TNC->xIDC_MODE, TNC->WEB_MODE);
-			
+
 				continue;
 			}
 
@@ -1925,7 +1925,7 @@ static int ProcessReceivedData(int port)
 				bytes--;
 
 				c = *(in++);
-	
+
 				if (c == FESC)
 				{
 					c = *(in++);
@@ -1951,9 +1951,9 @@ static int ProcessReceivedData(int port)
 	{
 //		i=sprintf(ErrMsg, "Read Failed for MPSK socket - error code = %d\r\n", WSAGetLastError());
 //		WritetoConsole(ErrMsg);
-				
+
 		closesocket(TNC->TCPDataSock);
-					
+
 		TNC->CONNECTED = FALSE;
 		if (TNC->Streams[0].Attached)
 			TNC->Streams[0].ReportDISC = TRUE;
@@ -1976,7 +1976,7 @@ static int ProcessReceivedData(int port)
 	}
 
 	//	Have some data
-	
+
 	ProcessFLDigiPacket(TNC, Message, bytes);			// Data may be for another port
 
 	return (0);
@@ -1995,12 +1995,12 @@ VOID ProcessFLDigiPacket(struct TNCINFO * TNC, char * Message, int Len)
 	{
 		if (TNC->Streams[0].Attached == 0)
 			return;
-		
+
 		while(Len)
 		{
 			c = *(MPTR++);
-	
-			if (TNC->InPacket)	
+
+			if (TNC->InPacket)
 			{
 				TNC->DataBuffer[TNC->DataLen++] = c;
 
@@ -2039,19 +2039,19 @@ VOID ProcessFLDigiPacket(struct TNCINFO * TNC, char * Message, int Len)
 							UINT * buffptr;
 							int Stream = 0;
 							struct STREAMINFO * STREAM = &TNC->Streams[0];
-		
+
 							buffptr = GetBuff();
-	
+
 							if (buffptr)
 							{
 								TNC->DataBuffer[TNC->DataLen++] = 13;  // Keep Tidy
 
 								buffptr[1]  = TNC->DataLen;
 								memcpy(&buffptr[2], &TNC->DataBuffer[0], TNC->DataLen);
-				
+
 								C_Q_ADD(&STREAM->PACTORtoBPQ_Q, buffptr);
 							}
-						
+
 							TNC->InPacket = FALSE;
 						}
 					}
@@ -2090,14 +2090,14 @@ VOID ProcessFLDigiPacket(struct TNCINFO * TNC, char * Message, int Len)
 						}
 					}
 				}
-					
+
 				if (TNC->DataLen > 520)
 					TNC->DataLen--;			// Protect Buffer
 			}
 			else
 			{
 				// Look for '<'
-			
+
 				if (c == '<')
 				{
 					TNC->DataBuffer[0] = c;
@@ -2143,7 +2143,7 @@ VOID ProcessFLDigiPacket(struct TNCINFO * TNC, char * Message, int Len)
 			{
 				if (TNC->DataLen == 1)
 				{
-					if (c != '0' && c != '1')		
+					if (c != '0' && c != '1')
 					{
 						// Drop if not Protocol '0' or '1' - this should eliminate almost all noise packets
 
@@ -2188,7 +2188,7 @@ VOID CheckFLDigiData(struct TNCINFO * TNC)
 //		Debugprintf("%s %s", crcstring, Input);
 		return;
 	}
-	ProcessFLDigiData(TNC, &Input[3], Len - 3, Input[2], TRUE);		// From RAW 
+	ProcessFLDigiData(TNC, &Input[3], Len - 3, Input[2], TRUE);		// From RAW
 }
 /*
 VOID ProcessARQPacket(struct PORTCONTROL * PORT, MESSAGE * Buffer)
@@ -2204,8 +2204,8 @@ VOID ProcessARQPacket(struct PORTCONTROL * PORT, MESSAGE * Buffer)
 		// Set up TNC info
 
 		TNC = TNCInfo[PORT->PORTNUMBER] = zalloc(sizeof(struct TNCINFO));
-		TNC->ARQInfo = zalloc(sizeof(struct ARQINFO)); 
-		TNC->FLInfo = zalloc(sizeof(struct FLINFO)); 
+		TNC->ARQInfo = zalloc(sizeof(struct ARQINFO));
+		TNC->FLInfo = zalloc(sizeof(struct FLINFO));
 
 		TNC->Timeout = 50;		// Default retry = 10 seconds
 		TNC->Retries = 6;		// Default Retries
@@ -2214,7 +2214,7 @@ VOID ProcessARQPacket(struct PORTCONTROL * PORT, MESSAGE * Buffer)
 
 	Input = &Buffer->DEST[0];
 	Len = Buffer->LENGTH - 7;	// Not including CRC
-	
+
 	// Look for attach on any call
 
 	ProcessFLDigiData(TNC, Input, Len);
@@ -2239,7 +2239,7 @@ static int Stuff(UCHAR * inbuff, UCHAR * outbuff, int len)
 
 			// if between 0 and 0x1F, Add 40,
 			// if > x80 and less than 0xa0 subtract 20
-			
+
 			c += 0x40;
 		}
 		outbuff[txptr++]=c;
@@ -2269,7 +2269,7 @@ static int UnStuff(UCHAR * inbuff, int len)
 
 			// if between 0x40 and 0x5F, subtract 0x40,
 			// else add 0x20 (so we can send chars 80-9f without a double DLE)
-			
+
 			if (c < 0x60)
 				c -= 0x40;
 			else
@@ -2286,7 +2286,7 @@ unsigned int crcval = 0xFFFF;
 void update(char c)
 {
 	int i;
-	
+
 	crcval ^= c & 255;
     for (i = 0; i < 8; ++i)
 	{
@@ -2296,11 +2296,11 @@ void update(char c)
             crcval = (crcval >> 1);
     }
 }
-	
+
 unsigned int CalcCRC(UCHAR * ptr, int Len)
 {
 	int i;
-	
+
 	crcval = 0xFFFF;
 	for (i = 0; i < Len; i++)
 	{
@@ -2360,7 +2360,7 @@ ARQ::STX
 //FLARQ COMPOSER
 Date: 09/01/2014 23:24:42
 To: gm8bpq
-From: 
+From:
 SubjectA0E0<SOH>
 <SOH>08!: Test
 
@@ -2408,7 +2408,7 @@ VOID ProcessFLDigiData(struct TNCINFO * TNC, UCHAR * Input, int Len, char Channe
 		char * context;
 		char FarStream = 0;
 		int BlockSize = 6;			// 64 default
-		int Window = TNC->Window;		
+		int Window = TNC->Window;
 		APPLCALLS * APPL;
 		char * ApplPtr = APPLS;
 		int App;
@@ -2434,7 +2434,7 @@ VOID ProcessFLDigiData(struct TNCINFO * TNC, UCHAR * Input, int Len, char Channe
 			ptr=strchr(Appl, ' ');
 
 			if (ptr) *ptr = 0;
-	
+
 			if (_stricmp(call2, Appl) == 0)
 					break;
 		}
@@ -2460,13 +2460,13 @@ VOID ProcessFLDigiData(struct TNCINFO * TNC, UCHAR * Input, int Len, char Channe
 		SuspendOtherPorts(TNC);
 
 		ProcessIncommingConnect(TNC, call1, 0, FALSE);
-				
+
 		SESS = TNC->PortRecord->ATTACHEDSESSIONS[0];
 
 		strcpy(STREAM->MyCall, call2);
-		STREAM->ConnectTime = time(NULL); 
+		STREAM->ConnectTime = time(NULL);
 		STREAM->BytesRXed = STREAM->BytesTXed = STREAM->BytesAcked = STREAM->BytesResent = 0;
-		
+
 		if (TNC->RIG && TNC->RIG != &TNC->DummyRig && strcmp(TNC->RIG->RigName, "PTT"))
 		{
 			sprintf(TNC->WEB_TNCSTATE, "%s Connected to %s Inbound Freq %s", TNC->Streams[0].RemoteCall, call2, TNC->RIG->Valchar);
@@ -2482,7 +2482,7 @@ VOID ProcessFLDigiData(struct TNCINFO * TNC, UCHAR * Input, int Len, char Channe
 				SESS->Mode = WL2K->mode;
 			}
 		}
-			
+
 		if (WL2K)
 			strcpy(SESS->RMSCall, WL2K->RMSCall);
 
@@ -2496,7 +2496,7 @@ VOID ProcessFLDigiData(struct TNCINFO * TNC, UCHAR * Input, int Len, char Channe
 		ARQ->TXSeq = ARQ->TXLastACK = 63;			// Last Sent
 		ARQ->RXHighest = ARQ->RXNoGaps = 63;		// Last Received
 		ARQ->ARQState = ARQ_ACTIVE;
-		ARQ->OurStream = (rand() % 78) + 49;		// To give some protection against other stuff on channel	
+		ARQ->OurStream = (rand() % 78) + 49;		// To give some protection against other stuff on channel
 		ARQ->FarStream = FarStream;						// Not Yet defined
 		if (strcmp(port1, "1025") == 0)
 		{
@@ -2538,15 +2538,15 @@ VOID ProcessFLDigiData(struct TNCINFO * TNC, UCHAR * Input, int Len, char Channe
 
 				TNC->SwallowSignon = TRUE;
 
-				// Save Appl Call in case needed for 
+				// Save Appl Call in case needed for
 
 			}
 			else
-			{	
+			{
 				STREAM->NeedDisc = 50;	// 1 sec
 			}
 		}
-	
+
 		ARQ->TXWindow = Window;
 
 		if (BlockSize < 4)  BlockSize = 4;
@@ -2556,7 +2556,7 @@ VOID ProcessFLDigiData(struct TNCINFO * TNC, UCHAR * Input, int Len, char Channe
 
 
 		ARQ->ARQTimer = 10;			// To force CTEXT to be Queued
-		
+
 		if (App == 32)
 		{
 			// Connect to Node - send CTEXT
@@ -2575,19 +2575,19 @@ VOID ProcessFLDigiData(struct TNCINFO * TNC, UCHAR * Input, int Len, char Channe
 
 		if (STREAM->NeedDisc)
 		{
-			// Send Not Avail 
+			// Send Not Avail
 
 			buffptr = GetBuff();
 			if (buffptr)
 			{
-				buffptr[1] = sprintf((char *)&buffptr[2], "Application Not Available\n"); 
+				buffptr[1] = sprintf((char *)&buffptr[2], "Application Not Available\n");
 				SendARQData(TNC, buffptr);
 			}
 		}
 
 AckConnectRequest:
 
-		SendLen = sprintf(Reply, "k%s:24 %s %c 7", call2, call1, ARQ->OurStream); 
+		SendLen = sprintf(Reply, "k%s:24 %s %c 7", call2, call1, ARQ->OurStream);
 
 		SaveAndSend(TNC, ARQ, TNC->TCPDataSock, Reply, SendLen);
 		ARQ->ARQTimerState = ARQ_CONNECTACK;
@@ -2613,7 +2613,7 @@ AckConnectRequest:
 		char FarStream = 0;
 		int BlockSize = 6;			// 64 default
 		int Window = 16;
-		
+
 		char Reply[80];
 		int ReplyLen;
 
@@ -2639,7 +2639,7 @@ AckConnectRequest:
 		if (STREAM->Connected)
 			goto SendKReply;		// Repeated ACK
 
-		STREAM->ConnectTime = time(NULL); 
+		STREAM->ConnectTime = time(NULL);
 		STREAM->BytesRXed = STREAM->BytesTXed = STREAM->BytesAcked = STREAM->BytesResent = 0;
 		STREAM->Connected = TRUE;
 
@@ -2650,11 +2650,11 @@ AckConnectRequest:
 			sprintf(TNC->WEB_TNCSTATE, "%s Connected to %s Outbound Freq %s",  STREAM->MyCall, STREAM->RemoteCall, TNC->RIG->Valchar);
 		else
 			sprintf(TNC->WEB_TNCSTATE, "%s Connected to %s Outbound", STREAM->MyCall, STREAM->RemoteCall);
-			
+
 		SetWindowText(TNC->xIDC_TNCSTATE, TNC->WEB_TNCSTATE);
 
 		UpdateMH(TNC, STREAM->RemoteCall, '+', 'Z');
-			
+
 		ARQ->ARQTimerState = 0;
 		ARQ->FarStream = FarStream;
 		ARQ->TXWindow = TNC->Window;
@@ -2766,7 +2766,7 @@ SendKReply:
 
 	if (CTRL == 'a')
 	{
-		// Abort. Send Abort ACK - same as 
+		// Abort. Send Abort ACK - same as
 
 		char * call1;
 		char * context;
@@ -2839,10 +2839,10 @@ SendKReply:
 
 		strcpy(TNC->WEB_PROTOSTATE, "Disconncted");
 		SetWindowText(TNC->xIDC_PROTOSTATE, TNC->WEB_PROTOSTATE);
-	
+
 		ARQ->ARQState = 0;
 
-		SendLen = sprintf(Reply, "b%s:91", STREAM->MyCall); 
+		SendLen = sprintf(Reply, "b%s:91", STREAM->MyCall);
 
 		ARQ->ARQTimerState = ARQ_WAITACK;
 		SaveAndSend(TNC, ARQ, TNC->TCPDataSock, Reply, SendLen);
@@ -2873,15 +2873,15 @@ SendKReply:
 		if (STREAM->Connected)
 		{
 			// Create a traffic record
-		
-			char logmsg[120];	
+
+			char logmsg[120];
 			time_t Duration;
 
 			Duration = time(NULL) - STREAM->ConnectTime;
-				
+
 			if (Duration == 0)
 				Duration = 1;
-			
+
 			sprintf(logmsg,"Port %2d %9s Bytes Sent %d  BPS %d Bytes Received %d BPS %d Time %d Seconds",
 				TNC->Port, STREAM->RemoteCall,
 				STREAM->BytesTXed, (int)(STREAM->BytesTXed/Duration),
@@ -2894,7 +2894,7 @@ SendKReply:
 		STREAM->Connected = FALSE;		// Back to Command Mode
 		STREAM->ReportDISC = TRUE;		// Tell Node
 
-		if (STREAM->Disconnecting)		// 
+		if (STREAM->Disconnecting)		//
 			FLReleaseTNC(TNC);
 
 		STREAM->Disconnecting = FALSE;
@@ -2933,11 +2933,11 @@ SendKReply:
 //			if (rand() % 5 == 2)
 //			{
 //				Debugprintf("Dropping %d", Seq);
-//				return; 
+//				return;
 //			}
 
 			buffptr = GetBuff();
-	
+
 			if (buffptr == NULL)
 				return;				// Sould never run out, but cant do much else
 
@@ -3019,10 +3019,10 @@ VOID SendARQData(struct TNCINFO * TNC, UINT * Buffer)
 	UCHAR * ptr;
 	int Origlen = Buffer[1];
 	int Stuffedlen;
-	
+
 	ARQ->TXSeq++;
 	ARQ->TXSeq &= 63;
-	
+
 	SendLen = sprintf(TXBuffer, "%c", ARQ->TXSeq + 32);
 
 	ptr = (UCHAR *)&Buffer[2];			// Start of data;
@@ -3039,9 +3039,9 @@ VOID SendARQData(struct TNCINFO * TNC, UINT * Buffer)
 	if (FL->FLARQ)
 	{
 		// Terminal Mode. Need to convert CR to LF so it displays in FLARQ Window
-		
+
 		ptr = strchr(ptr, 13);
-	
+
 		while (ptr)
 		{
 			*(ptr++) = 10;			// Replace CR with LF
@@ -3064,7 +3064,7 @@ VOID SendARQData(struct TNCINFO * TNC, UINT * Buffer)
 
 //	if (rand() % 5 == 2)
 //		Debugprintf("Dropping %d", ARQ->TXSeq);
-//	else 
+//	else
 
 	ARQ->TXHOLDQ[ARQ->TXSeq] = Buffer;
 
@@ -3092,7 +3092,7 @@ VOID TidyClose(struct TNCINFO * TNC, int Stream)
 
 	struct ARQINFO * ARQ = TNC->ARQInfo;
 
-	SendLen = sprintf(Reply, "d%s:90", TNC->Streams[0].MyCall); 
+	SendLen = sprintf(Reply, "d%s:90", TNC->Streams[0].MyCall);
 
 	SaveAndSend(TNC, ARQ, TNC->TCPDataSock, Reply, SendLen);
 	ARQ->ARQTimerState = ARQ_DISC;
@@ -3125,7 +3125,7 @@ VOID FLReleaseTNC(struct TNCINFO * TNC)
 	if (TNC->FLInfo->DefaultMode[0])
 	{
 		char txbuff[80];
-				
+
 		if (TNC->FLInfo->KISSMODE)
 		{
 			sprintf(txbuff, "WFF:%d MODEM:%s MODEM: WFF:", TNC->FLInfo->DefaultFreq, TNC->FLInfo->DefaultMode);
@@ -3138,7 +3138,7 @@ VOID FLReleaseTNC(struct TNCINFO * TNC)
 		}
 	}
 	//	Start Scanner
-				
+
 	sprintf(TXMsg, "%d SCANSTART 15", TNC->Port);
 
 	Rig_Command(-1, TXMsg);
@@ -3200,7 +3200,7 @@ VOID ARQTimer(struct TNCINFO * TNC)
 	if (FL->BusyTimer > 4)
 	{
 		FL->BusyTimer = 0;
-		
+
 		if (FL->BusyCounter > 2)		// 2 chars in last .3 secs
 			FL->Busy = TRUE;
 		else
@@ -3239,7 +3239,7 @@ VOID ARQTimer(struct TNCINFO * TNC)
 		while (STREAM->BPQtoPACTOR_Q)
 		{
 			Outstanding = ARQ->TXSeq - ARQ->TXLastACK;
-		
+
 			if (Outstanding < 0)
 				Outstanding += 64;
 
@@ -3247,7 +3247,7 @@ VOID ARQTimer(struct TNCINFO * TNC)
 
 			if (Outstanding > ARQ->TXWindow)
 				break;
-		
+
 			buffptr = Q_REM(&STREAM->BPQtoPACTOR_Q);
 			SendARQData(TNC, buffptr);
 		}
@@ -3256,8 +3256,8 @@ VOID ARQTimer(struct TNCINFO * TNC)
 
 		if (ARQ->ARQTimer > 0)
 			return;					// Timer Still Running
-	
-		// No more data available - send poll 
+
+		// No more data available - send poll
 
 		SendLen = sprintf(Reply, "p%s", TNC->Streams[0].MyCall);
 
@@ -3271,7 +3271,7 @@ VOID ARQTimer(struct TNCINFO * TNC)
 		ARQ->LastLen = SendLen;
 
 		SendPacket(TNC, Reply, SendLen);
-		
+
 		ARQ->ARQTimer = TNC->Timeout;
 		ARQ->Retries = TNC->Retries;
 
@@ -3279,7 +3279,7 @@ VOID ARQTimer(struct TNCINFO * TNC)
 		SetWindowText(TNC->xIDC_PROTOSTATE, TNC->WEB_PROTOSTATE);
 
 		return;
-	
+
 	}
 
 	// TrunroundTimer is used to allow time for far end to revert to RX
@@ -3292,7 +3292,7 @@ VOID ARQTimer(struct TNCINFO * TNC)
 		while (STREAM->BPQtoPACTOR_Q)
 		{
 			Outstanding = ARQ->TXSeq - ARQ->TXLastACK;
-		
+
 			if (Outstanding < 0)
 				Outstanding += 64;
 
@@ -3300,7 +3300,7 @@ VOID ARQTimer(struct TNCINFO * TNC)
 
 			if (Outstanding > ARQ->TXWindow)
 				break;
-		
+
 			buffptr = Q_REM(&STREAM->BPQtoPACTOR_Q);
 			SendARQData(TNC, buffptr);
 		}
@@ -3311,7 +3311,7 @@ VOID ARQTimer(struct TNCINFO * TNC)
 		if (FL->TX || FL->Busy)
 		{
 			// Only decrement if running send poll timer
-			
+
 			if (ARQ->ARQTimerState != ARQ_WAITDATA)
 				return;
 		}
@@ -3340,7 +3340,7 @@ VOID ARQTimer(struct TNCINFO * TNC)
 		{
 		case ARQ_WAITDATA:
 
-			// No more data available - send poll 
+			// No more data available - send poll
 
 			SendLen = sprintf(Reply, "p%s", TNC->Streams[0].MyCall);
 
@@ -3352,7 +3352,7 @@ VOID ARQTimer(struct TNCINFO * TNC)
 			ARQ->LastLen = SendLen;
 
 			SendPacket(TNC, Reply, SendLen);
-		
+
 			ARQ->ARQTimer = TNC->Timeout;
 			ARQ->Retries = TNC->Retries;
 
@@ -3360,7 +3360,7 @@ VOID ARQTimer(struct TNCINFO * TNC)
 			SetWindowText(TNC->xIDC_PROTOSTATE, TNC->WEB_PROTOSTATE);
 
 			return;
-	
+
 		case ARQ_CONNECTING:
 
 			// Report Connect Failed, and drop back to command mode
@@ -3372,7 +3372,7 @@ VOID ARQTimer(struct TNCINFO * TNC)
 				buffptr[1] = sprintf((UCHAR *)&buffptr[2], "FLDigi} Failure with %s\r", STREAM->RemoteCall);
 				C_Q_ADD(&STREAM->PACTORtoBPQ_Q, buffptr);
 			}
-	
+
 			// Send Disc to TNC in case it got the Connects, but we missed the ACKs
 
 			TidyClose(TNC, 0);
@@ -3385,17 +3385,17 @@ VOID ARQTimer(struct TNCINFO * TNC)
 		case ARQ_WAITACK:
 		case ARQ_CONNECTACK:
 		case ARQ_DISC:
-		
+
 			STREAM->Connected = FALSE;		// Back to Command Mode
-			STREAM->ReportDISC = TRUE;	
+			STREAM->ReportDISC = TRUE;
 			ARQ->ARQState = FALSE;
 
 			while (STREAM->PACTORtoBPQ_Q)
 				ReleaseBuffer(Q_REM(&STREAM->PACTORtoBPQ_Q));
-	
+
 			while (STREAM->BPQtoPACTOR_Q)
 				ReleaseBuffer(Q_REM(&STREAM->BPQtoPACTOR_Q));
-	
+
 			strcpy(TNC->WEB_TNCSTATE, "Free");
 			SetWindowText(TNC->xIDC_TNCSTATE, TNC->WEB_TNCSTATE);
 
@@ -3436,7 +3436,7 @@ VOID ProcessARQStatus(struct TNCINFO * TNC, struct ARQINFO * ARQ, char * Input)
 	}
 
 	//	Release all up to LastInSeq
-	
+
 	while (FirstUnAcked != LastInSeq)
 	{
 		FirstUnAcked++;
@@ -3507,7 +3507,7 @@ VOID ProcessARQStatus(struct TNCINFO * TNC, struct ARQINFO * ARQ, char * Input)
 	}
 
 	//	Release rest up to LastRXed
-	
+
 	while (FirstUnAcked != LastRXed)
 	{
 		FirstUnAcked++;
@@ -3536,7 +3536,7 @@ VOID ProcessARQStatus(struct TNCINFO * TNC, struct ARQINFO * ARQ, char * Input)
 	{
 		First++;
 		First &= 63;
-			
+
 		if(ARQ->TXHOLDQ[First])
 		{
 			UINT * Buffer = ARQ->TXHOLDQ[First];
@@ -3547,7 +3547,7 @@ VOID ProcessARQStatus(struct TNCINFO * TNC, struct ARQINFO * ARQ, char * Input)
 //			Debugprintf("Resend %d", First);
 
 			STREAM->BytesResent += Buffer[1];
-		
+
 			SendLen = sprintf(TXBuffer, "%c", First + 32);
 
 			if (TNC->FLInfo->KISSMODE)
@@ -3623,7 +3623,7 @@ VOID FLSlowTimer(struct TNCINFO * TNC)
 		if (FL->CmdControl > 5)			// Every Minute
 		{
 			FL->CmdControl = 0;
-			
+
 			SendKISSCommand(TNC, "FLSTAT: MODEM: WFF:");
 		}
 
@@ -3649,9 +3649,9 @@ static int ProcessXMLData(int port)
 	{
 //		i=sprintf(ErrMsg, "Read Failed for MPSK socket - error code = %d\r\n", WSAGetLastError());
 //		WritetoConsole(ErrMsg);
-				
+
 		closesocket(TNC->TCPSock);
-					
+
 		TNC->CONNECTED = FALSE;
 		if (TNC->Streams[0].Attached)
 			TNC->Streams[0].ReportDISC = TRUE;
@@ -3678,7 +3678,7 @@ static int ProcessXMLData(int port)
 	if (TNC->InternalCmd)
 	{
 		ULONG * buffptr = GetBuff();
-	
+
 		TNC->InternalCmd = FALSE;
 
 		ptr1 = strstr(Message, "<value>");
@@ -3704,7 +3704,7 @@ static int ProcessXMLData(int port)
 				C_Q_ADD(&TNC->Streams[0].PACTORtoBPQ_Q, buffptr);
 			}
 		}
-	
+
 		return 0;
 	}
 
@@ -3754,7 +3754,7 @@ static int ProcessXMLData(int port)
 		{
 /*
 			if (_memicmp(Buffer, "BUSY TRUE", 9) == 0)
-	{	
+	{
 		TNC->BusyFlags |= CDBusy;
 		TNC->Busy = TNC->BusyHold * 10;				// BusyHold  delay
 
@@ -3781,7 +3781,7 @@ static int ProcessXMLData(int port)
 */
 
 	}
-	
+
 	return (0);
 
 }
@@ -3822,7 +3822,7 @@ VOID SendXMLCommand(struct TNCINFO * TNC, char * Command, char * Value, char Par
 	strcpy(FL->LastXML, Command);
 	Len = sprintf(ReqBuf, Req, FL->LastXML, ValueString);
 	Len = sprintf(SendBuff, MsgHddr, Len, ReqBuf);
-	send(TNC->TCPSock, SendBuff, Len, 0); 
+	send(TNC->TCPSock, SendBuff, Len, 0);
 	return;
 }
 
@@ -3843,11 +3843,11 @@ VOID SendXMLPoll(struct TNCINFO * TNC)
 	if (ARQ->ARQTimer)
 	{
 		// if timer is running, poll fot TX State
-		
+
 		strcpy(FL->LastXML, "main.get_trx_state");
 		Len = sprintf(ReqBuf, Req, FL->LastXML, "");
 		Len = sprintf(SendBuff, MsgHddr, Len, ReqBuf);
-		send(TNC->TCPSock, SendBuff, Len, 0); 
+		send(TNC->TCPSock, SendBuff, Len, 0);
 		return;
 	}
 
@@ -3869,7 +3869,7 @@ VOID SendXMLPoll(struct TNCINFO * TNC)
 
 	Len = sprintf(ReqBuf, Req, FL->LastXML, "");
 	Len = sprintf(SendBuff, MsgHddr, Len, ReqBuf);
-	send(TNC->TCPSock, SendBuff, Len, 0); 
+	send(TNC->TCPSock, SendBuff, Len, 0);
 }
 
 //  sudo add-apt-repository ppa:kamalmostafa/fldigi

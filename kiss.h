@@ -19,7 +19,7 @@ typedef struct tagASYINFO
 	UCHAR	RXMSG[512];				// Msg being built
 	UCHAR	RXBUFFER[MAXBLOCK];		// Raw chars from Comms
 	int		RXBCOUNT;				// chars in RXBUFFER
-	UCHAR * RXBPTR;					// get pointer for RXBUFFER (put ptr is RXBCOUNT) 
+	UCHAR * RXBPTR;					// get pointer for RXBUFFER (put ptr is RXBCOUNT)
 	UCHAR * RXMPTR;					// put pointer for RXMSG
 	BOOL	MSGREADY;				// Complete msg in RXMSG
 	BOOL	ESCFLAG;				// FESC/DLE received

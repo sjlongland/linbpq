@@ -925,25 +925,25 @@ SRes LzmaProps_Decode(CLzmaProps *p, const Byte *data, unsigned size)
 {
 	LZ_UInt32 dicSize;
 	Byte d;
-	
+
 	if (size < LZMA_PROPS_SIZE)
 		return SZ_ERROR_UNSUPPORTED;
 	else
 		dicSize = data[1] | ((LZ_UInt32)data[2] << 8) | ((LZ_UInt32)data[3] << 16) | ((LZ_UInt32)data[4] << 24);
-	
+
 	if (dicSize < LZMA_DIC_MIN)
 		dicSize = LZMA_DIC_MIN;
 	p->dicSize = dicSize;
-	
+
 	d = data[0];
 	if (d >= (9 * 5 * 5))
 		return SZ_ERROR_UNSUPPORTED;
-	
+
 	p->lc = d % 9;
 	d /= 9;
 	p->pb = d / 5;
 	p->lp = d % 5;
-	
+
 	return SZ_OK;
 }
 
@@ -1003,22 +1003,22 @@ SRes LzmaDecode(Byte *dest, SizeT *destLen, const Byte *src, SizeT *srcLen,
 	*srcLen = *destLen = 0;
 	if (inSize < RC_INIT_SIZE)
 		return SZ_ERROR_INPUT_EOF;
-	
+
 	LzmaDec_Construct(&p);
 	res = LzmaDec_AllocateProbs(&p, propData, propSize, alloc);
 	if (res != 0)
 		return res;
 	p.dic = dest;
 	p.dicBufSize = outSize;
-	
+
 	LzmaDec_Init(&p);
-	
+
 	*srcLen = inSize;
 	res = LzmaDec_DecodeToDic(&p, outSize, src, srcLen, finishMode, status);
-	
+
 	if (res == SZ_OK && *status == LZMA_STATUS_NEEDS_MORE_INPUT)
 		res = SZ_ERROR_INPUT_EOF;
-	
+
 	(*destLen) = p.dicPos;
 	LzmaDec_FreeProbs(&p, alloc);
 	return res;

@@ -15,10 +15,10 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with LinBPQ/BPQ32.  If not, see http://www.gnu.org/licenses
-*/	
+*/
 
 //
-//	DLL to provide BPQEther support for G8BPQ switch in a 
+//	DLL to provide BPQEther support for G8BPQ switch in a
 //	32bit environment,
 //
 //	Uses BPQ EXTERNAL interface
@@ -58,7 +58,7 @@ along with LinBPQ/BPQ32.  If not, see http://www.gnu.org/licenses
 
 //#include "packet32.h"
 //#include "ntddndis.h"
- 
+
 extern char * PortConfig[33];
 
 typedef struct PCAPStruct
@@ -165,7 +165,7 @@ int ExtProc(int fn, int port,unsigned char * buff)
 		}
 
 		if (PCAPInfo[port].RLIRX)
-		
+
 		//	RLI MODE - An extra 3 bytes before len, seem to be 00 00 41
 
 		{
@@ -174,9 +174,9 @@ int ExtProc(int fn, int port,unsigned char * buff)
 			if ((len < 16) || (len > 320)) return 0; // Probably BPQ Mode Frame
 
 			len-=3;
-		
+
 			memcpy(&buff[7],&pkt_data[19],len);
-		
+
 			len+=5;
 		}
 		else
@@ -186,24 +186,24 @@ int ExtProc(int fn, int port,unsigned char * buff)
 			if ((len < 16) || (len > 320)) return 0; // Probably RLI Mode Frame
 
 			len-=3;
-		
+
 			memcpy(&buff[7],&pkt_data[16],len);
-		
+
 			len+=5;
 		}
 
 		buff[5]=(len & 0xff);
 		buff[6]=(len >> 8);
-		
+
 		return 1;
 
-		
+
 	case 2:				// send
 
 		Debugprintf("BPQETHER Send");
-		
+
  		if (PCAPInfo[port].RLITX)
-		
+
 		//	RLI MODE - An extra 3 bytes before len, seem to be 00 00 41
 
 		{
@@ -216,7 +216,7 @@ int ExtProc(int fn, int port,unsigned char * buff)
 
 			if (txlen < 1 || txlen > 400)
 				return 0;
-			
+
 			memcpy(&txbuff[19],&buff[7],txlen);
 
 		}
@@ -240,17 +240,17 @@ int ExtProc(int fn, int port,unsigned char * buff)
 		memcpy(&txbuff[12],&PCAPInfo[port].EtherType,2);
 
 		txlen+=14;
-		
+
 		if (txlen < 60) txlen = 60;
 
-		// Send down the packet 
+		// Send down the packet
 
 		if (pcap_sendpacketx(PCAPInfo[port].adhandle, txbuff, txlen) != 0)
 		{
 			char buf[256];
-			n=sprintf(buf,"\nError sending the packet: \n", pcap_geterrx(PCAPInfo[port].adhandle));		
+			n=sprintf(buf,"\nError sending the packet: \n", pcap_geterrx(PCAPInfo[port].adhandle));
 			Debugprintf(buf);
-			
+
 			return 3;
 		}
 
@@ -260,7 +260,7 @@ int ExtProc(int fn, int port,unsigned char * buff)
 
 	case 3:				// CHECK IF OK TO SEND
 
-		return (0);		// OK	
+		return (0);		// OK
 
 	case 4:				// reinit
 
@@ -278,13 +278,13 @@ int ExtProc(int fn, int port,unsigned char * buff)
 UINT ETHERExtInit(struct PORTCONTROL *  PortEntry)
 {
 	//	Can have multiple ports, each mapping to a different Ethernet Adapter
-	
+
 	//	The Adapter number is in IOADDR
 	//
 
 	if (InitPCAP())
 		OpenPCAP(PortEntry->IOBASE, PortEntry->PORTNUMBER);
-	
+
 	return ((int) ExtProc);
 }
 
@@ -324,14 +324,14 @@ InitPCAP()
 	if ((pcap_compilex=GetAddress("pcap_compile")) == 0 ) return FALSE;
 
 	if ((pcap_setfilterx=GetAddress("pcap_setfilter")) == 0 ) return FALSE;
-	
+
 	if ((pcap_open_livex = (pcap_t * (__cdecl *)())
 		GetProcAddress(PcapDriver,"pcap_open_live")) == 0 ) return FALSE;
 
 	if ((pcap_geterrx=GetAddress("pcap_geterr")) == 0 ) return FALSE;
 
 	if ((pcap_next_exx=GetAddress("pcap_next_ex")) == 0 ) return FALSE;
-	
+
 	return (TRUE);
 #endif
 }
@@ -354,7 +354,7 @@ FARPROCX GetAddress(char * Proc)
 
 		n=sprintf(buf,"Error finding %s - %d\n", Proc,err);
 		WritetoConsole(buf);
-	
+
 		return(0);
 	}
 
@@ -388,7 +388,7 @@ int OpenPCAP(int IOBASE, int port)
 
 	/* Open the adapter */
 	if ((PCAPInfo[port].adhandle= pcap_open_livex(Adapter,	// name of the device
-							 65536,			// portion of the packet to capture. 
+							 65536,			// portion of the packet to capture.
 											// 65536 grants that the whole packet will be captured on all the MACs.
 							 PCAPInfo[port].Promiscuous,	// promiscuous mode (nonzero means promiscuous)
 							 1,				// read timeout
@@ -401,32 +401,32 @@ int OpenPCAP(int IOBASE, int port)
 		/* Free the device list */
 		return -1;
 	}
-	
+
 	/* Check the link layer. We support only Ethernet for simplicity. */
 	if(pcap_datalinkx(PCAPInfo[port].adhandle) != DLT_EN10MB)
 	{
 		n=sprintf(buf,"This program works only on Ethernet networks.\n");
 		WritetoConsole(buf);
-		
+
 		/* Free the device list */
 		return -1;
 	}
 
-	netmask=0xffffff; 
+	netmask=0xffffff;
 
 	sprintf(packet_filter,"ether[12:2]=0x%x",
 		ntohs(PCAPInfo[port].EtherType));
 
 	//compile the filter
 	if (pcap_compilex(PCAPInfo[port].adhandle, &fcode, packet_filter, 1, netmask) <0 )
-	{	
+	{
 		n=sprintf(buf,"Unable to compile the packet filter. Check the syntax.\n");
 		WritetoConsole(buf);
 
 		/* Free the device list */
 		return -1;
 	}
-	
+
 	//set the filter
 
 	if (pcap_setfilterx(PCAPInfo[port].adhandle, &fcode)<0)
@@ -437,7 +437,7 @@ int OpenPCAP(int IOBASE, int port)
 		/* Free the device list */
 		return -1;
 	}
-	
+
 	n=sprintf(buf,"Using %s\n", Adapter);
 	WritetoConsole(buf);
 
@@ -475,7 +475,7 @@ static BOOL ReadConfigFile(int Port)
 			ptr2 = strchr(ptr1, 13);
 
 			strcpy(errbuf,buf);			// save in case of error
-	
+
 			if (!ProcessLine(buf, Port, FALSE))
 			{
 				WritetoConsole("BPQEther - Bad config record ");
@@ -485,7 +485,7 @@ static BOOL ReadConfigFile(int Port)
 		}
 		return (TRUE);
 	}
-		
+
 	n=sprintf(buf,"No config info found in bpq32.cfg\n");
 	WritetoConsole(buf);
 
@@ -515,7 +515,7 @@ static ProcessLine(char * buf, int Port, BOOL CheckPort)
 	if (CheckPort)
 	{
 		p_port = strtok(NULL, " \t\n\r");
-			
+
 		if (p_port == NULL) return (FALSE);
 
 		port = atoi(p_port);
@@ -526,7 +526,7 @@ static ProcessLine(char * buf, int Port, BOOL CheckPort)
 	if(_stricmp(ptr,"ADAPTER") == 0)
 	{
 		p_Adapter = strtok(NULL, " \t\n\r");
-		
+
 		strcpy(Adapter,p_Adapter);
 		return (TRUE);
 	}
@@ -534,7 +534,7 @@ static ProcessLine(char * buf, int Port, BOOL CheckPort)
 	if(_stricmp(ptr,"TYPE") == 0)
 	{
 		p_type = strtok(NULL, " \t\n\r");
-		
+
 		if (p_type == NULL) return (FALSE);
 
 		num=sscanf(p_type,"%x",&a);
@@ -549,7 +549,7 @@ static ProcessLine(char * buf, int Port, BOOL CheckPort)
 	if(_stricmp(ptr,"promiscuous") == 0)
 	{
 		ptr = strtok(NULL, " \t\n\r");
-		
+
 		if (ptr == NULL) return (FALSE);
 
 		PCAPInfo[Port].Promiscuous = atoi(ptr);
@@ -561,7 +561,7 @@ static ProcessLine(char * buf, int Port, BOOL CheckPort)
 	if(_stricmp(ptr,"RXMODE") == 0)
 	{
 		p_port = strtok(NULL, " \t\n\r");
-			
+
 		if (p_port == NULL) return (FALSE);
 
 		if(_stricmp(p_port,"RLI") == 0)
@@ -577,13 +577,13 @@ static ProcessLine(char * buf, int Port, BOOL CheckPort)
 		}
 
 		return FALSE;
-	
+
 	}
 
 	if(_stricmp(ptr,"TXMODE") == 0)
 	{
 		p_port = strtok(NULL, " \t\n\r");
-			
+
 		if (p_port == NULL) return (FALSE);
 
 		if(_stricmp(p_port,"RLI") == 0)
@@ -605,7 +605,7 @@ static ProcessLine(char * buf, int Port, BOOL CheckPort)
 	if(_stricmp(ptr,"DEST") == 0)
 	{
 		p_mac = strtok(NULL, " \t\n\r");
-		
+
 		if (p_mac == NULL) return (FALSE);
 
 		num=sscanf(p_mac,"%x-%x-%x-%x-%x-%x",&a,&b,&c,&d,&e,&f);
@@ -626,9 +626,9 @@ static ProcessLine(char * buf, int Port, BOOL CheckPort)
 	}
 
 	if(_stricmp(ptr,"SOURCE") == 0)
-	{	
+	{
 		p_mac = strtok(NULL, " \t\n\r");
-		
+
 		if (p_mac == NULL) return (FALSE);
 
 		num=sscanf(p_mac,"%x-%x-%x-%x-%x-%x",&a,&b,&c,&d,&e,&f);
@@ -651,8 +651,8 @@ static ProcessLine(char * buf, int Port, BOOL CheckPort)
 	//	Bad line
 	//
 	return (FALSE);
-	
+
 }
-	
+
 
 

@@ -66,7 +66,7 @@ extern int NUMBEROFNODES;
 #define InfoMax	2000				// Max Info
 #define HFCTextOffset 88000;		// HF modes CTEXT
 
-#define C_IDMSG	512 
+#define C_IDMSG	512
 #define C_ROUTES 90000				// Allow 2500
 #define C_CTEXT	2048
 #define C_PORTS	2560
@@ -113,12 +113,12 @@ typedef struct _TRANSPORTENTRY
 	union						// POINTER TO TARGET HOST/LINK/DEST/PORT (if Pactor)
 	{
 		struct PORTCONTROL * PORT;
-		struct _LINKTABLE * LINK;	
+		struct _LINKTABLE * LINK;
 		struct DEST_LIST * DEST;
 		struct _BPQVECSTRUC * HOST;
 		struct _EXTPORTDATA * EXTPORT;
-	}	L4TARGET;	
-		
+	}	L4TARGET;
+
 	UCHAR	L4MYCALL[7];			// CALL WE ARE USING
 
 	UCHAR	CIRCUITINDEX;			// OUR CIRCUIT INFO
@@ -139,7 +139,7 @@ typedef struct _TRANSPORTENTRY
 	UCHAR	L4CIRCUITTYPE;		// BIT SIGNIFICANT - SEE BELOW
 	UCHAR	KAMSESSION;			// Session Number on KAM Host Mode TNC
 	struct DATAMESSAGE * L4TX_Q;
-	struct _L3MESSAGEBUFFER * L4RX_Q;	
+	struct _L3MESSAGEBUFFER * L4RX_Q;
 	struct DATAMESSAGE * L4HOLD_Q;				// FRAMES WAITING TO BE ACKED
 	struct _L3MESSAGEBUFFER * L4RESEQ_Q;		// FRAMES RECEIVED OUT OF SEQUENCE
 
@@ -147,13 +147,13 @@ typedef struct _TRANSPORTENTRY
 	USHORT	L4TIMER;
 	UCHAR	L4ACKREQ;			// DATA ACK NEEDED
 	UCHAR	L4RETRIES;			// RETRY COUNTER
-	USHORT	L4KILLTIMER;		// IDLE CIRCUIT TIMER 
+	USHORT	L4KILLTIMER;		// IDLE CIRCUIT TIMER
 	USHORT	SESSIONT1;			// TIMEOUT FOR SESSIONS FROM HERE
 	UCHAR	SESSPACLEN;			// PACLEN FOR THIS SESSION
 	UCHAR	BADCOMMANDS;		// SUCCESSIVE BAD COMMANDS
 	UCHAR	STAYFLAG;			// STAY CONNECTED FLAG
 	UCHAR	SPYFLAG;			// SPY - CONNECT TO NODE VIA BBS CALLSIGN
-		
+
 	UCHAR	RTT_SEQ;			// SEQUENCE NUMBER BEING TIMED
 	ULONG	RTT_TIMER;			// TIME ABOVE SEQUENCE WAS SENT
 
@@ -196,7 +196,7 @@ typedef struct ROUTE
 {
 	// Adjacent Nodes
 
-	UCHAR NEIGHBOUR_CALL[7];	// AX25 CALLSIGN	
+	UCHAR NEIGHBOUR_CALL[7];	// AX25 CALLSIGN
 	UCHAR NEIGHBOUR_DIGI1[7];	// DIGIS EN ROUTE (MAX 2 - ?? REMOVE)
 	UCHAR NEIGHBOUR_DIGI2[7];	// DIGIS EN ROUTE (MAX 2 - ?? REMOVE)
 
@@ -219,9 +219,9 @@ typedef struct ROUTE
 	BOOL NoKeepAlive;			// Suppress Keepalive Processing
 	int	LastConnectAttempt;		// To stop us trying too often
 
-	int Status;			// 
+	int Status;			//
 	int LastRTT;			// Last Value Reported
-	int RTT;				// Current	
+	int RTT;				// Current
 	int SRTT;				// Smoothed RTT
 	int NeighbourSRTT;		// Other End SRTT
 //	int RTTIncrement;		// Average of Ours and Neighbours SRTT in 10 ms
@@ -250,7 +250,7 @@ typedef struct ROUTE
 typedef struct _L3MESSAGEBUFFER
 {
 //
-//	NETROM LEVEL 3 MESSAGE with Buffer Header 
+//	NETROM LEVEL 3 MESSAGE with Buffer Header
 //
 	struct _L3MESSAGEBUFFER * Next;
 	UCHAR	Port;
@@ -278,7 +278,7 @@ typedef struct _L3MESSAGEBUFFER
 typedef struct _L3MESSAGE
 {
 //
-//	NETROM LEVEL 3 MESSAGE - WITHOUT L2 INFO 
+//	NETROM LEVEL 3 MESSAGE - WITHOUT L2 INFO
 //
 	UCHAR	L3SRCE[7];			// ORIGIN NODE
 	UCHAR	L3DEST[7];			// DEST NODE
@@ -313,14 +313,14 @@ typedef struct _MESSAGE
 //	 MAY BE UP TO 56 BYTES OF DIGIS
 
 	UCHAR	CTL;
-	UCHAR	PID; 
+	UCHAR	PID;
 
-	union 
+	union
 	{                   /*  array named screen */
 		UCHAR L2DATA[256];
 		struct _L3MESSAGE L3MSG;
 	};
-		
+
 	UCHAR Padding[BUFFLEN - sizeof(time_t) - sizeof(unsigned short) - sizeof(VOID *) - 256 - MSGHDDRLEN - 16];
 
 	unsigned short Process;
@@ -344,9 +344,9 @@ typedef struct HDDRWITHDIGIS
 	UCHAR	DIGIS[8][7];
 
 	UCHAR	CTL;
-	UCHAR	PID; 
+	UCHAR	PID;
 
-	union 
+	union
 	{                   /*  array named screen */
 		UCHAR L2DATA[256];
 		struct _L3MESSAGE L3MSG;
@@ -365,7 +365,7 @@ typedef struct DATAMESSAGE
 	UCHAR	PORT;
 	USHORT	LENGTH;
 
-	UCHAR	PID; 
+	UCHAR	PID;
 
 	UCHAR L2DATA[256];
 
@@ -432,7 +432,7 @@ typedef struct DEST_ROUTE_ENTRY
 {
 	struct ROUTE * ROUT_NEIGHBOUR;	// POINTER TO NEXT NODE IN PATH
 	USHORT LastRTT;					// Last Value Reported
-	USHORT RTT;						// Current	
+	USHORT RTT;						// Current
 	USHORT SRTT;					// Smoothed RTT
 	UCHAR Hops;
 } *PDEST_ROUTE_ENTRY;
@@ -444,9 +444,9 @@ typedef struct DEST_LIST
 	struct DEST_LIST * DEST_CHAIN;	// SORTED LIST CHAIN
 
 	UCHAR DEST_CALL[7];			// DESTINATION CALLSIGN (AX25 FORMAT)
-	UCHAR DEST_ALIAS[6];	
+	UCHAR DEST_ALIAS[6];
 
-	UCHAR DEST_STATE;			// CONTROL BITS - SETTING UP, ACTIVE ETC	
+	UCHAR DEST_STATE;			// CONTROL BITS - SETTING UP, ACTIVE ETC
 
 	UCHAR DEST_ROUTE;			// CURRENTY ACTIVE DESTINATION
 	UCHAR INP3FLAGS;
@@ -581,7 +581,7 @@ typedef struct PORTCONTROL
 					// 12 = RLC400 14 = INTERNAL 16 = EXTERNAL
 
 
-	USHORT IOBASE;		// CONFIG PARAMS FOR HARDWARE DRIVERS 
+	USHORT IOBASE;		// CONFIG PARAMS FOR HARDWARE DRIVERS
 
 	char INTLEVEL;		// NEXT 4 SAME FOR ALL H/W TYPES
 	int	BAUDRATE;		// SPEED
@@ -594,7 +594,7 @@ typedef struct PORTCONTROL
 	UCHAR SOFTDCDFLAG;	// IF SET USE 'SOFT DCD' - IF MODEM CANT GIVE A REAL ONE
 	UCHAR PORTSLOTTIME;	// SLOT TIME
 	UCHAR PORTTAILTIME;	// TAIL TIME
-	UCHAR BBSBANNED;	// SET IF PORT CAN'T ACCEPT L2 CALLS TO BBS CALLSIGN 
+	UCHAR BBSBANNED;	// SET IF PORT CAN'T ACCEPT L2 CALLS TO BBS CALLSIGN
 	UCHAR PORTT1;		// L2 TIMEOUT
 	UCHAR PORTT2;		// L2 DELAYED ACK TIMER
 	UCHAR PORTN2;		// RETRIES
@@ -613,7 +613,7 @@ typedef struct PORTCONTROL
 	UCHAR USERS;			// MAX USERS ON PORT
 	USHORT KISSFLAGS;		// KISS SPECIAL MODE BITS
 	UCHAR PORTINTERLOCK;	// TO DEFINE PORTS WHICH CANT TX AT SAME TIME
-	UCHAR NODESPACLEN;		// MAX LENGTH OF 'NODES' MSG 
+	UCHAR NODESPACLEN;		// MAX LENGTH OF 'NODES' MSG
 	UCHAR TXPORT;			// PORT FOR SHARED TX OPERATION
 	MHSTRUC * PORTMHEARD;		// POINTER TO MH DATA
 
@@ -648,7 +648,7 @@ typedef struct PORTCONTROL
 
 typedef struct FULLPORTDATA
 {
-	struct PORTCONTROL PORTCONTROL;	
+	struct PORTCONTROL PORTCONTROL;
 	UCHAR HARDWAREDATA[200];			// WORK AREA FOR HARDWARE DRIVERS
 } *PFULLPORTDATA;
 
@@ -656,11 +656,11 @@ typedef struct FULLPORTDATA
 
 typedef struct KISSINFO
 {
-	struct PORTCONTROL  PORT;	
+	struct PORTCONTROL  PORT;
 
 	int LINKSTS;			// CURRENT STATE
 	UINT * CURALP;			// CURRENT BUFFER
-	UINT * NEXTCHR;			// 	
+	UINT * NEXTCHR;			//
 	UINT ASYNCMSG_Q;		//  RECEIVED MESSAGES
 	UINT KISSTX_Q	;		// MESSAGES TO SEND
 	int ESCFLAG	;			// 		; SET IF LAST RX CHAR WAS DLE
@@ -675,7 +675,7 @@ typedef struct KISSINFO
 	int REALKISSFLAGS;			// 	; KISS FLAGS FOR ACTIVE SUBPORT
 
 	USHORT TXCCC;			// 	; NETROM/BPQKISS CHECKSUMS
-	USHORT RXCCC;			// 
+	USHORT RXCCC;			//
 
 	int TXACTIVE;			// TIMER TO DETECT 'HUNG' SENDS
 
@@ -695,7 +695,7 @@ typedef struct _EXTPORTDATA
 	struct PORTCONTROL PORTCONTROL	;	// REMAP HARDWARE INFO
 
 	int (FAR * PORT_EXT_ADDR) ();		// ADDR OF RESIDENT ROUTINE
-	char PORT_DLL_NAME[16];	
+	char PORT_DLL_NAME[16];
 	UCHAR EXTRESTART;					// FLAG FOR DRIVER REINIT
 	HINSTANCE DLLhandle;
 	int MAXHOSTMODESESSIONS;			// Max Host Sessions supported (Used for KAM Pactor + ax.25 support)
@@ -719,7 +719,7 @@ typedef struct _HDLCDATA
 //
 
 	ULONG ASIOC;			// A CHAN ADDRESSES
-	ULONG SIO;				// OUR ADDRESSES (COULD BE A OR B) 
+	ULONG SIO;				// OUR ADDRESSES (COULD BE A OR B)
 	ULONG SIOC;
 	ULONG BSIOC;			// B CHAN CONTROL
 
@@ -731,7 +731,7 @@ typedef struct _HDLCDATA
 //	UINT * IOTXCA;				// INTERRUPT VECTORS
 //	UINT * IOTXEA;
 //	UINT * IORXCA;
-//	UINT * IORXEA;	
+//	UINT * IORXEA;
 
 	UCHAR LINKSTS;
 
@@ -759,7 +759,7 @@ typedef struct _HDLCDATA
 	UCHAR PORTSLOTIMER;
 
 	USHORT TXBRG;				// FOR CARDS WITHOUT /32 DIVIDER
-	USHORT RXBRG;	
+	USHORT RXBRG;
 
 	UCHAR WR10	;				// NRZ/NRZI FLAG
 
@@ -782,7 +782,7 @@ extern int  DEST_LIST_LEN;
 extern int  MAXDESTS;			// MAX NODES IN SYSTEM
 
 extern struct _LINKTABLE * LINKS;
-extern int	LINK_TABLE_LEN; 
+extern int	LINK_TABLE_LEN;
 extern int	MAXLINKS;
 /*
 L4TABLE		DD	0
@@ -830,7 +830,7 @@ typedef struct _LINKTABLE
 
 	UCHAR	L2FLAGS;		// CONTROL BITS
 	UCHAR	VER1FLAG;		// SET IF OTHER END RUNNING VERSION 1
-  
+
 	VOID *	RX_Q;			// PACKETS RECEIVED ON THIS LINK
 	VOID *	TX_Q;			// PACKETS TO SEND
 	VOID *	FRAMES[8];		// FRAMES WAITING ACK
@@ -979,7 +979,7 @@ struct SEM
 // DED Emulator Stream Info
 
 struct StreamInfo
-{ 
+{
 	UCHAR * Chan_TXQ;		//	!! Leave at front so ASM Code Finds it
 							// FRAMES QUEUED TO NODE
     int BPQStream;
@@ -1044,7 +1044,7 @@ struct TNCDATA
 	int CMDTMR;				// TRANSARENT MODE ESCAPE TIMER
 	int COMCOUNT;			// NUMBER OF COMMAND CHARS RECEIVED
 	int CMDTIME ;			// GUARD TIME FOR TRANS MODE EACAPE
-	int COMCHAR;			// CHAR TO LEAVE CONV MODE 
+	int COMCHAR;			// CHAR TO LEAVE CONV MODE
 
 	char ECHOFLAG;			// ECHO ENABLED
 	BOOL TRACEFLAG;			//  MONITOR ON/OFF
@@ -1056,7 +1056,7 @@ struct TNCDATA
 	BOOL NEWMODE;
 	BOOL CONMODEFLAG;		//  CONNECT MODE - CONV OR TRANS
 	BOOL LFIGNORE;
-	BOOL MCON;				//  TRACE MODE FLAGS 
+	BOOL MCON;				//  TRACE MODE FLAGS
 	BOOL MCOM;
 	BOOL MALL;
 	BOOL AUTOLF;			//  Add LF after CR
@@ -1065,11 +1065,11 @@ struct TNCDATA
 	BOOL MTXFORCE;			//  MONITOR TRANSMITTED FRAMES EVEN IF M OFF
 	UINT MMASK;				// MONITOR PORT MASK
 	BOOL HEADERLN;			//  PUT MONITORED DATA ON NEW LINE FLAG
-	
+
 	BOOL MODEFLAG;			//  COMMAND/DATA MODE
 
 	UINT APPLICATION;		// APPLMASK
-	
+
 	UINT APPLFLAGS;		// FLAGS TO CONTROL APPL SYSTEM
 
 	UINT SENDPAC;			//  SEND PACKET CHAR
@@ -1083,11 +1083,11 @@ struct TNCDATA
 
 	// DED Mode Fields
 
-	int PollDelay;			// Used by VCOM to slow down continuous reads on real port 
+	int PollDelay;			// Used by VCOM to slow down continuous reads on real port
 
 	struct StreamInfo * Channels[MAXSTREAMS+1];
 	char MODE;				// INITIALLY TERMINAL MODE
-	char HOSTSTATE;			// HOST STATE MACHINE 
+	char HOSTSTATE;			// HOST STATE MACHINE
 	int MSGCOUNT;			// LENGTH OF MESSAGE EXPECTED
 	int MSGLENGTH;
 	char MSGTYPE;
@@ -1104,7 +1104,7 @@ struct TNCDATA
 
 	// Kantronics Fields
 
-	int	RXBPtr;	
+	int	RXBPtr;
 	char nextMode;			// Mode after RESET
 
 	// SCS Fields
@@ -1128,7 +1128,7 @@ struct TNCDATA
 #define MAX_ENTRIES 128
 #define MaxMHEntries 100
 #define MAX_BROADCASTS 8
-#define MAXUDPPORTS 30 
+#define MAXUDPPORTS 30
 
 #ifndef MAXGETHOSTSTRUCT
 #define MAXGETHOSTSTRUCT        1024
@@ -1164,7 +1164,7 @@ struct arp_table_entry
 
 	union
 	{
-		struct sockaddr_in6 destaddr6;  
+		struct sockaddr_in6 destaddr6;
 		struct sockaddr_in destaddr;
 	};
 
@@ -1209,7 +1209,7 @@ struct AXIPPORTINFO
 
 	int NumberofBroadcastAddreses;
 	BOOL Checkifcanreply;
-	
+
 	int arp_table_len;
 	int ResolveIndex;			// pointer to entry being resolved
 

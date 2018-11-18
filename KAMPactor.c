@@ -15,10 +15,10 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with LinBPQ/BPQ32.  If not, see http://www.gnu.org/licenses
-*/	
+*/
 
 //
-//	DLL to inteface KAM TNC in Pactor Mode to BPQ32 switch 
+//	DLL to inteface KAM TNC in Pactor Mode to BPQ32 switch
 //
 //	Uses BPQ EXTERNAL interface
 //
@@ -28,11 +28,11 @@ along with LinBPQ/BPQ32.  If not, see http://www.gnu.org/licenses
 // Send Change to ISS before each transmission
 // Support up to 32 BPQ Ports
 
-// Version 1.2.1.3 August 2010 
+// Version 1.2.1.3 August 2010
 
 // Drop RTS as well as DTR on close
 
-// Version 1.2.1.4 August 2010 
+// Version 1.2.1.4 August 2010
 
 // Save Minimized State
 
@@ -132,7 +132,7 @@ int ProcessLine(char * buf, int Port)
 
 		BPQport=0;
 		BPQport = atoi(ptr);
-	
+
 		p_cmd = strtok(NULL, " \t\n\r");
 
 		if (Port && Port != BPQport)
@@ -193,7 +193,7 @@ ConfigLine:
 				TNC->VeryOldMode = TRUE;
 			}
 			else
-		
+
 			if (_memicmp(buf, "BUSYWAIT", 8) == 0)		// Wait time beofre failing connect if busy
 				TNC->BusyWait = atoi(&buf[8]);
 
@@ -208,7 +208,7 @@ ConfigLine:
 	return (TRUE);
 }
 
-#define	FEND	0xC0	// KISS CONTROL CODES 
+#define	FEND	0xC0	// KISS CONTROL CODES
 #define	FESC	0xDB
 #define	TFEND	0xDC
 #define	TFESC	0xDD
@@ -252,7 +252,7 @@ int KAMExtProc(int fn, int port,unsigned char * buff)
 
 	if (TNC == NULL)
 		return 0;
-	
+
 	if (fn < 4 || fn > 5)
 		if (TNC->hDevice == 0)
 			return 0;					// Port not open
@@ -290,7 +290,7 @@ int KAMExtProc(int fn, int port,unsigned char * buff)
 			if (STREAM->PACTORtoBPQ_Q !=0)
 			{
 				int datalen;
-			
+
 				buffptr=Q_REM(&STREAM->PACTORtoBPQ_Q);
 
 				datalen=buffptr[1];
@@ -304,13 +304,13 @@ int KAMExtProc(int fn, int port,unsigned char * buff)
 
 	//			buff[5]=(datalen & 0xff);
 	//			buff[6]=(datalen >> 8);
-	
+
 				ReleaseBuffer(buffptr);
-	
+
 				return (1);
 			}
 		}
-			
+
 		return 0;
 
 	case 2:				// send
@@ -323,7 +323,7 @@ int KAMExtProc(int fn, int port,unsigned char * buff)
 
 		Stream = buff[4];
 		STREAM = &TNC->Streams[Stream];
-		
+
 		if (!TNC->TNCOK)
 		{
 			// Send Error Response
@@ -332,7 +332,7 @@ int KAMExtProc(int fn, int port,unsigned char * buff)
 			memcpy(buffptr+2, "No Connection to PACTOR TNC\r", 36);
 
 			C_Q_ADD(&STREAM->PACTORtoBPQ_Q, buffptr);
-			
+
 			return 0;
 		}
 
@@ -354,16 +354,16 @@ int KAMExtProc(int fn, int port,unsigned char * buff)
 
 
 	case 3:				// CHECK IF OK TO SEND. Also used to check if TNC is responding
-		
+
 		Stream = (int)buff;
-	
+
 		STREAM = &TNC->Streams[Stream];
 
 		if (Stream == 0)
 		{
 			if (TNC->HFPacket)
 			{
-				if (TNC->Mem1 < 2000 || TNC->Streams[0].FramesOutstanding  > 4)	
+				if (TNC->Mem1 < 2000 || TNC->Streams[0].FramesOutstanding  > 4)
 					return (1 | TNC->HostMode << 8 | STREAM->Disconnecting << 15);
 
 			}
@@ -375,7 +375,7 @@ int KAMExtProc(int fn, int port,unsigned char * buff)
 		}
 		else
 		{
-			if (STREAM->FramesOutstanding > 3 || STREAM->BytesOutstanding > 500 || TNC->Mem1 < 500)	
+			if (STREAM->FramesOutstanding > 3 || STREAM->BytesOutstanding > 500 || TNC->Mem1 < 500)
 				return (1 | TNC->HostMode << 8 | STREAM->Disconnecting << 15);
 		}
 
@@ -390,7 +390,7 @@ int KAMExtProc(int fn, int port,unsigned char * buff)
 		EncodeAndSend(TNC, "Q", 1);			// Exit Host Mode
 		Sleep(50);
 
-		CloseCOMPort(TNCInfo[port]->hDevice);		
+		CloseCOMPort(TNCInfo[port]->hDevice);
 		return (0);
 
 	case 6:				// Scan Control
@@ -475,7 +475,7 @@ UINT KAMExtInit(EXTPORTDATA * PortEntry)
 
 	PortEntry->PORTCONTROL.PROTOCOL = 10;	// WINMOR/Pactor
 	PortEntry->PORTCONTROL.PORTQUALITY = 0;
-	PortEntry->SCANCAPABILITIES = NONE;		// No Scan Control 
+	PortEntry->SCANCAPABILITIES = NONE;		// No Scan Control
 
 	TNC->Interlock = PortEntry->PORTCONTROL.PORTINTERLOCK;
 
@@ -530,7 +530,7 @@ UINT KAMExtInit(EXTPORTDATA * PortEntry)
 	TNC->InitScript = _strupr(TNC->InitScript);
 
 	ptr = strstr(TNC->InitScript, "MAXUSERS");
-	
+
 	if (ptr)
 	{
 		ptr = strchr(ptr,'/');  // to the separator
@@ -559,31 +559,31 @@ UINT KAMExtInit(EXTPORTDATA * PortEntry)
 
 	CreatePactorWindow(TNC, ClassName, WindowTitle, RigControlRow, PacWndProc, 500, 213, ForcedClose);
 
- 
+
 	CreateWindowEx(0, "STATIC", "Comms State", WS_CHILD | WS_VISIBLE, 10,6,120,20, TNC->hDlg, NULL, hInstance, NULL);
 	TNC->xIDC_COMMSSTATE = CreateWindowEx(0, "STATIC", "", WS_CHILD | WS_VISIBLE, 116,6,386,20, TNC->hDlg, NULL, hInstance, NULL);
-	
+
 	CreateWindowEx(0, "STATIC", "TNC State", WS_CHILD | WS_VISIBLE, 10,28,106,20, TNC->hDlg, NULL, hInstance, NULL);
 	TNC->xIDC_TNCSTATE = CreateWindowEx(0, "STATIC", "", WS_CHILD | WS_VISIBLE, 116,28,520,20, TNC->hDlg, NULL, hInstance, NULL);
 
 	CreateWindowEx(0, "STATIC", "Mode", WS_CHILD | WS_VISIBLE, 10,50,80,20, TNC->hDlg, NULL, hInstance, NULL);
 	TNC->xIDC_MODE = CreateWindowEx(0, "STATIC", "", WS_CHILD | WS_VISIBLE, 116,50,200,20, TNC->hDlg, NULL, hInstance, NULL);
- 
+
 	CreateWindowEx(0, "STATIC", "Status", WS_CHILD | WS_VISIBLE, 10,72,110,20, TNC->hDlg, NULL, hInstance, NULL);
 	TNC->xIDC_STATE = CreateWindowEx(0, "STATIC", "", WS_CHILD | WS_VISIBLE, 116,72,144,20, TNC->hDlg, NULL, hInstance, NULL);
 
  	CreateWindowEx(0, "STATIC", "TX/RX State", WS_CHILD | WS_VISIBLE,10,94,80,20, TNC->hDlg, NULL, hInstance, NULL);
 	TNC->xIDC_TXRX = CreateWindowEx(0, "STATIC", "", WS_CHILD | WS_VISIBLE,116,94,374,20 , TNC->hDlg, NULL, hInstance, NULL);
- 
+
 	CreateWindowEx(0, "STATIC", "Free Space", WS_CHILD | WS_VISIBLE,10,116,80,20, TNC->hDlg, NULL, hInstance, NULL);
 	TNC->xIDC_BUFFERS = CreateWindowEx(0, "STATIC", "", WS_CHILD | WS_VISIBLE,116,116,374,20 , TNC->hDlg, NULL, hInstance, NULL);
-	
+
 	CreateWindowEx(0, "STATIC", "Traffic", WS_CHILD | WS_VISIBLE,10,138,80,20, TNC->hDlg, NULL, hInstance, NULL);
 	TNC->xIDC_TRAFFIC = CreateWindowEx(0, "STATIC", "RX 0 TX 0 ACKED 0", WS_CHILD | WS_VISIBLE,116,138,374,20 , TNC->hDlg, NULL, hInstance, NULL);
 
 	TNC->ClientHeight = 213;
 	TNC->ClientWidth = 500;
-	
+
 	MoveWindows(TNC);
 #endif
 	OpenCOMMPort(TNC, PortEntry->PORTCONTROL.SerialPortName, PortEntry->PORTCONTROL.BAUDRATE, FALSE);
@@ -599,7 +599,7 @@ void CheckRXKAM(struct TNCINFO * TNC)
 {
 	int Length, Len;
 
-	// only try to read number of bytes in queue 
+	// only try to read number of bytes in queue
 
 	if (TNC->RXLen == 500)
 		TNC->RXLen = 0;
@@ -614,7 +614,7 @@ void CheckRXKAM(struct TNCINFO * TNC)
 	Length = TNC->RXLen;
 
 	// If first char != FEND, then probably a Terminal Mode Frame. Wait for CR on end
-			
+
 	if (TNC->RXBuffer[0] != FEND)
 	{
 		// Char Mode Frame I think we need to see cmd: on end
@@ -636,7 +636,7 @@ void CheckRXKAM(struct TNCINFO * TNC)
 		// Complete Char Mode Frame
 
 		TNC->RXLen = 0;		// Ready for next frame
-					
+
 		if (TNC->HostMode == 0)
 		{
 			// We think TNC is in Terminal Mode
@@ -667,7 +667,7 @@ void CheckRXKAM(struct TNCINFO * TNC)
 
 	TNC->RXLen = 0;		// Ready for next frame
 
-		
+
 	return;
 
 }
@@ -685,21 +685,21 @@ VOID ProcessHostFrame(struct TNCINFO * TNC, UCHAR * rxbuffer, int Len)
 		rxbuffer++;
 		Len--;
 	}
-	
+
 	FendPtr = memchr(&rxbuffer[1], FEND, Len-1);
-	
+
 	if (FendPtr == &rxbuffer[Len-1])
 	{
 		ProcessKHOSTPacket(TNC, &rxbuffer[1], Len - 2);
 		return;
 	}
-		
+
 	// Process the first Packet in the buffer
 
 	NewLen =  FendPtr - rxbuffer -1;
 
 	ProcessKHOSTPacket(TNC, &rxbuffer[1], NewLen);
-	
+
 	// Loop Back
 
 	ProcessHostFrame(TNC, FendPtr+1, Len - NewLen - 2);
@@ -729,7 +729,7 @@ VOID KAMPoll(int Port)
 		Stream = 0;
 
 
-	// If Pactor Session has just been attached, drop back to cmd mode and set Pactor Call to 
+	// If Pactor Session has just been attached, drop back to cmd mode and set Pactor Call to
 	// the connecting user's callsign
 
 	for (Stream = 0; Stream <= MaxStreams; Stream++)
@@ -748,13 +748,13 @@ VOID KAMPoll(int Port)
 				UCHAR TXMsg[1000] = "D20";
 				int datalen;
 				char Msg[80];
-				
+
 				TNC->HFPacket = FALSE;
 				TNC->TimeInRX = 0;
 
 				calllen = ConvFromAX25(TNC->PortRecord->ATTACHEDSESSIONS[0]->L4USER, TNC->Streams[0].MyCall);
 				TNC->Streams[0].MyCall[calllen] = 0;
-		
+
 					EncodeAndSend(TNC, "X", 1);			// ??Return to packet mode??
 					if (TNC->VeryOldMode)
 						datalen = sprintf(TXMsg, "C20MYCALL %s", TNC->Streams[0].MyCall);
@@ -762,7 +762,7 @@ VOID KAMPoll(int Port)
 						datalen = sprintf(TXMsg, "C20MYPTCALL %s", TNC->Streams[0].MyCall);
 					EncodeAndSend(TNC, TXMsg, datalen);
 					TNC->InternalCmd = 'M';
-		
+
 					TNC->NeedPACTOR = 0;		// Cancel enter Pactor
 
 					sprintf(TNC->WEB_TNCSTATE, "In Use by %s", TNC->Streams[0].MyCall);
@@ -771,17 +771,17 @@ VOID KAMPoll(int Port)
 					// Stop Scanning
 
 					sprintf(Msg, "%d SCANSTOP", TNC->Port);
-		
+
 					Rig_Command(-1, Msg);
 
 			}
 		}
 	}
-	
+
 	if (TNC->Timeout)
 	{
 		TNC->Timeout--;
-		
+
 		if (TNC->Timeout)			// Still waiting
 			return;
 
@@ -799,14 +799,14 @@ VOID KAMPoll(int Port)
 		TNC->TNCOK = FALSE;
 		TNC->HostMode = 0;
 		TNC->ReinitState = 0;
-				
+
 		sprintf(TNC->WEB_COMMSSTATE, "%s Open but TNC not responding", TNC->PortRecord->PORTCONTROL.SerialPortName);
 		SetWindowText(TNC->xIDC_COMMSSTATE, TNC->WEB_COMMSSTATE);
 
 		for (Stream = 0; Stream <= MaxStreams; Stream++)
 		{
 			UINT * buffptr;
-			
+
 			STREAM = &TNC->Streams[Stream];
 
 			if (TNC->PortRecord->ATTACHEDSESSIONS[Stream])		// Connected
@@ -814,7 +814,7 @@ VOID KAMPoll(int Port)
 				STREAM->Connected = FALSE;		// Back to Command Mode
 				STREAM->ReportDISC = TRUE;		// Tell Node
 			}
-			
+
 			STREAM->FramesQueued = 0;
 
 			while(STREAM->BPQtoPACTOR_Q)
@@ -923,7 +923,7 @@ VOID KAMPoll(int Port)
 			// Restart Scanning
 
 			sprintf(Status, "%d SCANSTART 15", TNC->Port);
-		
+
 			Rig_Command(-1, Status);
 
 			return;
@@ -935,7 +935,7 @@ VOID KAMPoll(int Port)
 		STREAM = &TNC->Streams[Stream];
 
 		// If in HF Packet mode, normal flow control doesn't seem to work
-		//	If more that 4 packets sent, send a status poll. and use response to 
+		//	If more that 4 packets sent, send a status poll. and use response to
 		//	reset frames outstanding
 
 		if ((Stream == 0) && (TNC->HFPacket) && (TNC->Streams[0].FramesOutstanding  > 4))
@@ -958,7 +958,7 @@ VOID KAMPoll(int Port)
 			if (STREAM->Connected)
 			{
 				int Next;
-				
+
 				if (Stream > 0)
 					sprintf(TXMsg, "D1%c", Stream + '@');
 				else if (TNC->HFPacket)
@@ -978,7 +978,7 @@ VOID KAMPoll(int Port)
 					if (TNC->TXRXState == 'R')
 					{
 						if (TNC->TimeInRX++ > 15)
-							EncodeAndSend(TNC, "T", 1);			// Changeover to ISS 
+							EncodeAndSend(TNC, "T", 1);			// Changeover to ISS
 						else
 							goto Poll;
 					}
@@ -993,7 +993,7 @@ VOID KAMPoll(int Port)
 
 				if (TNC->SwallowSignon && Stream == 0)
 				{
-					TNC->SwallowSignon = FALSE;	
+					TNC->SwallowSignon = FALSE;
 					if (strstr(MsgPtr, "Connected"))	// Discard *** connected
 					{
 						ReleaseBuffer(buffptr);
@@ -1002,7 +1002,7 @@ VOID KAMPoll(int Port)
 				}
 
 				Next = 0;
-				STREAM->BytesTXed += datalen; 
+				STREAM->BytesTXed += datalen;
 
 				if (Stream == 0)
 				{
@@ -1096,7 +1096,7 @@ VOID KAMPoll(int Port)
 							datalen = sprintf(TXMsg, "C2AC %s", TNC->Streams[0].RemoteCall);
 						else
 							datalen = sprintf(TXMsg, "C20PACTOR %s", TNC->Streams[0].RemoteCall);
-						
+
 						// If Pactor, check busy detecters on any interlocked ports
 
 						if (TNC->HFPacket == 0 && InterlockedCheckBusy(TNC) && TNC->OverrideBusy == 0)
@@ -1139,7 +1139,7 @@ VOID KAMPoll(int Port)
 							EncodeAndSend(TNC, "C2AD", 4);		// ??Return to packet mode??
 						else
 							EncodeAndSend(TNC, "X", 1);			// ??Return to packet mode??
-			
+
 						TNC->NeedPACTOR = 50;
 					}
 					else
@@ -1157,7 +1157,7 @@ VOID KAMPoll(int Port)
 
 					return;
 				}
-	
+
 				// Other Command ??
 
 				if (Stream > 0)
@@ -1220,7 +1220,7 @@ static VOID DoTNCReinit(struct TNCINFO * TNC)
 	if (TNC->ReinitState == 0)
 	{
 		// Just Starting - Send a TNC Mode Command to see if in Terminal or Host Mode
-		
+
 		sprintf(TNC->WEB_COMMSSTATE,"%s Initialising TNC", TNC->PortRecord->PORTCONTROL.SerialPortName);
 		SetWindowText(TNC->xIDC_COMMSSTATE, TNC->WEB_COMMSSTATE);
 
@@ -1239,7 +1239,7 @@ static VOID DoTNCReinit(struct TNCINFO * TNC)
 		int len;
 
 		start = TNC->InitPtr;
-		
+
 		if (*(start) == 0)			// End of Script
 		{
 			// Put into Host Mode
@@ -1250,11 +1250,11 @@ static VOID DoTNCReinit(struct TNCINFO * TNC)
 			WriteCommBlock(TNC);
 			TNC->Timeout = 50;
 
-			TNC->ReinitState = 4;	// Need Reset 
+			TNC->ReinitState = 4;	// Need Reset
 
 			return;
 		}
-		
+
 		end = strchr(start, 13);
 		len = ++end - start;
 		TNC->InitPtr = end;
@@ -1303,7 +1303,7 @@ static VOID DoTermModeTimeout(struct TNCINFO * TNC)
 	if (TNC->ReinitState == 3)
 	{
 		// Entering Host Mode
-	
+
 		// Assume ok
 
 		TNC->HostMode = TRUE;
@@ -1311,13 +1311,13 @@ static VOID DoTermModeTimeout(struct TNCINFO * TNC)
 	}
 }
 
-	
+
 
 static VOID ProcessTermModeResponse(struct TNCINFO * TNC)
 {
 	UCHAR * Poll = TNC->TXBuffer;
 
-	if (TNC->ReinitState == 0 || TNC->ReinitState == 1) 
+	if (TNC->ReinitState == 0 || TNC->ReinitState == 1)
 	{
 		// Testing if in Term Mode. It is, so can now send Init Commands
 
@@ -1337,7 +1337,7 @@ static VOID ProcessTermModeResponse(struct TNCINFO * TNC)
 	if (TNC->ReinitState == 4)		// Send INTFACE, Need RESET
 	{
 		TNC->ReinitState = 5;
-			
+
 		memcpy(Poll, "RESET\r", 6);
 
 		TNC->TXLen = 6;
@@ -1378,7 +1378,7 @@ VOID ProcessKHOSTPacket(struct TNCINFO * TNC, UCHAR * Msg, int Len)
 	if (Msg[1] == '0' && Msg[2] == '0')
 		Stream = 0;
 	else
-		if (Msg[1] == '2') Stream = 0; else Stream = Msg[2] - '@';	
+		if (Msg[1] == '2') Stream = 0; else Stream = Msg[2] - '@';
 
 	STREAM = &TNC->Streams[Stream];
 
@@ -1411,7 +1411,7 @@ VOID ProcessKHOSTPacket(struct TNCINFO * TNC, UCHAR * Msg, int Len)
 	}
 
 	if (Msg[0] == 'D')					// Data
-	{	
+	{
 		// Pass to Appl
 
 		buffptr = GetBuff();
@@ -1427,7 +1427,7 @@ VOID ProcessKHOSTPacket(struct TNCINFO * TNC, UCHAR * Msg, int Len)
 
 		if (Stream == 0)
 		{
-			sprintf(TNC->WEB_TRAFFIC, "RX %d TX %d ACKED %d ", 
+			sprintf(TNC->WEB_TRAFFIC, "RX %d TX %d ACKED %d ",
 					TNC->Streams[0].BytesRXed, TNC->Streams[0].BytesTXed, TNC->Streams[0].BytesAcked);
 			SetWindowText(TNC->xIDC_TRAFFIC, TNC->WEB_TRAFFIC);
 		}
@@ -1438,7 +1438,7 @@ VOID ProcessKHOSTPacket(struct TNCINFO * TNC, UCHAR * Msg, int Len)
 	if (Msg[0] == 'C')					// Command Reponse
 	{
 		TNC->Timeout = 0;
-	
+
 		// See if we need to process locally (Response to our command, Incoming Call, Disconencted, etc
 
 		// See if a response to internal command
@@ -1451,7 +1451,7 @@ VOID ProcessKHOSTPacket(struct TNCINFO * TNC, UCHAR * Msg, int Len)
 			{
 				char * Line;
 				char * ptr;
-					
+
 				// Message is line giving free bytes, followed by a line for each active (packet) stream
 
 				// FREE BYTES 1366/5094
@@ -1473,7 +1473,7 @@ VOID ProcessKHOSTPacket(struct TNCINFO * TNC, UCHAR * Msg, int Len)
 
 				ptr =  strchr(&Msg[13], '/');
 				TNC->Mem1 = atoi(&Msg[13]);
-				if (ptr) 
+				if (ptr)
 					TNC->Mem2 = atoi(++ptr);
 				else
 					TNC->Mem2 = 0;
@@ -1498,7 +1498,7 @@ VOID ProcessKHOSTPacket(struct TNCINFO * TNC, UCHAR * Msg, int Len)
 						STREAM->BytesOutstanding = 0;
 						STREAM->FramesOutstanding = 0;
 					}
-						
+
 					Line = strchr(&Line[1], 13);
 				}
 				return;
@@ -1550,7 +1550,7 @@ VOID ProcessKHOSTPacket(struct TNCINFO * TNC, UCHAR * Msg, int Len)
 		if (Len < 4)
 		{
 			// Reset Response FEND FEND S00 FEND
-					
+
 			TNC->Timeout = 0;
 
 			sprintf(TNC->WEB_COMMSSTATE,"%s TNC link OK", TNC->PortRecord->PORTCONTROL.SerialPortName);
@@ -1558,7 +1558,7 @@ VOID ProcessKHOSTPacket(struct TNCINFO * TNC, UCHAR * Msg, int Len)
 
 			return;
 		}
-		
+
 		// Pass to Appl
 
 		if (strstr(Buffer, "STANDBY>") || strstr(Buffer, "*** DISCONNECTED"))
@@ -1569,18 +1569,18 @@ VOID ProcessKHOSTPacket(struct TNCINFO * TNC, UCHAR * Msg, int Len)
 
 				return;
 			}
-	
+
 			if (STREAM->Connecting && STREAM->Disconnecting == FALSE)
 			{
 				// Connect Failed
-			
+
 				buffptr = GetBuff();
 				if (buffptr == 0) return;			// No buffers, so ignore
 
 				buffptr[1]  = sprintf((UCHAR *)&buffptr[2], "*** Failure with %s\r", STREAM->RemoteCall);
 
 				C_Q_ADD(&STREAM->PACTORtoBPQ_Q, buffptr);
-	
+
 				STREAM->Connecting = FALSE;
 				STREAM->Connected = FALSE;				// In case!
 				STREAM->FramesOutstanding = 0;
@@ -1616,30 +1616,30 @@ VOID ProcessKHOSTPacket(struct TNCINFO * TNC, UCHAR * Msg, int Len)
 			Call = strstr(Buffer, "NNECTED to");
 
 		if (Call)
-		{	
+		{
 			Call+=11;					// To Callsign
-			
+
 			if (Stream == 0 && TNC->HFPacket == 0)
 			{
 				Buffer[Len-4] = 0;
 			}
 
 			STREAM->BytesRXed = STREAM->BytesTXed = STREAM->BytesAcked = 0;
-			STREAM->ConnectTime = time(NULL); 
+			STREAM->ConnectTime = time(NULL);
 
 			if (Stream == 0)
 			{
 				// Stop Scanner
 
 				char Msg[80];
-				
+
 				sprintf(Msg, "%d SCANSTOP", TNC->Port);
-		
+
 				Rig_Command(-1, Msg);
 
-				sprintf(TNC->WEB_TRAFFIC, "RX %d TX %d ACKED %d ", 
+				sprintf(TNC->WEB_TRAFFIC, "RX %d TX %d ACKED %d ",
 					TNC->Streams[0].BytesRXed, TNC->Streams[0].BytesTXed, TNC->Streams[0].BytesAcked);
-				
+
 				SetWindowText(TNC->xIDC_TRAFFIC, TNC->WEB_TRAFFIC);
 			}
 
@@ -1660,7 +1660,7 @@ VOID ProcessKHOSTPacket(struct TNCINFO * TNC, UCHAR * Msg, int Len)
 				{
 					struct WL2KInfo * WL2K = TNC->WL2K;
 					char FreqAppl[10] = "";				// Frequecy-specific application
-	
+
 					if (TNC->RIG && TNC->RIG != &TNC->DummyRig)
 					{
 						sprintf(TNC->WEB_TNCSTATE, "%s Connected to %s Inbound Freq %s", TNC->Streams[0].RemoteCall, TNC->NodeCall, TNC->RIG->Valchar);
@@ -1673,7 +1673,7 @@ VOID ProcessKHOSTPacket(struct TNCINFO * TNC, UCHAR * Msg, int Len)
 					else
 					{
 						sprintf(TNC->WEB_TNCSTATE, "%s Connected to %s Inbound", TNC->Streams[0].RemoteCall, TNC->NodeCall);
-				
+
 						if (WL2K)
 						{
 							SESS->Frequency = WL2K->Freq;
@@ -1681,15 +1681,15 @@ VOID ProcessKHOSTPacket(struct TNCINFO * TNC, UCHAR * Msg, int Len)
 					}
 
 					SESS->Mode = 11;			// P1
-					
+
 					if (WL2K)
-						strcpy(SESS->RMSCall, WL2K->RMSCall);		
-				
+						strcpy(SESS->RMSCall, WL2K->RMSCall);
+
 					SetWindowText(TNC->xIDC_TNCSTATE, TNC->WEB_TNCSTATE);
 
-					EncodeAndSend(TNC, "T", 1);			// Changeover to ISS 
+					EncodeAndSend(TNC, "T", 1);			// Changeover to ISS
 
-					// If an autoconnect APPL is defined, send it	
+					// If an autoconnect APPL is defined, send it
 
 					if (FreqAppl[0])			// Frequency spcific APPL overrides TNC APPL
 					{
@@ -1743,18 +1743,18 @@ VOID ProcessKHOSTPacket(struct TNCINFO * TNC, UCHAR * Msg, int Len)
 			else
 			{
 				// Connect Complete
-			
+
 				buffptr = GetBuff();
 				if (buffptr == 0) return;			// No buffers, so ignore
 
 				buffptr[1]  = sprintf((UCHAR *)&buffptr[2], "*** Connected to %s\r", Call);;
 
 				C_Q_ADD(&STREAM->PACTORtoBPQ_Q, buffptr);
-	
+
 				STREAM->Connecting = FALSE;
 				STREAM->Connected = TRUE;			// Subsequent data to data channel
 
-				
+
 				if (Stream == 0)
 				{
 					if (TNC->RIG)
@@ -1822,7 +1822,7 @@ static int	KissEncode(UCHAR * inbuff, UCHAR * outbuff, int len)
 	for (i=0;i<len;i++)
 	{
 		c=inbuff[i];
-		
+
 		switch (c)
 		{
 		case FEND:
@@ -1908,7 +1908,7 @@ VOID ForcedClose(struct TNCINFO * TNC, int Stream)
 
 VOID CloseComplete(struct TNCINFO * TNC, int Stream)
 {
-		TNC->NeedPACTOR = 50;	
+		TNC->NeedPACTOR = 50;
 }
 
 
@@ -1942,6 +1942,6 @@ LFSUP OFF
 RING OFF
 ARQBBS OFF
 
-MYCALL 
+MYCALL
 
 */

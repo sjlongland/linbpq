@@ -1,10 +1,10 @@
 <!-- Version 2 7/5/2016 -->
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"> 
-<head> 
-<meta http-equiv="content-type" content="text/html; charset=UTF-8"/> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
 <link href="/menu_assets/styles.css" rel="stylesheet" type="text/css">
-<style type="text/css"> 
+<style type="text/css">
 
 
 #outer
@@ -42,26 +42,26 @@ font-family: monospace;
 }
 </style>
 
-<title>Edit Messages</title> 
-<script type="text/javascript"> 
- 
+<title>Edit Messages</title>
+<script type="text/javascript">
+
 var Details
 var Sidebar
 var fromleft;
 var Outer;
 
 function initialize()
-{	
+{
 	var w=window,d=document,e=d.documentElement,g=d.getElementsByTagName('body')[0];
 	x=w.innerWidth||e.clientWidth||g.clientWidth;	y=w.innerHeight||e.clientHeight||g.clientHeight;
 	fromleft = (x / 2) - 331;
 	if (fromleft < 0) {fromleft = 0;}
-	Outer = document.getElementById("outer"); 
+	Outer = document.getElementById("outer");
 	Outer.style.left = fromleft + "px";
-	Sidebar = document.getElementById("sidebar"); 
+	Sidebar = document.getElementById("sidebar");
 //	Sidebar.style.left = fromleft + "px";
-	Details = document.getElementById("main"); 
-	Details.innerHTML = "waiting for data..."; 
+	Details = document.getElementById("main");
+	Details.innerHTML = "waiting for data...";
 //	Details.style.left = fromleft + 150 + "px";
 	GetData("");
 }
@@ -87,7 +87,7 @@ function doit(param)
 
 function dofilter(form)
 {
-	var val = form.FFrom.value + "|" + form.FTo.value + "|" + form.FVia.value+ "|" + form.FBid.value+ "|" 
+	var val = form.FFrom.value + "|" + form.FTo.value + "|" + form.FVia.value+ "|" + form.FBid.value+ "|"
 	GetData(val);
 }
 
@@ -113,7 +113,7 @@ function GetDetails(call)
 function GetData(filter)
 {
 	if (window.XMLHttpRequest){request=new XMLHttpRequest();}else{request=new ActiveXObject("Microsoft.XMLHTTP");}
- 
+
 	request.onreadystatechange = function()
 	{
 		if (request.readyState == 4)
@@ -121,25 +121,25 @@ function GetData(filter)
 			var text = request.responseText;
 			var lines = text.split("|");
 			var i = 0;
-			
-	 	    var infoArea = document.getElementById("sidebar"); 
+
+	 	    var infoArea = document.getElementById("sidebar");
 		    var strInfo = '<table>';
- 						
+
 			while(i < lines.length - 1)
-			{	
-				var clink = '<a href=javascript:GetDetails("' + lines[i] + '")>' + lines[i] + '</a>';	
-				var tableRow = '<tr><td>' + clink + '</td></tr>\n';	 
-				strInfo += tableRow;			
+			{
+				var clink = '<a href=javascript:GetDetails("' + lines[i] + '")>' + lines[i] + '</a>';
+				var tableRow = '<tr><td>' + clink + '</td></tr>\n';
+				strInfo += tableRow;
 				i=i+1;
 			}
 			infoArea.innerHTML = strInfo + "</table>";
 			GetDetails(lines[0]);
 		}
 	}
-	request.open("POST","MsgInfo.txt?%s",true);										   
+	request.open("POST","MsgInfo.txt?%s",true);
 	request.send(filter);
 }
- 
+
 </script>
 </head>
 <body background=/background.jpg onload="initialize()" onresize="initialize()">
@@ -162,7 +162,7 @@ function GetData(filter)
 
 <div id="outer">
  <div align=center style="font-family: monospace;" id="sidebar"></div>
- <div align=center style="font-family: monospace;" id="main"></div> 
+ <div align=center style="font-family: monospace;" id="main"></div>
  <div style="font-family: monospace;" id="sel">
  <form style="font-family: monospace;"><div style="text-align: center;"><span
 style="font-family: monospace; font-weight: bold;">Filter</span></div>
@@ -172,6 +172,6 @@ Via&nbsp; <input  style="font-family: monospace;" size="7" name="FVia" value="" 
 BID&nbsp; <input  style="font-family: monospace;" size="7" name="FBid" value="" onkeyup=dofilter(this.form)>
 </form>
 </div>
-</div> 
+</div>
 </span>
 

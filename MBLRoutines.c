@@ -15,7 +15,7 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with LinBPQ/BPQ32.  If not, see http://www.gnu.org/licenses
-*/	
+*/
 
 // Mail and Chat Server for BPQ32 Packet Switch
 //
@@ -34,7 +34,7 @@ VOID ProcessMBLLine(CIRCUIT * conn, struct UserInfo * user, UCHAR* Buffer, int l
 		if (user->flags & (F_PMS))
 		{
 			Parse_SID(conn, &Buffer[1], len-4);
-			
+
 			if (conn->BBSFlags & FBBForwarding)
 			{
 				conn->FBBIndex = 0;		// ready for first block;
@@ -76,7 +76,7 @@ VOID ProcessMBLLine(CIRCUIT * conn, struct UserInfo * user, UCHAR* Buffer, int l
 			FBBputs(conn, ">\r");
 			return;
 		}
-		
+
 		Msg = FindMessage(user->Call, Number, conn->sysop);
 
 		if (Msg)
@@ -107,8 +107,8 @@ VOID ProcessMBLLine(CIRCUIT * conn, struct UserInfo * user, UCHAR* Buffer, int l
 		char * BID = NULL;
 		char * ATBBS = NULL;
 		char * ptr, * Context;
-		char seps[] = " \t\r";	
-	
+		char seps[] = " \t\r";
+
 		Cmd = strtok_s(Buffer, seps, &Context);
 
 		if (Cmd[1] == 0) Cmd[1] = 'P';
@@ -142,7 +142,7 @@ VOID ProcessMBLLine(CIRCUIT * conn, struct UserInfo * user, UCHAR* Buffer, int l
 				BID = &ptr[1];
 			else
 			{
-				nodeprintfEx(conn, "*** Error: Invalid Format\r");				
+				nodeprintfEx(conn, "*** Error: Invalid Format\r");
 				return;
 			}
 
@@ -169,7 +169,7 @@ VOID ProcessMBLLine(CIRCUIT * conn, struct UserInfo * user, UCHAR* Buffer, int l
 			return;
 		}
 
-		CreateMessage(conn, From, To, ATBBS, toupper(Cmd[1]), BID, NULL);	
+		CreateMessage(conn, From, To, ATBBS, toupper(Cmd[1]), BID, NULL);
 		return;
 	}
 
@@ -211,28 +211,28 @@ VOID ProcessMBLLine(CIRCUIT * conn, struct UserInfo * user, UCHAR* Buffer, int l
 			MsgBytes = _strdup("Message file not found\r");
 			conn->FwdMsg->length = strlen(MsgBytes);
 		}
-	
+
 		MsgPtr = MsgBytes;
 		MsgLen = conn->FwdMsg->length;
 
 		// If a B2 Message, remove B2 Header
 
 		if (conn->FwdMsg->B2Flags)
-		{		
+		{
 			// Remove all B2 Headers, and all but the first part.
-					
+
 			MsgPtr = strstr(MsgBytes, "Body:");
-			
+
 			if (MsgPtr)
 			{
 				MsgLen = atoi(&MsgPtr[5]);
 				MsgPtr= strstr(MsgBytes, "\r\n\r\n");		// Blank Line after headers
-	
+
 				if (MsgPtr)
 					MsgPtr +=4;
 				else
 					MsgPtr = MsgBytes;
-			
+
 			}
 			else
 				MsgPtr = MsgBytes;
@@ -242,8 +242,8 @@ VOID ProcessMBLLine(CIRCUIT * conn, struct UserInfo * user, UCHAR* Buffer, int l
 
 		now = time(NULL);
 
-		tm = gmtime(&now);	
-	
+		tm = gmtime(&now);
+
 		nodeprintf(conn, "R:%02d%02d%02d/%02d%02dZ %d@%s.%s %s\r",
 			tm->tm_year-100, tm->tm_mon+1, tm->tm_mday, tm->tm_hour, tm->tm_min,
 			conn->FwdMsg->number, BBSName, HRoute, RlineVer);
@@ -259,7 +259,7 @@ VOID ProcessMBLLine(CIRCUIT * conn, struct UserInfo * user, UCHAR* Buffer, int l
 			nodeprintf(conn, "\r/ex\r");
 
 		free(MsgBytes);
-			
+
 		conn->FBBMsgsSent = TRUE;
 
 		return;
@@ -278,7 +278,7 @@ VOID ProcessMBLLine(CIRCUIT * conn, struct UserInfo * user, UCHAR* Buffer, int l
 			set_fwd_bit(conn->FwdMsg->forw, user->BBSNumber);
 
 			//  Only mark as forwarded if sent to all BBSs that should have it
-			
+
 			if (memcmp(conn->FwdMsg->fbbs, zeros, NBMASK) == 0)
 			{
 				conn->FwdMsg->status = 'F';			// Mark as forwarded
@@ -295,13 +295,13 @@ VOID ProcessMBLLine(CIRCUIT * conn, struct UserInfo * user, UCHAR* Buffer, int l
 		if (FindMessagestoForward(conn))
 		{
 			struct MsgInfo * Msg;
-				
-			// Send S line and wait for response - SB WANT @ USA < W8AAA $1029_N0XYZ 
+
+			// Send S line and wait for response - SB WANT @ USA < W8AAA $1029_N0XYZ
 
 			Msg = conn->FwdMsg;
-		
+
 			nodeprintfEx(conn, "S%c %s @ %s < %s $%s\r", Msg->type, Msg->to,
-					(Msg->via[0]) ? Msg->via : conn->UserPointer->Call, 
+					(Msg->via[0]) ? Msg->via : conn->UserPointer->Call,
 					Msg->from, Msg->bid);
 
 			conn->BBSFlags |= MBLFORWARDING;
@@ -327,7 +327,7 @@ VOID ProcessMBLLine(CIRCUIT * conn, struct UserInfo * user, UCHAR* Buffer, int l
 			set_fwd_bit(conn->FwdMsg->forw, user->BBSNumber);
 
 			//  Only mark as forwarded if sent to all BBSs that should have it
-			
+
 			if (memcmp(conn->FwdMsg->fbbs, zeros, NBMASK) == 0)
 			{
 				conn->FwdMsg->status = 'F';			// Mark as forwarded
@@ -342,15 +342,15 @@ VOID ProcessMBLLine(CIRCUIT * conn, struct UserInfo * user, UCHAR* Buffer, int l
 		if (FindMessagestoForward(conn))
 		{
 			struct MsgInfo * Msg;
-				
-			// Send S line and wait for response - SB WANT @ USA < W8AAA $1029_N0XYZ 
+
+			// Send S line and wait for response - SB WANT @ USA < W8AAA $1029_N0XYZ
 
 			Msg = conn->FwdMsg;
-		
+
 			nodeprintfEx(conn, "S%c %s @ %s < %s $%s\r", Msg->type, Msg->to,
-					(Msg->via[0]) ? Msg->via : conn->UserPointer->Call, 
+					(Msg->via[0]) ? Msg->via : conn->UserPointer->Call,
 					Msg->from, Msg->bid);
-			
+
 			return;
 
 		}
@@ -363,7 +363,7 @@ VOID ProcessMBLLine(CIRCUIT * conn, struct UserInfo * user, UCHAR* Buffer, int l
 
 	// Winpack after doing ocmpressed downloads sends KM or B
 
-	if (_stricmp(Buffer, "*** DONE\r") == 0 || _stricmp(Buffer, "*** What?\r") == 0 
+	if (_stricmp(Buffer, "*** DONE\r") == 0 || _stricmp(Buffer, "*** What?\r") == 0
 		|| _stricmp(Buffer, "B\r") == 0)
 	{
 		Disconnect(conn->BPQStream);

@@ -2,18 +2,18 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html><head><title>Main Configuration</title>
 
-<script type="text/javascript"> 
- 
+<script type="text/javascript">
+
 var Main
 var fromleft;
 
 function initialize()
-{	
+{
 	var w=window,d=document,e=d.documentElement,g=d.getElementsByTagName('body')[0];
 	x=w.innerWidth||e.clientWidth||g.clientWidth;
 	fromleft = (x / 2) - 350;
 	if (fromleft < 0) {fromleft = 0;}
-	Main = document.getElementById("main"); 
+	Main = document.getElementById("main");
 	Main.style.left = fromleft + "px";
 }
 </script>
@@ -71,7 +71,7 @@ Password <input value="%s" name="ISPPassword"> <br>
 &nbsp;POP3 Poll Interval <input value="%d" size="3" name="PollInterval">&nbsp;
 <input %sname="ISPAuth" type="checkbox"> SMTP Server Requires Authentication
 <h3>&nbsp;WP Params</h3>
- <input %sname="EnWP" type="checkbox"> Send WPUpdates&nbsp;&nbsp;&nbsp; 
+ <input %sname="EnWP" type="checkbox"> Send WPUpdates&nbsp;&nbsp;&nbsp;
  <input %sname="RejWFBulls" type="checkbox"> Reject WP Bulls&nbsp;&nbsp;&nbsp; &nbsp;
  Type B<input %s name="Type" value="TypeB" type="radio">Type P<input %s name="Type" value="TypeP" type="radio"><br><br>
 &nbsp;WP Destinations<br>&nbsp;<textarea cols="30" rows="4" name="WPTO">%s</textarea><br>
@@ -80,11 +80,11 @@ Password <input value="%s" name="ISPPassword"> <br>
 To&nbsp;&nbsp;&nbsp; Reject At&nbsp;&nbsp; Hold
 From&nbsp;&nbsp;&nbsp; Hold
 To&nbsp;&nbsp;&nbsp; Hold At<br>&nbsp;
-<textarea cols="8" rows="5" name="Rfrom">%s</textarea> 
-<textarea cols="8" rows="5" name="Rto">%s</textarea> 
-<textarea cols="8" rows="5" name="Rat">%s</textarea> 
+<textarea cols="8" rows="5" name="Rfrom">%s</textarea>
+<textarea cols="8" rows="5" name="Rto">%s</textarea>
+<textarea cols="8" rows="5" name="Rat">%s</textarea>
 <textarea cols="8" rows="5" name="Hfrom">%s</textarea>
-<textarea cols="8" rows="5" name="Hto">%s</textarea> 
+<textarea cols="8" rows="5" name="Hto">%s</textarea>
 <textarea cols="8" rows="5" name="Hat">%s</textarea>
 
 <div style="position: absolute; left: 290px; top: 870px;"><input name="Save" value="Save" type="submit"> <input name="Cancel" value="Cancel" type="submit"></div>

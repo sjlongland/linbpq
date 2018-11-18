@@ -1,9 +1,9 @@
 <!-- Version 4 10/10/2015 -->
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"> 
-<head> 
-<meta http-equiv="content-type" content="text/html; charset=UTF-8"/> 
-<style type="text/css"> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+<style type="text/css">
 
 #outer{width:610px;height:530px;position:absolute;}
 #main{width:515px;position:absolute;height:530px;left:95px;border:2px solid;}
@@ -11,9 +11,9 @@
 
 </style>
 
-<title>Edit Users</title> 
-<script type="text/javascript"> 
- 
+<title>Edit Users</title>
+<script type="text/javascript">
+
 var Details
 var Sidebar
 var fromleft;
@@ -26,11 +26,11 @@ function initialize()
 	x=w.innerWidth||e.clientWidth||g.clientWidth;	y=w.innerHeight||e.clientHeight||g.clientHeight;
 	fromleft = (x / 2) - 300;
 	if (fromleft < 0) {fromleft = 0;}
-	Outer = document.getElementById("outer"); 
+	Outer = document.getElementById("outer");
 	Outer.style.left = fromleft + "px";
-	Sidebar = document.getElementById("sidebar"); 
-	Details = document.getElementById("main"); 
-	Details.innerHTML = "waiting for data..."; 
+	Sidebar = document.getElementById("sidebar");
+	Details = document.getElementById("main");
+	Details.innerHTML = "waiting for data...";
 	GetData("");
 }
 
@@ -38,10 +38,10 @@ function save(form)
 {
 	var msg
 	var fn = "UserSave?" + Key;
-	
-	msg = 
+
+	msg =
 	form.BBS.checked + "|" +
-	form.PermitEmail.checked + "|" + 
+	form.PermitEmail.checked + "|" +
 	form.PMS.checked + "|" +
 	form.RMSExUser.checked + "|" +
 	form.SYSOP.checked + "|" +
@@ -61,8 +61,8 @@ function save(form)
 	form.Name.value + "|" +
 	form.Password.value + "|"  +
 	form.CMSPass.value + "|"  +
-	form.QTH.value + "|" + 
-	form.ZIP.value + "|" + 
+	form.QTH.value + "|" +
+	form.ZIP.value + "|" +
 	form.HomeBBS.value + "|"
 	post(fn, msg);
 }
@@ -96,19 +96,19 @@ function xpost(url, data, call)
 			var text = request.responseText;
 			var lines = text.split("|");
 			var i = 0;
-			
-	 	    var infoArea = document.getElementById("sidebar"); 
+
+	 	    var infoArea = document.getElementById("sidebar");
 		    var strInfo = '<table>';
- 						
+
 			while(i < lines.length - 1)
-			{	
-				var clink = '<a href=javascript:GetDetails("' + lines[i] + '")>' + lines[i] + '</a>';	
-				var tableRow = '<tr><td>' + clink + '</td></tr>\n';	 
-				strInfo += tableRow;			
+			{
+				var clink = '<a href=javascript:GetDetails("' + lines[i] + '")>' + lines[i] + '</a>';
+				var tableRow = '<tr><td>' + clink + '</td></tr>\n';
+				strInfo += tableRow;
 				i=i+1;
 			}
 			infoArea.innerHTML = strInfo + "</table>";
-			
+
 			if (call == "")
 			{
 				GetDetails(lines[0]);
@@ -118,8 +118,8 @@ function xpost(url, data, call)
 				GetDetails(call);
 			}
 	}
-	
-	
+
+
 	}}
 	request.open("POST", url, true);request.send(data);
 }
@@ -133,7 +133,7 @@ function GetDetails(call)
 function GetData()
 {
 	if (window.XMLHttpRequest){request=new XMLHttpRequest();}else{request=new ActiveXObject("Microsoft.XMLHTTP");}
- 
+
 	request.onreadystatechange = function()
 	{
 		if (request.readyState == 4)
@@ -141,25 +141,25 @@ function GetData()
 			var text = request.responseText;
 			var lines = text.split("|");
 			var i = 0;
-			
-	 	    var infoArea = document.getElementById("sidebar"); 
+
+	 	    var infoArea = document.getElementById("sidebar");
 		    var strInfo = '<table>';
- 						
+
 			while(i < lines.length - 1)
-			{	
-				var clink = '<a href=javascript:GetDetails("' + lines[i] + '")>' + lines[i] + '</a>';	
-				var tableRow = '<tr><td>' + clink + '</td></tr>\n';	 
-				strInfo += tableRow;			
+			{
+				var clink = '<a href=javascript:GetDetails("' + lines[i] + '")>' + lines[i] + '</a>';
+				var tableRow = '<tr><td>' + clink + '</td></tr>\n';
+				strInfo += tableRow;
 				i=i+1;
 			}
 			infoArea.innerHTML = strInfo + "</table>";
 			GetDetails(lines[0]);
 		}
 	}
-	request.open("POST","UserList.txt?%s",true);										   
+	request.open("POST","UserList.txt?%s",true);
 	request.send();
 }
- 
+
 </script>
 </head>
 <body background=/background.jpg onload="initialize()" onresize="initialize()">
@@ -177,7 +177,7 @@ function GetData()
 <br>
 <div id="outer">
  <div id="sidebar"></div>
- <div id="main"></div> 
-</div> 
+ <div id="main"></div>
+</div>
 
 

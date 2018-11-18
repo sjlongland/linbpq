@@ -11,14 +11,14 @@ typedef struct VCOMStruct
    UCHAR	RXMSG[512];				// Msg being built
    UCHAR	RXBUFFER[MAXBLOCK];		// Raw chars from Comms
    int		RXBCOUNT;				// chars in RXBUFFER
-   UCHAR * RXBPTR;					// get pointer for RXBUFFER (put ptr is RXBCOUNT) 
+   UCHAR * RXBPTR;					// get pointer for RXBUFFER (put ptr is RXBCOUNT)
    UCHAR * RXMPTR;					// put pointer for RXMSG
    BOOL	   MSGREADY;				// Complete msg in RXMSG
    BOOL	   ESCFLAG;					// FESC received
    BOOL		NewVCOM;				// Set if using User Mode VCOM Driver
    BOOL		NewVCOMConnected;		// Set if COM side is connected
-   int		ReopenTimer;			// Open retry delay timer 	
-   
+   int		ReopenTimer;			// Open retry delay timer
+
 } VCOMINFO, *PVCOMINFO ;
 
 PVCOMINFO VCOMInfo[32]={0};

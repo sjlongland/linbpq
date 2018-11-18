@@ -85,7 +85,7 @@ APPLCALLS APPLCALLTABLE[NumberofAppls] = {0};
 UCHAR	MYNODECALL[10] = "";				// NODE CALLSIGN (ASCII)
 UCHAR	MYNETROMCALL[10] = "";				// NETROM CALLSIGN (ASCII)
 
-UINT	FREE_Q = 0;
+uintptr_t FREE_Q = 0;
 
 time_t TimeLoaded = 0;
 

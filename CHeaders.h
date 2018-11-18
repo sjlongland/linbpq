@@ -2,6 +2,8 @@
 // Prototypes for BPQ32 Node Functions
 //
 
+#include <stdint.h>
+
 #define DllImport
 
 #define EXCLUDEBITS
@@ -246,7 +248,7 @@ extern UCHAR MYNETROMCALL[];			// NETROM CALLSIGN (ASCII)
 
 extern UCHAR NETROMCALL[];				// NETORM CALL (AX25)
 
-extern UINT	FREE_Q;
+extern uintptr_t FREE_Q;
 
 extern struct PORTCONTROL * PORTTABLE;
 extern int	NUMBEROFPORTS;

@@ -103,8 +103,15 @@ realclean: clean
 # Package up this current release as a tarball for download
 release: DESTDIR ?= $(PWD)
 release: $(DESTDIR)/linbpq-$(VERSION).tar.xz
+signed-release: DESTDIR ?= $(PWD)
+signed-release: $(DESTDIR)/linbpq-$(VERSION).tar.xz.asc
+
+$(DESTDIR)/linbpq-$(VERSION).tar.xz.asc: $(DESTDIR)/linbpq-$(VERSION).tar.xz
+	gpg -a -o $(DESTDIR)/linbpq-$(VERSION).tar.xz.asc \
+		--detach-sign $(DESTDIR)/linbpq-$(VERSION).tar.xz
 
 $(DESTDIR)/linbpq-$(VERSION).tar.xz: .git
+	-rm -f $(DESTDIR)/linbpq-$(VERSION).tar.xz
 	git archive --format=tar \
 		--prefix=linbpq-$(VERSION) \
 		-o $(DESTDIR)/linbpq-$(VERSION).tar \
@@ -112,6 +119,6 @@ $(DESTDIR)/linbpq-$(VERSION).tar.xz: .git
 	xz -9 $(DESTDIR)/linbpq-$(VERSION).tar
 
 # The following targets do not produce files
-.PHONY: clean realclean all install linbpq release
+.PHONY: clean realclean all install linbpq release signed-release
 
 -include $(wildcard $(OBJECTS)/*.d)

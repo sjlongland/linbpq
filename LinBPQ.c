@@ -572,7 +572,7 @@ int main(int argc, char * argv[])
 
 	// Make sure logs directory exists
 
-	sprintf(LogDir, "%s/logs", LogDirectory);
+	snprintf(LogDir, sizeof(LogDir)-1, "%s/logs", LogDirectory);
 
 #ifdef WIN32
 	CreateDirectory(LogDir, NULL);

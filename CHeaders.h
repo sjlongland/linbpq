@@ -105,7 +105,7 @@ VOID SENDL4CONNECT(TRANSPORTENTRY * Session);
 
 VOID CloseSessionPartner(TRANSPORTENTRY * Session);
 int COUNTNODES();
-int DecodeNodeName(char * NodeName, char * ptr);;
+int DecodeNodeName(char * NodeName, char * ptr);
 VOID DISPLAYCIRCUIT(TRANSPORTENTRY * L4, char * Buffer);
 int cCOUNT_AT_L2(struct _LINKTABLE * LINK);
 void * zalloc(int len);

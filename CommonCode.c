@@ -120,13 +120,13 @@ BOOL CheckQHeadder(UINT * Q)
 
 VOID * _Q_REM(VOID *PQ, char * File, int Line)
 {
-	UINT * Q;
-	UINT * first;
-	UINT next;
+	uintptr_t * Q;
+	uintptr_t * first;
+	uintptr_t next;
 
 	//	PQ may not be word aligned, so copy as bytes (for ARM5)
 
-	Q = (UINT *) PQ;
+	Q = (uintptr_t *) PQ;
 
 	if (Semaphore.Flag == 0)
 		Debugprintf("Q_REM called without semaphore from %s Line %d", File, Line);
@@ -134,7 +134,7 @@ VOID * _Q_REM(VOID *PQ, char * File, int Line)
 	if (CheckQHeadder(Q) == 0)
 		return(0);
 
-	first = (UINT *)Q[0];
+	first = (uintptr_t *)Q[0];
 
 	if (first == 0) return (0);			// Empty
 
@@ -226,14 +226,14 @@ BOK1:
 
 int _C_Q_ADD(VOID *PQ, VOID *PBUFF, char * File, int Line)
 {
-	UINT * Q;
-	UINT * BUFF = (UINT *)PBUFF;
-	UINT * next;
+	uintptr_t * Q;
+	uintptr_t * BUFF = (uintptr_t *)PBUFF;
+	uintptr_t * next;
 	int n = 0;
 
 //	PQ may not be word aligned, so copy as bytes (for ARM5)
 
-	Q = (UINT *) PQ;
+	Q = (uintptr_t *) PQ;
 
 	if (Semaphore.Flag == 0)
 		Debugprintf("C_Q_ADD called without semaphore from %s Line %d", File, Line);
@@ -266,21 +266,21 @@ int _C_Q_ADD(VOID *PQ, VOID *PBUFF, char * File, int Line)
 
 BOK2:
 
-	BUFF[0]=0;							// Clear chain in new buffer
+	BUFF[0]=0;						// Clear chain in new buffer
 
 	if (Q[0] == 0)						// Empty
 	{
-		Q[0]=(UINT)BUFF;				// New one on front
+		Q[0]=(uintptr_t)BUFF;				// New one on front
 		return(0);
 	}
 
-	next = (UINT *)Q[0];
+	next = (uintptr_t *)Q[0];
 
 	while (next[0]!=0)
 	{
-		next=(UINT *)next[0];			// Chain to end of queue
+		next=(uintptr_t *)next[0];			// Chain to end of queue
 	}
-	next[0]=(UINT)BUFF;					// New one on end
+	next[0]=(uintptr_t)BUFF;				// New one on end
 
 	return(0);
 }
@@ -289,32 +289,32 @@ BOK2:
 
 int C_Q_ADD_NP(VOID *PQ, VOID *PBUFF)
 {
-	UINT * Q;
-	UINT * BUFF = (UINT *)PBUFF;
-	UINT * next;
+	uintptr_t * Q;
+	uintptr_t * BUFF = (uintptr_t *)PBUFF;
+	uintptr_t * next;
 	int n = 0;
 
 //	PQ may not be word aligned, so copy as bytes (for ARM5)
 
-	Q = (UINT *) PQ;
+	Q = (uintptr_t *) PQ;
 
 	if (CheckQHeadder(Q) == 0)			// Make sure Q header is readable
 		return(0);
 
-	BUFF[0]=0;							// Clear chain in new buffer
+	BUFF[0]=0;					// Clear chain in new buffer
 
-	if (Q[0] == 0)						// Empty
+	if (Q[0] == 0)					// Empty
 	{
-//		Q[0]=(UINT)BUFF;				// New one on front
+//		Q[0]=(UINT)BUFF;			// New one on front
 		memcpy(PQ, &BUFF, 4);
 		return 0;
 	}
-	next = (UINT *)Q[0];
+	next = (uintptr_t *)Q[0];
 
 	while (next[0]!=0)
-		next=(UINT *)next[0];			// Chain to end of queue
+		next=(uintptr_t *)next[0];		// Chain to end of queue
 
-	next[0]=(UINT)BUFF;					// New one on end
+	next[0]=(uintptr_t)BUFF;			// New one on end
 
 	return(0);
 }
@@ -322,12 +322,12 @@ int C_Q_ADD_NP(VOID *PQ, VOID *PBUFF)
 
 int C_Q_COUNT(VOID *PQ)
 {
-	UINT * Q;
+	uintptr_t * Q;
 	int count = 0;
 
 //	PQ may not be word aligned, so copy as bytes (for ARM5)
 
-	Q = (UINT *) PQ;
+	Q = (uintptr_t *) PQ;
 
 	if (CheckQHeadder(Q) == 0)			// Make sure Q header is readable
 		return(0);
@@ -342,7 +342,7 @@ int C_Q_COUNT(VOID *PQ)
 			Debugprintf("C_Q_COUNT Detected corrupt Q %p len %d", PQ, count);
 			return count;
 		}
-		Q = (UINT *)*Q;
+		Q = (uintptr_t *)*Q;
 	}
 
 	return count;
@@ -350,7 +350,7 @@ int C_Q_COUNT(VOID *PQ)
 
 VOID * _GetBuff(char * File, int Line)
 {
-	UINT * Temp = Q_REM(&FREE_Q);
+	uintptr_t * Temp = Q_REM(&FREE_Q);
 	MESSAGE * Msg;
 	char * fptr = 0;
 
@@ -1956,7 +1956,7 @@ HANDLE OpenCOMPort(VOID * pPort, int speed, BOOL SetDTR, BOOL SetRTS, BOOL Quiet
 
 	// if Port Name starts COM, convert to \\.\COM or ports above 10 wont work
 
-	if ((UINT)pPort < 256)			// just a com port number
+	if ((uintptr_t)pPort < 256)		// just a com port number
 		sprintf( szPort, "\\\\.\\COM%d", pPort);
 
 	else if (_memicmp(pPort, "COM", 3) == 0)
@@ -1982,7 +1982,7 @@ HANDLE OpenCOMPort(VOID * pPort, int speed, BOOL SetDTR, BOOL SetRTS, BOOL Quiet
 		if (Quiet == 0)
 		{
 			if (pPort < (VOID *)256)
-				Debugprintf("COM%d could not be opened %d", (UINT)pPort, GetLastError());
+				Debugprintf("COM%d could not be opened %d", (uintptr_t)pPort, GetLastError());
 			else
 				Debugprintf("%s could not be opened %d", pPort, GetLastError());
 		}
@@ -2052,7 +2052,7 @@ HANDLE OpenCOMPort(VOID * pPort, int speed, BOOL SetDTR, BOOL SetRTS, BOOL Quiet
 	}
 	else
 	{
-		if ((UINT)pPort < 256)
+		if ((uintptr_t)pPort < 256)
 			sprintf(buf,"COM%d Setup Failed %d ", pPort, GetLastError());
 		else
 			sprintf(buf,"%s Setup Failed %d ", pPort, GetLastError());
@@ -2209,7 +2209,7 @@ HANDLE OpenCOMPort(VOID * pPort, int speed, BOOL SetDTR, BOOL SetRTS, BOOL Quiet
 	// As Serial ports under linux can have all sorts of odd names, the code assumes that
 	// they are symlinked to a com1-com255 in the BPQ Directory (normally the one it is started from
 
-	if ((UINT)pPort < 256)
+	if ((uintptr_t)pPort < 256)
 		sprintf(Port, "%s/com%d", BPQDirectory, (int)pPort);
 	else
 		strcpy(Port, pPort);

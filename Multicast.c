@@ -620,7 +620,7 @@ UCHAR * LZUncompress(UCHAR * Decoded, int Len, int * NewLen)
 	int r;
 
 	UINT rlen;
-	UINT outlen;
+	size_t outlen;
 
 	memcpy(&rlen, &Decoded[5], 4);
 
@@ -720,9 +720,9 @@ void SaveMulticastMessage(struct MSESSION * MSession)
 
 		// Extract decoded msg len
 
-		ExpectedLen = atoi(ptr1);
+		ExpectedLen = atoi((char *)ptr1);
 
-		ptr1 = strchr(ptr1, 10);
+		ptr1 = (UCHAR *)strchr((char *)ptr1, 10);
 		ptr1++;
 
 		HddrLen = ptr1 - &MSession->Message[12];
@@ -801,9 +801,9 @@ void SaveMulticastMessage(struct MSESSION * MSession)
 
 		// Extract decoded msg len
 
-		ExpectedLen = atoi(ptr1);
+		ExpectedLen = atoi((char *)ptr1);
 
-		ptr1 = strchr(ptr1, 10);
+		ptr1 = (UCHAR *)strchr((char *)ptr1, 10);
 		ptr1++;
 
 		HddrLen = ptr1 - &MSession->Message[12];
@@ -901,7 +901,7 @@ void SaveMulticastMessage(struct MSESSION * MSession)
 		// import and delete it.
 
 		if (*(ptr1) == 'S' && ptr1[2] == ' ')
-			if (_memicmp(&ptr1[UncompressedLen - 5], "/EX", 3) == 0)
+			if (_memicmp(&ptr1[UncompressedLen - 5], (UCHAR *)"/EX", 3) == 0)
 				ImportMessages(NULL, MsgFile, TRUE);
 
 		free (Uncompressed);
@@ -931,7 +931,7 @@ VOID ProcessMCASTLine(ConnectionInfo * conn, struct UserInfo * user, char * Buff
 
 //	return;
 
-	n = sscanf(&Buffer[1], "%s %04d %04X", Opcode, &len, &checksum);
+	n = sscanf(&Buffer[1], "%s %04u %04X", Opcode, &len, &checksum);
 
 	if (n != 3)
 		return;
@@ -944,7 +944,7 @@ VOID ProcessMCASTLine(ConnectionInfo * conn, struct UserInfo * user, char * Buff
 	if (headerlen + len != MsgLen)
 		return;
 
-	crcval = CalcCRC(data, len);
+	crcval = CalcCRC((UCHAR *)data, len);
 
 	if (checksum != crcval)
 		return;
@@ -1076,8 +1076,8 @@ VOID ProcessMCASTLine(ConnectionInfo * conn, struct UserInfo * user, char * Buff
 	{
 		//	<DATA 72 B21B>{80BC:1}[b256:start]401
 
-		int Blockno = atoi(&data[6]);
-		char * dataptr = strchr(&data[6], '}');
+		int Blockno = atoi((char *)&data[6]);
+		char * dataptr = strchr((char *)&data[6], '}');
 
 		if (dataptr == 0)
 			return;
@@ -1438,7 +1438,7 @@ DE GM8BPQ K
 		}
 //		else if (_memicmp(ptr1, "Body:", 4) == 0)
 //		{
-//			MsgLen = atoi(&ptr1[5]);
+//			MsgLen = atoi((char *)&ptr1[5]);
 //			StartofMsg = ptr1;
 //		}
 		else if (_memicmp(ptr1, "File:", 5) == 0)
@@ -1599,12 +1599,12 @@ VOID MCastTimer()
 int MulticastStatusHTML(char * Reply)
 {
 	char StatusPage [] =
-		"<pre>ID    From      FileName        Size  %%  Time   Age   Blocklist"
+		"<pre>ID    From      FileName        Size  %  Time   Age   Blocklist"
 		"                                                   "
 		"\r\n<textarea cols=110 rows=6 name=MC>";
 
 	char StatusTail [] = "</textarea><br><br>";
-	int Len = 0;
+	size_t Len = 0;
 	char Unknown[] = "???";
 
 	struct MSESSION * Sess = MSessions;
@@ -1612,7 +1612,8 @@ int MulticastStatusHTML(char * Reply)
 	if (Sess ==NULL)
 		return 0;
 
-	Len = sprintf(Reply, StatusPage);
+	Len = strlen(StatusPage);
+	strcpy(Reply, StatusPage);
 
 	while (Sess)
 	{
@@ -1670,7 +1671,8 @@ int MulticastStatusHTML(char * Reply)
 		Sess = Sess->Next;
 	}
 
-	Len += sprintf(&Reply[Len], StatusTail);
+	Len += strlen(StatusTail);
+	strcpy(&Reply[Len], StatusTail);
 
 	return Len;
 }

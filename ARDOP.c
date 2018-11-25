@@ -5858,13 +5858,6 @@ BOOL ARAXTXCHECK()
 	return 0;
 }
 
-
-#define DATABYTES 400000		// WAS 320000
-extern UCHAR * NEXTFREEDATA;	// ADDRESS OF NEXT FREE BYTE in shared memory
-extern UCHAR DATAAREA[DATABYTES];
-
-
-
 VOID AddVirtualKISSPort(struct TNCINFO * TNC, int ARDOPPort, char * buf)
 {
 	// Adds a Virtual KISS port for simultaneous ARDOP and Packet on Teensy TNC
@@ -5874,9 +5867,6 @@ VOID AddVirtualKISSPort(struct TNCINFO * TNC, int ARDOPPort, char * buf)
 
 	struct PORTCONTROL * PORTVEC=PORTTABLE;
 	struct PORTCONTROL * PORT;
-	int pl = sizeof(struct PORTCONTROL);
-	int mh = MHENTRIES * sizeof(MHSTRUC);
-	int space = &DATAAREA[DATABYTES] - NEXTFREEDATA;
 	char Msg[64];
 	unsigned char * ptr3;
 	int newPortNumber = 0;
@@ -5887,8 +5877,15 @@ VOID AddVirtualKISSPort(struct TNCINFO * TNC, int ARDOPPort, char * buf)
 	if (buf[12] == '=')
 		newPortNumber = atoi(&buf[13]);
 
-	if (space < (pl + mh))
+	PORT = calloc(1, sizeof(struct PORTCONTROL));
+	if (PORT)
+		PORT->PORTMHEARD = calloc(MHENTRIES, sizeof(PMHSTRUC));
+
+	if (!PORT || !PORT->PORTMHEARD)
 	{
+		if (PORT)
+			free(PORT);
+
 		WritetoConsoleLocal("Insufficient space to add ARDOP/Packet Port\n");
 		return;
 	}
@@ -5900,16 +5897,6 @@ VOID AddVirtualKISSPort(struct TNCINFO * TNC, int ARDOPPort, char * buf)
 	}
 
 	// PORTVEC is now last port in chain
-
-	ptr3 = NEXTFREEDATA;
-
-	PORT = (struct PORTCONTROL *)ptr3;
-
-	ptr3 += sizeof (struct PORTCONTROL);
-
-	//	Round to word boundary (for ARM5 etc)
-	ptr3 = (UCHAR *)roundPtr(ptr3);
-
 	PORTVEC->PORTPOINTER = PORT;		// Chain to previous last port
 
 	if (newPortNumber == 0)
@@ -5969,16 +5956,6 @@ VOID AddVirtualKISSPort(struct TNCINFO * TNC, int ARDOPPort, char * buf)
 	//	ADD MH AREA IF NEEDED
 
 	NEEDMH = 1;								// Include MH in Command List
-
-	PORT->PORTMHEARD = (PMHSTRUC)ptr3;
-
-	ptr3 += MHENTRIES * sizeof(MHSTRUC);
-
-	//	Round to word boundary (for ARM5 etc)
-	ptr3 = (UCHAR *)roundPtr(ptr3);
-
-	NEXTFREEDATA = ptr3;
-
 	return;
 }
 

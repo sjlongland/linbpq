@@ -1285,76 +1285,76 @@ UINT AXIPExtInit(struct PORTCONTROL *  PortEntry);
 UINT ARDOPExtInit(EXTPORTDATA * PortEntry);
 UINT VARAExtInit(EXTPORTDATA * PortEntry);
 
-UINT InitializeExtDriver(PEXTPORTDATA PORTVEC)
+ExtDriverInitFn InitializeExtDriver(PEXTPORTDATA PORTVEC)
 {
 	// Only works with built in drivers
 
-	UCHAR Value[20];
+	char Value[20];
 
 	strcpy(Value,PORTVEC->PORT_DLL_NAME);
 
 	_strupr(Value);
 
 	if (strstr(Value, "BPQETHER"))
-		return (UINT) ETHERExtInit;
+		return (ExtDriverInitFn)ETHERExtInit;
 
 	if (strstr(Value, "BPQAXIP"))
-		return (UINT) AXIPExtInit;
+		return (ExtDriverInitFn)AXIPExtInit;
 
 	if (strstr(Value, "BPQTOAGW"))
-		return (UINT) AGWExtInit;
+		return (ExtDriverInitFn)AGWExtInit;
 
 	if (strstr(Value, "AEAPACTOR"))
-		return (UINT) AEAExtInit;
+		return (ExtDriverInitFn)AEAExtInit;
 
 	if (strstr(Value, "HALDRIVER"))
-		return (UINT) HALExtInit;
+		return (ExtDriverInitFn)HALExtInit;
 /*
 	if (strstr(Value, "BPQVKISS"))
-		return (UINT) VCOMExtInit;
+		return (ExtDriverInitFn)VCOMExtInit;
 
 
 	if (strstr(Value, "V4"))
-		return (UINT) V4ExtInit;
+		return (ExtDriverInitFn)V4ExtInit;
 
 	if (strstr(Value, "SOUNDMODEM"))
-		return (UINT) SoundModemExtInit;
+		return (ExtDriverInitFn)SoundModemExtInit;
 
 	if (strstr(Value, "BAYCOM"))
-		return (UINT) BaycomExtInit;
+		return (ExtDriverInitFn)BaycomExtInit;
 */
 	if (strstr(Value, "MULTIPSK"))
-		return (UINT) MPSKExtInit;
+		return (ExtDriverInitFn)MPSKExtInit;
 
 	if (strstr(Value, "KAMPACTOR"))
-		return (UINT) KAMExtInit;
+		return (ExtDriverInitFn)KAMExtInit;
 
 	if (strstr(Value, "WINMOR"))
-		return (UINT) WinmorExtInit;
+		return (ExtDriverInitFn)WinmorExtInit;
 
 	if (strstr(Value, "SCSPACTOR"))
-		return (UINT) SCSExtInit;
+		return (ExtDriverInitFn)SCSExtInit;
 
 	if (strstr(Value, "SCSTRACKER"))
-		return (UINT) TrackerExtInit;
+		return (ExtDriverInitFn)TrackerExtInit;
 
 	if (strstr(Value, "TRKMULTI"))
-		return (UINT) TrackerMExtInit;
+		return (ExtDriverInitFn)TrackerMExtInit;
 
 	if (strstr(Value, "UZ7HO"))
-		return (UINT) UZ7HOExtInit;
+		return (ExtDriverInitFn)UZ7HOExtInit;
 
 	if (strstr(Value, "FLDIGI"))
-		return (UINT) FLDigiExtInit;
+		return (ExtDriverInitFn)FLDigiExtInit;
 
 	if (strstr(Value, "TELNET"))
-		return (UINT) TelnetExtInit;
+		return (ExtDriverInitFn)TelnetExtInit;
 
 	if (strstr(Value, "ARDOP"))
-		return (UINT) ARDOPExtInit;
+		return (ExtDriverInitFn)ARDOPExtInit;
 
 	if (strstr(Value, "VARA"))
-		return (UINT) VARAExtInit;
+		return (ExtDriverInitFn)VARAExtInit;
 
 	return(0);
 }

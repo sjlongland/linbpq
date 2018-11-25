@@ -12,6 +12,8 @@
 
 #include "asmstrucs.h"
 
+typedef UINT (*ExtDriverInitFn)(void*);
+
 BOOL CheckExcludeList(UCHAR * Call);
 
 Dll int ConvFromAX25(unsigned char * incall,unsigned char * outcall);
@@ -22,7 +24,7 @@ VOID Consoleprintf(const char * format, ...);
 VOID FreeConfig();
 int GetListeningPortsPID(int Port);
 
-UINT InitializeExtDriver(PEXTPORTDATA PORTVEC);
+ExtDriverInitFn InitializeExtDriver(PEXTPORTDATA PORTVEC);
 
 VOID PutLengthinBuffer(UCHAR * buff, int datalen);			// Neded for arm5 portability
 int GetLengthfromBuffer(UCHAR * buff);

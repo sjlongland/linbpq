@@ -107,7 +107,7 @@ VOID ReleaseOtherPorts(struct TNCINFO * ThisTNC);
 
 char * strlop(char * buf, char delim);
 
-extern UCHAR BPQDirectory[];
+extern char BPQDirectory[];
 
 #define MAXBPQPORTS 32
 #define MAXMPSKPORTS 16

@@ -78,7 +78,7 @@ static VOID DoMonitorHddr(struct TNCINFO * TNC, struct AGWHEADER * RXHeader, UCH
 VOID SendRPBeacon(struct TNCINFO * TNC);
 VOID MHPROC(struct PORTCONTROL * PORT, MESSAGE * Buffer);
 
-extern UCHAR BPQDirectory[];
+extern char BPQDirectory[];
 
 #define MAXBPQPORTS 32
 #define MAXUZ7HOPORTS 16

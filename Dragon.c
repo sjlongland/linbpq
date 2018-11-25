@@ -57,7 +57,7 @@ static int RigControlRow = 185;
 #define NARROWMODE 12		// PI/II
 #define WIDEMODE 16			// PIII only
 
-extern UCHAR BPQDirectory[];
+extern char BPQDirectory[];
 
 extern char * PortConfig[33];
 extern BOOL RIG_DEBUG;

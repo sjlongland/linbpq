@@ -290,7 +290,7 @@ int CommentLine = 0;
 #define MAXLINE 512
 #define FILEVERSION 22
 
-extern UCHAR BPQDirectory[];
+extern char BPQDirectory[];
 
 
 char inputname[250]="bpqcfg.txt";

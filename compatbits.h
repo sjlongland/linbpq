@@ -139,7 +139,7 @@ int sprintf_s(char * string, int plen, const char * format, ...);
 
 
 int memicmp(unsigned char *a, unsigned char *b, int n);
-int stricmp(const unsigned char * pStr1, const unsigned char *pStr2);
+int stricmp(const char * pStr1, const char *pStr2);
 char * strupr(char* s);
 char * strlwr(char* s);
 

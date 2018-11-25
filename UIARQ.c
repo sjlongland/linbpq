@@ -85,7 +85,7 @@ int DoScanLine(struct TNCINFO * TNC, char * Buff, int Len);
 VOID ProcessARQPacket(struct PORTCONTROL * PORT, MESSAGE * Buffer);
 char * strlop(char * buf, char delim);
 
-extern UCHAR BPQDirectory[];
+extern char BPQDirectory[];
 extern char MYALIASLOPPED[10];
 
 

@@ -243,8 +243,8 @@ extern char	MYALIASTEXT[]; //	{"      "	; NODE ALIAS (KEEP TOGETHER)
 extern UCHAR	MYCALLWITHALIAS[13];
 extern APPLCALLS APPLCALLTABLE[NumberofAppls];
 
-extern UCHAR MYNODECALL[];				// NODE CALLSIGN (ASCII)
-extern UCHAR MYNETROMCALL[];			// NETROM CALLSIGN (ASCII)
+extern char MYNODECALL[];				// NODE CALLSIGN (ASCII)
+extern char MYNETROMCALL[];			// NETROM CALLSIGN (ASCII)
 
 extern UCHAR NETROMCALL[];				// NETORM CALL (AX25)
 
@@ -363,8 +363,8 @@ extern int SEMRELEASES;
 extern int SEMCLASHES;
 extern int MINBUFFCOUNT;
 
-extern UCHAR BPQDirectory[];
-extern UCHAR BPQProgramDirectory[];
+extern char BPQDirectory[];
+extern char BPQProgramDirectory[];
 
 extern char WINMOR[];
 extern char PACTORCALL[];

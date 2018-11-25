@@ -197,7 +197,7 @@ BOOL ProcessConfig();
 VOID FreeConfig();
 extern char * PortConfig[35];
 
-extern UCHAR BPQDirectory[];
+extern char BPQDirectory[];
 
 
 extern int OffsetH, OffsetW;

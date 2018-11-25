@@ -44,7 +44,7 @@ static int RigControlRow = 140;
 #define NARROWMODE 30
 #define WIDEMODE 30			// PIII only
 
-extern UCHAR BPQDirectory[];
+extern char BPQDirectory[];
 
 extern char * PortConfig[33];
 

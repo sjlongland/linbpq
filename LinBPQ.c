@@ -156,8 +156,8 @@ int _MYTIMEZONE = 0;
 /* #define F_PWD        0x1000 */
 
 
-UCHAR BPQDirectory[260];
-UCHAR LogDirectory[260];
+char BPQDirectory[260];
+char LogDirectory[260];
 
 BOOL GetConfig(char * ConfigName);
 VOID DecryptPass(char * Encrypt, unsigned char * Pass, unsigned int len);
@@ -503,7 +503,7 @@ int main(int argc, char * argv[])
 	ConnectionInfo * conn;
 	struct stat STAT;
 	PEXTPORTDATA PORTVEC;
-	UCHAR LogDir[260];
+	char LogDir[260];
 
 #ifdef WIN32
 

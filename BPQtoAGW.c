@@ -94,7 +94,7 @@ int ProcessReceivedData(int bpqport);
 static int ProcessLine(char * buf, int Port, BOOL CheckPort);
 
 
-extern UCHAR BPQDirectory[];
+extern char BPQDirectory[];
 
 #pragma pack(1)
 

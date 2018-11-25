@@ -90,7 +90,7 @@ char EtherType[10]="0x08FF";
 
 short udpport=0;
 
-extern UCHAR BPQDirectory[];
+extern char BPQDirectory[];
 
 unsigned int OurInst = 0;
 

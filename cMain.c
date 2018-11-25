@@ -81,8 +81,8 @@ UCHAR	NETROMCALL[7] = "";				// Call used for NETROM (can be MYCALL)
 
 APPLCALLS APPLCALLTABLE[NumberofAppls] = {0};
 
-UCHAR	MYNODECALL[10] = "";				// NODE CALLSIGN (ASCII)
-UCHAR	MYNETROMCALL[10] = "";				// NETROM CALLSIGN (ASCII)
+char	MYNODECALL[10] = "";				// NODE CALLSIGN (ASCII)
+char	MYNETROMCALL[10] = "";				// NETROM CALLSIGN (ASCII)
 
 uintptr_t FREE_Q = 0;
 
@@ -1370,7 +1370,7 @@ BOOL FindDestination(UCHAR * Call, struct DEST_LIST ** REQDEST)
 	return FALSE;
 }
 
-extern UCHAR BPQDirectory[];
+extern char BPQDirectory[];
 
 #define LINE_MAX 256
 

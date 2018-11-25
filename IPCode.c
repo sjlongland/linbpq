@@ -232,7 +232,7 @@ int IPPortMask = 0;
 
 IPSTATS IPStats = {0};
 
-UCHAR BPQDirectory[260];
+char BPQDirectory[260];
 
 char ARPFN[MAX_PATH];
 char IPRFN[MAX_PATH];

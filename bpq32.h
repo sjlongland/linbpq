@@ -195,7 +195,7 @@ UCHAR * APIENTRY GetPortDescription(int portslot, char * Desc);
 int APIENTRY BPQSetHandle(int Stream, HWND hWnd);
 
 int ConvFromAX25(unsigned char * ax25call, char * callsign);
-BOOL ConvToAX25(unsigned char * callsign, unsigned char * ax25call);
+BOOL ConvToAX25(char * callsign, unsigned char * ax25call);
 char * APIENTRY GetNodeCall();
 
 int APIENTRY ChangeSessionCallsign(int Stream, unsigned char * AXCall);

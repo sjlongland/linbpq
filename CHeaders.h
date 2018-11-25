@@ -17,8 +17,8 @@ typedef UINT (*ExtDriverInitFn)(void*);
 BOOL CheckExcludeList(UCHAR * Call);
 
 Dll int ConvFromAX25(unsigned char * ax25call, char * callsign);
-Dll BOOL ConvToAX25(unsigned char * callsign, unsigned char * ax25call);
-DllExport BOOL ConvToAX25Ex(unsigned char * callsign, unsigned char * ax25call);
+Dll BOOL ConvToAX25(char * callsign, unsigned char * ax25call);
+DllExport BOOL ConvToAX25Ex(char * callsign, unsigned char * ax25call);
 int WritetoConsoleLocal(char * buff);
 VOID Consoleprintf(const char * format, ...);
 VOID FreeConfig();

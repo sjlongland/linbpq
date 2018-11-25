@@ -2716,7 +2716,7 @@ Dll BOOL APIENTRY CheckOneTimePassword(char * Password, char * KeyPhrase)
 }
 
 
-DllExport BOOL ConvToAX25Ex(unsigned char * callsign, unsigned char * ax25call)
+DllExport BOOL ConvToAX25Ex(char * callsign, unsigned char * ax25call)
 {
 	// Allows SSID's of 'T and 'R'
 
@@ -2762,7 +2762,7 @@ DllExport BOOL ConvToAX25Ex(unsigned char * callsign, unsigned char * ax25call)
 			return (TRUE);
 		}
 
-		ax25call[i] = callsign[i] << 1;
+		ax25call[i] = (UCHAR)callsign[i] << 1;
 	}
 
 	//
@@ -2773,7 +2773,7 @@ DllExport BOOL ConvToAX25Ex(unsigned char * callsign, unsigned char * ax25call)
 }
 
 
-DllExport BOOL ConvToAX25(unsigned char * callsign, unsigned char * ax25call)
+DllExport BOOL ConvToAX25(char * callsign, unsigned char * ax25call)
 {
 	int i;
 
@@ -2805,7 +2805,7 @@ DllExport BOOL ConvToAX25(unsigned char * callsign, unsigned char * ax25call)
 			return (TRUE);
 		}
 
-		ax25call[i] = callsign[i] << 1;
+		ax25call[i] = (UCHAR)callsign[i] << 1;
 	}
 
 	//

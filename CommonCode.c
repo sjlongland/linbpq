@@ -2816,35 +2816,35 @@ DllExport BOOL ConvToAX25(unsigned char * callsign, unsigned char * ax25call)
 }
 
 
-DllExport int ConvFromAX25(unsigned char * incall,unsigned char * outcall)
+DllExport int ConvFromAX25(unsigned char * ax25call, char * callsign)
 {
 	int in,out=0;
 	unsigned char chr;
 
-	memset(outcall,0x20,10);
+	memset(callsign,0x20,10);
 
 	for (in=0;in<6;in++)
 	{
-		chr=incall[in];
+		chr=ax25call[in];
 		if (chr == 0x40)
 			break;
 		chr >>= 1;
-		outcall[out++]=chr;
+		callsign[out++]=chr;
 	}
 
-	chr=incall[6];				// ssid
+	chr=ax25call[6];			// ssid
 
 	if (chr == 0x42)
 	{
-		outcall[out++]='-';
-		outcall[out++]='T';
+		callsign[out++]='-';
+		callsign[out++]='T';
 		return out;
 	}
 
 	if (chr == 0x44)
 	{
-		outcall[out++]='-';
-		outcall[out++]='R';
+		callsign[out++]='-';
+		callsign[out++]='R';
 		return out;
 	}
 
@@ -2853,14 +2853,14 @@ DllExport int ConvFromAX25(unsigned char * incall,unsigned char * outcall)
 
 	if (chr > 0)
 	{
-		outcall[out++]='-';
+		callsign[out++]='-';
 		if (chr > 9)
 		{
 			chr-=10;
-			outcall[out++]='1';
+			callsign[out++]='1';
 		}
 		chr+=48;
-		outcall[out++]=chr;
+		callsign[out++]=chr;
 	}
 	return (out);
 }

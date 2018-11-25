@@ -536,7 +536,7 @@ int main(int argc, char * argv[])
 	printf("G8BPQ AX25 Packet Switch System Version %s %s\n", TextVerstring, Datestring);
 	printf("%s\n", VerCopyright);
 
-	if (argc > 1 && _stricmp(argv[1], "-v") == 0)
+	if ((argc > 1) && (_stricmp(argv[1], "-v") == 0))
 		return 0;
 
 	sprintf(RlineVer, "LinBPQ%d.%d.%d", Ver[0], Ver[1], Ver[2]);

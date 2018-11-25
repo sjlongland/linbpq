@@ -26,7 +26,6 @@ along with LinBPQ/BPQ32.  If not, see http://www.gnu.org/licenses
 
 #include <stdio.h>
 #include <time.h>
-#include "roundptr.h"
 
 #ifdef WIN32
 //#include <Psapi.h>

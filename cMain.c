@@ -37,8 +37,6 @@ along with LinBPQ/BPQ32.  If not, see http://www.gnu.org/licenses
 #include <assert.h>
 #include <stdint.h>
 
-#include "roundptr.h"
-
 #include "kernelresource.h"
 #include "CHeaders.h"
 

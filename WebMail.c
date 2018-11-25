@@ -776,8 +776,8 @@ int ViewWebMailMessage(struct HTTPConnectionInfo * Session, char * Reply, int Nu
 				// if first (only??) attachment is XML and  filename
 				// starts "RMS_Express_Form" process as HTML Form
 
-				if (DisplayHTML && _memicmp(ptr1, "<?xml", 4) == 0 &&
-					_memicmp(WebMail->FileName[0], "RMS_Express_Form_", 16) == 0)
+				if (DisplayHTML && (_memicmp((UCHAR*)ptr1, (UCHAR*)"<?xml", 4) == 0) &&
+					(_memicmp((UCHAR*)WebMail->FileName[0], (UCHAR*)"RMS_Express_Form_", 16) == 0))
 				{
 					int Len = DisplayWebForm(Session, Msg, WebMail->FileName[0], ptr1, Reply, MsgBytes, BodyLen + 32); // 32 for added "has attachments"
 					free(MsgBytes);
@@ -867,7 +867,7 @@ int ViewWebMailMessage(struct HTTPConnectionInfo * Session, char * Reply, int Nu
 
 		int origlen = strlen(MsgBytes) + 1;
 
-		UCHAR * BufferB = malloc(2 * origlen);
+		char * BufferB = malloc(2 * origlen);
 
 #ifdef WIN32
 
@@ -883,9 +883,9 @@ int ViewWebMailMessage(struct HTTPConnectionInfo * Session, char * Reply, int Nu
 		free(BufferW);
 
 #else
-		int left = 2 * strlen(MsgBytes);
-		int len = strlen(MsgBytes);
-		UCHAR * BufferBP = BufferB;
+		size_t left = 2 * strlen(MsgBytes);
+		size_t len = strlen(MsgBytes);
+		char * BufferBP = BufferB;
 		iconv_t * icu = NULL;
 
 		if (icu == NULL)
@@ -1044,7 +1044,7 @@ void ProcessWebMailMessage(struct HTTPConnectionInfo * Session, char * Key, BOOL
 
 		jsTemplate = GetTemplateFromFile(2, "webscript.js");
 
-		ReplyLen = sprintf(Reply, "HTTP/1.1 200 OK\r\nContent-Length: %d\r\n"
+		ReplyLen = sprintf(Reply, "HTTP/1.1 200 OK\r\nContent-Length: %lu\r\n"
 			"Cache-Control: max-age=60\r\nContent-Type: text/javascript\r\n\r\n%s", strlen(jsTemplate), jsTemplate);
 		*RLen = ReplyLen;
 		return;
@@ -1423,7 +1423,7 @@ void ProcessWebMailMessage(struct HTTPConnectionInfo * Session, char * Key, BOOL
 		return;
 	}
 
-	if (_memicmp(NodeURL, "/WebMail/GetPage/", 17) == 0)
+	if (_memicmp((UCHAR*)NodeURL, (UCHAR*)"/WebMail/GetPage/", 17) == 0)
 	{
 		// Read the HTML Template file and do any needed substitutions
 
@@ -1586,7 +1586,7 @@ void ProcessWebMailMessage(struct HTTPConnectionInfo * Session, char * Key, BOOL
 		return;
 	}
 
-	if (_memicmp(NodeURL, "/WebMail/GetList/", 17) == 0)
+	if (_memicmp((UCHAR*)NodeURL, (UCHAR*)"/WebMail/GetList/", 17) == 0)
 	{
 		// Send Select Template Popup
 
@@ -1911,12 +1911,12 @@ VOID SaveNewMessage(struct HTTPConnectionInfo * Session, char * MsgPtr, char * R
 
 	strcpy(Msg->from, Session->User->Call);
 
-	if (_memicmp(HDest, "rms:", 4) == 0 || _memicmp(HDest, "rms/", 4) == 0)
+	if ((_memicmp((UCHAR*)HDest, (UCHAR*)"rms:", 4) == 0) || (_memicmp((UCHAR*)HDest, (UCHAR*)"rms/", 4) == 0))
 	{
 		Vptr=&HDest[4];
 		strcpy(Msg->to, "RMS");
 	}
-	else if (_memicmp(HDest, "smtp:", 5) == 0)
+	else if (_memicmp((UCHAR*)HDest, (UCHAR*)"smtp:", 5) == 0)
 	{
 		if (ISP_Gateway_Enabled)
 		{
@@ -2563,7 +2563,7 @@ char * BuildB2Header(WebMailInfo * WebMail, struct MsgInfo * Msg)
 		"Mbo: %s\r\n",
 		Msg->title, BBSName);
 
-	NewMsg += sprintf(NewMsg, "Body: %d\r\n", strlen(WebMail->Body));
+	NewMsg += sprintf(NewMsg, "Body: %lu\r\n", strlen(WebMail->Body));
 
 //	for (n = 0; n < Files; n++)
 //	{
@@ -2749,12 +2749,12 @@ VOID SaveTemplateMessage(struct HTTPConnectionInfo * Session, char * MsgPtr, cha
 
 	strcpy(Msg->from, Session->User->Call);
 
-	if (_memicmp(HDest, "rms:", 4) == 0 || _memicmp(HDest, "rms/", 4) == 0)
+	if ((_memicmp((UCHAR*)HDest, (UCHAR*)"rms:", 4) == 0) || (_memicmp((UCHAR*)HDest, (UCHAR*)"rms/", 4) == 0))
 	{
 		Vptr=&HDest[4];
 		strcpy(Msg->to, "RMS");
 	}
-	else if (_memicmp(HDest, "smtp:", 5) == 0)
+	else if (_memicmp((UCHAR*)HDest, (UCHAR*)"smtp:", 5) == 0)
 	{
 		if (ISP_Gateway_Enabled)
 		{
@@ -2985,12 +2985,12 @@ VOID BuildMessageFromHTMLInput(struct HTTPConnectionInfo * Session, char * Reply
 
 	strcpy(Msg->from, Session->User->Call);
 
-	if (_memicmp(HDest, "rms:", 4) == 0 || _memicmp(HDest, "rms/", 4) == 0)
+	if ((_memicmp((UCHAR*)HDest, (UCHAR*)"rms:", 4) == 0) || (_memicmp((UCHAR*)HDest, (UCHAR*)"rms/", 4) == 0))
 	{
 		Vptr=&HDest[4];
 		strcpy(Msg->to, "RMS");
 	}
-	else if (_memicmp(HDest, "smtp:", 5) == 0)
+	else if (_memicmp((UCHAR*)HDest, (UCHAR*)"smtp:", 5) == 0)
 	{
 		if (ISP_Gateway_Enabled)
 		{
@@ -3187,7 +3187,7 @@ void ProcessFormInput(struct HTTPConnectionInfo * Session, char * input, char * 
 //		7.2.3 The Multipart/alternative subtype
 
 
-		if (_memicmp(ptr, "Content-Type: ", 14) == 0)
+		if (_memicmp((UCHAR*)ptr, (UCHAR*)"Content-Type: ", 14) == 0)
 		{
 			char Line[1000] = "";
 			char lcLine[1000] = "";
@@ -3198,7 +3198,7 @@ void ProcessFormInput(struct HTTPConnectionInfo * Session, char * input, char * 
 			memcpy(lcLine, &ptr[14], ptr2-ptr-14);
 			_strlwr(lcLine);
 
-			if (_memicmp(Line, "Multipart/", 10) == 0)
+			if (_memicmp((UCHAR*)Line, (UCHAR*)"Multipart/", 10) == 0)
 			{
 				Multipart = TRUE;
 
@@ -3394,7 +3394,7 @@ void ProcessFormInput(struct HTTPConnectionInfo * Session, char * input, char * 
 
 	while (ptr1)
 	{
-		if (_memicmp(ptr, "Msg:", 4) == 0)
+		if (_memicmp((UCHAR*)ptr, (UCHAR*)"Msg:", 4) == 0)
 		{
 			// Rest is message body. <var> substitutions have been done
 
@@ -3412,17 +3412,17 @@ void ProcessFormInput(struct HTTPConnectionInfo * Session, char * input, char * 
 		while (*ptr1 == '\r' || *ptr1 == '\n')
 			*ptr1++ = 0;
 
-		if (_memicmp(ptr, "To:", 3) == 0)
+		if (_memicmp((UCHAR*)ptr, (UCHAR*)"To:", 3) == 0)
 		{
 			if (strlen(ptr) > 5)
 				WebMail->To = _strdup(&ptr[3]);
 		}
-		else if (_memicmp(ptr, "CC:", 3) == 0)
+		else if (_memicmp((UCHAR*)ptr, (UCHAR*)"CC:", 3) == 0)
 		{
 			if (strlen(ptr) > 5)
 				WebMail->CC = _strdup(&ptr[3]);
 		}
-		else if (_memicmp(ptr, "Subj:", 5) == 0)
+		else if (_memicmp((UCHAR*)ptr, (UCHAR*)"Subj:", 5) == 0)
 		{
 			if (ptr[5] == ' ')		// May have space after :
 				ptr++;
@@ -3430,7 +3430,7 @@ void ProcessFormInput(struct HTTPConnectionInfo * Session, char * input, char * 
 				WebMail->Subject = _strdup(&ptr[5]);
 		}
 
-		else if (_memicmp(ptr, "Subject:", 8) == 0)
+		else if (_memicmp((UCHAR*)ptr, (UCHAR*)"Subject:", 8) == 0)
 		{
 			if (ptr[8] == ' ')
 				ptr++;
@@ -3730,7 +3730,7 @@ char * BuildFormMessage(struct HTTPConnectionInfo * Session, struct MsgInfo * Ms
 			Msg->bid, DateString, "Private", Msg->from, WebMail->To, Msg->title, BBSName);
 
 
-	NewMsg += sprintf(NewMsg, "Body: %d\r\n", strlen(WebMail->Body));
+	NewMsg += sprintf(NewMsg, "Body: %lu\r\n", strlen(WebMail->Body));
 
 	for (n = 0; n < Files; n++)
 	{
@@ -4263,7 +4263,7 @@ gotFile:
 
 	while (ptr1)
 	{
-		if (_memicmp(ptr, "Msg:", 4) == 0)
+		if (_memicmp((UCHAR*)ptr, (UCHAR*)"Msg:", 4) == 0)
 		{
 			// Rest is message body. May need <var> substitutions
 
@@ -4281,7 +4281,7 @@ gotFile:
 		while (*ptr1 == '\r' || *ptr1 == '\n')
 			*ptr1++ = 0;
 
-		if (_memicmp(ptr, "Form:", 5) == 0)
+		if (_memicmp((UCHAR*)ptr, (UCHAR*)"Form:", 5) == 0)
 		{
 			InputName = &ptr[5];
 
@@ -4298,7 +4298,7 @@ gotFile:
 				WebMail->DisplayHTMLName = _strdup(WebMail->DisplayHTMLName);
 			}
 		}
-		else if (_memicmp(ptr, "ReplyTemplate:",14) == 0)
+		else if (_memicmp((UCHAR*)ptr, (UCHAR*)"ReplyTemplate:",14) == 0)
 		{
 			ReplyName = &ptr[14];
 
@@ -4310,17 +4310,17 @@ gotFile:
 
 			WebMail->ReplyHTMLName = _strdup(ReplyName);
 		}
-		else if (_memicmp(ptr, "To:", 3) == 0)
+		else if (_memicmp((UCHAR*)ptr, (UCHAR*)"To:", 3) == 0)
 		{
 			if (strlen(ptr) > 5)
 				WebMail->To = _strdup(&ptr[3]);
 		}
-		else if (_memicmp(ptr, "Subj:", 5) == 0)
+		else if (_memicmp((UCHAR*)ptr, (UCHAR*)"Subj:", 5) == 0)
 		{
 			if (strlen(ptr) > 6)
 				WebMail->Subject = _strdup(&ptr[5]);
 		}
-		else if (_memicmp(ptr, "Def:", 4) == 0)
+		else if (_memicmp((UCHAR*)ptr, (UCHAR*)"Def:", 4) == 0)
 		{
 			// Def: MsgOriginalBody=<var MsgOriginalBody>
 

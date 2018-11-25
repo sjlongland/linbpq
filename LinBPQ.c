@@ -562,7 +562,7 @@ int main(int argc, char * argv[])
 
 	for (i = 1; i < argc; i++)
 	{
-		if (_memicmp(argv[i], "logdir=", 7) == 0)
+		if (_memicmp((UCHAR*)argv[i], (UCHAR*)"logdir=", 7) == 0)
 		{
 			strcpy(LogDirectory, &argv[i][7]);
 			break;

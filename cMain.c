@@ -34,6 +34,7 @@ along with LinBPQ/BPQ32.  If not, see http://www.gnu.org/licenses
 #include "stdio.h"
 #include <fcntl.h>
 
+#include <assert.h>
 #include <stdint.h>
 
 #include "roundptr.h"
@@ -89,6 +90,9 @@ uintptr_t FREE_Q = 0;
 
 time_t TimeLoaded = 0;
 
+/*!
+ * Pointer to the first port in the port table.
+ */
 struct PORTCONTROL * PORTTABLE = NULL;
 int	NUMBEROFPORTS = 0;
 int PORTENTRYLEN = sizeof(struct PORTCONTROL);
@@ -553,14 +557,54 @@ extern int L3BG();
 extern int TNCTimerProc();
 extern int PROCESSIFRAME();
 
+/*!
+ * Take a list of callsigns with optional whitespace and pass each one to
+ * ConvToAX25 before returning the complete list.  Result is an array of
+ * bit-shifted callsigns (7 characters a piece) followed by a
+ * terminating NULL byte.
+ */
+static char* split_call_list(const char* src_list) {
+	/* Count up the number of elements in the list */
+	int elements = 1;
+	const char* ptr = src_list;
+	while (*ptr) {
+		if (*ptr == ',')
+			elements++;
+		ptr++;
+	}
+
+	/* Allocate the destination list */
+	char* dest_list = calloc((elements*7) + 1, sizeof(char));
+	if (!dest_list)
+		return NULL;	/* Allocation failure */
+
+	ptr = src_list;
+	char* dest_call = dest_list;
+	while (*(ptr) > 32)
+	{
+		ConvToAX25(ptr, dest_call);
+		dest_call += 7;
+		if (strchr(ptr, ','))
+		{
+			ptr = strchr(ptr, ',');
+			ptr++;
+		}
+		else
+			break;
+	}
+
+	/* Finish off with a NULL byte */
+	*dest_call = 0;
+
+	return dest_list;
+}
 
 BOOL Start()
 {
 	struct CONFIGTABLE * cfg = (struct CONFIGTABLE * )ConfigBuffer;
 	struct APPLCONFIG * ptr1;
 	struct PORTCONTROL * PORT;
-	struct FULLPORTDATA * FULLPORT;		// Including HW Data
-	struct FULLPORTDATA * NEXTPORT;		// Including HW Data
+	struct FULLPORTDATA * PREVPORT;		// Tail of PORTTABLE linked-list
 	struct _EXTPORTDATA * EXTPORT;
 	APPLCALLS * APPL;
 	struct ROUTE * ROUTE;
@@ -571,10 +615,6 @@ BOOL Start()
 	unsigned char * ptr2, * ptr3, * ptr4;
 	USHORT * CWPTR;
 	int i, n;
-
-	NEXTFREEDATA = &DATAAREA[0];			// For Reinit
-
-	memset(DATAAREA, 0, DATABYTES);
 
 	// Reinit everything in case of restart
 
@@ -803,17 +843,23 @@ BOOL Start()
 	ptr2 = ConfigBuffer + C_PORTS;
 	PortRec = (struct PORTCONFIG *)ptr2;
 
-	PORTTABLE = (VOID *)NEXTFREEDATA;
-	FULLPORT = (struct FULLPORTDATA *)PORTTABLE;
+	/* This is the first port */
+	PREVPORT = NULL;
 
 	while (PortRec->PORTNUM)
 	{
-		//	SET UP NEXT PORT PTR
+		/* Allocate the control structure */
+		struct FULLPORTDATA * THISPORT
+			= calloc(1, sizeof(struct FULLPORTDATA));
+		PORT = &THISPORT->PORTCONTROL;
 
-		PORT = &FULLPORT->PORTCONTROL;
-		NEXTPORT = FULLPORT;
-		NEXTPORT++;
-		PORT->PORTPOINTER = (struct PORTCONTROL *)NEXTPORT;
+		if (PREVPORT == NULL) {
+			/* This is the first port */
+			PORTTABLE = PORT;
+		} else {
+			/* This is the last port */
+			PREVPORT->PORTCONTROL.PORTPOINTER = PORT;
+		}
 
 		PORT->PORTNUMBER = (UCHAR)PortRec->PORTNUM;
 		PORT->PortSlot = PortSlot++;
@@ -850,6 +896,10 @@ BOOL Start()
 		PORT->INTLEVEL = (char)PortRec->INTLEVEL;
 		PORT->BAUDRATE = PortRec->SPEED;
 
+		/*
+		 * Work-around for systems with 16-bit "int"
+		 * (49664 is lower 16-bits of 115200)
+		 */
 		if (PORT->BAUDRATE == 49664)
 			PORT->BAUDRATE = (int)115200;
 
@@ -986,65 +1036,20 @@ BOOL Start()
 
 		//	SEE IF PERMITTED LINK CALLSIGNS SPECIFIED
 
-		ptr2 = &PortRec->VALIDCALLS[0];
-
-		if (*(ptr2))
+		if (*(PortRec->VALIDCALLS))
 		{
-			ptr3 = (char *)PORT->PORTPOINTER;				// Permitted Calls follows Port Info
-			PORT->PERMITTEDCALLS = ptr3;
-
-			while (*(ptr2) > 32)
-			{
-				ConvToAX25(ptr2, ptr3);
-				ptr3 += 7;
-				PORT->PORTPOINTER = (struct PORTCONTROL *)ptr3;
-				if (strchr(ptr2, ','))
-				{
-					ptr2 = strchr(ptr2, ',');
-					ptr2++;
-				}
-				else
-					break;
-			}
-
-			ptr3 ++;							// Terminating NULL
-
-			//	Round to word boundary (for ARM5 etc)
-			ptr3 = (UCHAR *)roundPtr(ptr3);
-
-			PORT->PORTPOINTER = (struct PORTCONTROL *)ptr3;
+			PORT->PERMITTEDCALLS = split_call_list(
+					PortRec->VALIDCALLS);
+			assert(PORT->PERMITTEDCALLS != NULL);
 		}
 
 		//	SEE IF PORT UNPROTO ADDR SPECIFIED
 
-		ptr2 = &PortRec->UNPROTO[0];
-
-		if (*(ptr2))
+		if (*(PortRec->UNPROTO))
 		{
-			ptr3 = (char *)PORT->PORTPOINTER;				// Unproto follows port info
-			PORT->PORTUNPROTO = ptr3;
-
-			while (*(ptr2) > 32)
-			{
-				ConvToAX25(ptr2, ptr3);
-				ptr3 += 7;
-				PORT->PORTPOINTER = (struct PORTCONTROL *)ptr3;
-				if (strchr(ptr2, ','))
-				{
-					ptr2 = strchr(ptr2, ',');
-					ptr2++;
-				}
-				else
-					break;
-			}
-
-			ptr3 ++;							// Terminating NULL
-
-			//	Round to word boundsaty (for ARM5 etc)
-
-			ptr3 = (UCHAR *)roundPtr(ptr3);
-
-			PORT->PORTPOINTER = (struct PORTCONTROL *)ptr3;
+			PORT->PORTUNPROTO = split_call_list(
+					PortRec->UNPROTO);
+			assert(PORT->PORTUNPROTO != NULL);
 		}
 
 		//	ADD MH AREA IF NEEDED
@@ -1052,26 +1057,14 @@ BOOL Start()
 		if (PortRec->MHEARD != 'N')
 		{
 			NEEDMH = 1;								// Include MH in Command List
-
-			ptr3 = (char *)PORT->PORTPOINTER;				// Permitted Calls follows Port Info
-			PORT->PORTMHEARD = (PMHSTRUC)ptr3;
-
-			ptr3 += MHENTRIES * sizeof(MHSTRUC);
-
-			//	Round to word boundsaty (for ARM5 etc)
-			ptr3 = (UCHAR *)roundPtr(ptr3);
-
-			PORT->PORTPOINTER = (struct PORTCONTROL *)ptr3;
+			PORT->PORTMHEARD = calloc(MHENTRIES, sizeof(MHSTRUC));
+			assert(PORT->PORTMHEARD != NULL);
 		}
 
 		PortRec++;
 		NUMBEROFPORTS ++;
-		FULLPORT = (struct FULLPORTDATA *)PORT->PORTPOINTER;
+		PREVPORT = THISPORT;
 	}
-
-	PORT->PORTPOINTER = NULL;		// End of list
-
-	NEXTFREEDATA = (UCHAR *)FULLPORT;
 
 	//	SET UP APPLICATION CALLS AND ALIASES
 
@@ -1115,18 +1108,17 @@ BOOL Start()
 
 	//	SET UP VARIOUS CONTROL TABLES
 
-	LINKS = (VOID *)NEXTFREEDATA;
-	NEXTFREEDATA += MAXLINKS * sizeof(struct _LINKTABLE);
+	LINKS = calloc(MAXLINKS, sizeof(struct _LINKTABLE));
+	assert(LINKS != NULL);
 
-	DESTS = (VOID *)NEXTFREEDATA;
-	NEXTFREEDATA += MAXDESTS * sizeof(struct DEST_LIST);
-	ENDDESTLIST = (VOID *)NEXTFREEDATA;
+	DESTS = calloc(MAXDESTS, sizeof(struct DEST_LIST));
+	assert(DESTS != NULL);
 
-	NEIGHBOURS = (VOID *)NEXTFREEDATA;
-	NEXTFREEDATA += MAXNEIGHBOURS * sizeof(struct ROUTE);
+	NEIGHBOURS = calloc(MAXNEIGHBOURS, sizeof(struct ROUTE));
+	assert(NEIGHBOURS);
 
-	L4TABLE = (VOID *)NEXTFREEDATA;
-	NEXTFREEDATA += MAXCIRCUITS * sizeof(TRANSPORTENTRY);
+	L4TABLE = calloc(MAXCIRCUITS, sizeof(TRANSPORTENTRY));
+	assert(L4TABLE);
 
 	//	SET UP DEFAULT ROUTES LIST
 
@@ -1172,36 +1164,12 @@ BOOL Start()
 	}
 
 	//	SET UP INFO MESSAGE
-
-	ptr2 = ConfigBuffer + C_INFOMSG;
-	ptr3 = NEXTFREEDATA;
-
-	INFOMSG = ptr3;
-
-	while ((*ptr2))
-	{
-		*(ptr3++) = *(ptr2++);
-	}
-
-	INFOLEN = ptr3 - (unsigned char *)INFOMSG;
-
-	NEXTFREEDATA = ptr3;
+	INFOMSG = strdup(ConfigBuffer + C_INFOMSG);
+	INFOLEN = strlen(INFOMSG);
 
 	//	SET UP CTEXT MESSAGE
-
-	ptr2 = ConfigBuffer + C_CTEXT;
-	ptr3 = NEXTFREEDATA;
-
-	CTEXTMSG = ptr3;
-
-	while ((*ptr2))
-	{
-		*(ptr3++) = *(ptr2++);
-	}
-
-	CTEXTLEN = ptr3 - (unsigned char *)CTEXTMSG;
-
-	NEXTFREEDATA = ptr3;
+	CTEXTMSG = strdup(ConfigBuffer + C_CTEXT);
+	CTEXTLEN = strlen(CTEXTMSG);
 
 	//	SET UP ID MESSAGE
 
@@ -1216,35 +1184,30 @@ BOOL Start()
 	IDHDDR.CTL = 3;
 	IDHDDR.PID = 0xf0;
 
-	ptr2 = ConfigBuffer + C_IDMSG;
-	ptr3 = &IDHDDR.L2DATA[0];
+	strncpy(IDHDDR.L2DATA, ConfigBuffer + C_IDMSG,
+			sizeof(IDHDDR.L2DATA));
+	IDHDDR.LENGTH = &IDHDDR.L2DATA[strlen(IDHDDR.L2DATA)]
+		- (unsigned char *)&IDHDDR;
 
-	while ((*ptr2))
-	{
-		*(ptr3++) = *(ptr2++);
-	}
+	uint8_t* buffer_pool = calloc(NUMBEROFBUFFERS, BUFFLEN);
+	BUFFERPOOL = buffer_pool;
+	assert(buffer_pool != NULL);
 
-	IDHDDR.LENGTH = ptr3 - (unsigned char *)&IDHDDR;
-
-	NEXTFREEDATA = (UCHAR*)roundPtr(NEXTFREEDATA);
-	BUFFERPOOL = NEXTFREEDATA;
-
-	Consoleprintf("PORTS %x LINKS %x DESTS %x ROUTES %x L4 %x BUFFERS %x\n",
+	Consoleprintf("PORTS %p LINKS %p DESTS %p ROUTES %p L4 %p BUFFERS %p\n",
 		PORTTABLE, LINKS, DESTS, NEIGHBOURS, L4TABLE, BUFFERPOOL);
 
-	Debugprintf("PORTS %x LINKS %x DESTS %x ROUTES %x L4 %x BUFFERS %x ",
+	Debugprintf("PORTS %p LINKS %p DESTS %p ROUTES %p L4 %p BUFFERS %p ",
 		PORTTABLE, LINKS, DESTS, NEIGHBOURS, L4TABLE, BUFFERPOOL);
 
 	i = NUMBEROFBUFFERS;
 
 	NUMBEROFBUFFERS = 0;
 
-	while (i-- && NEXTFREEDATA < (DATAAREA + DATABYTES - (400 + 8192)))	// 400 was BUFFLEN. Keep 8K free for anything that needs shared memory
+	while (i--)
 	{
-		Bufferlist[NUMBEROFBUFFERS] = (UINT *)NEXTFREEDATA;
-
-		ReleaseBuffer((UINT *)NEXTFREEDATA);
-		NEXTFREEDATA += 400;			// was BUFFLEN
+		Bufferlist[NUMBEROFBUFFERS] = &buffer_pool[
+			BUFFLEN * NUMBEROFBUFFERS];
+		ReleaseBuffer(Bufferlist[NUMBEROFBUFFERS]);
 
 		NUMBEROFBUFFERS++;
 		MAXBUFFS++;

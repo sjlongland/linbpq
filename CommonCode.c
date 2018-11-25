@@ -4192,3 +4192,29 @@ LRESULT CALLBACK UIWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam
 
 #endif
 
+
+/*!
+ * Read an arbitrary pointer at the end of a buffer.
+ *
+ * @param	buffer		The buffer to read
+ * @param	index		Read the ${index}th pointer from the end
+ * @returns	The pointer value
+ */
+void* buffer_read_ptr(UINT* buffer, int idx) {
+	void* out;
+	memcpy(&out, &buffer[BUFFLEN- ((idx+1)*sizeof(out))
+			/sizeof(buffer[0])], sizeof(out));
+	return out;
+}
+
+/*!
+ * Write an arbitrary pointer at the end of a buffer.
+ *
+ * @param	buffer		The buffer to write
+ * @param	index		Read the ${index}th pointer from the end
+ * @param	ptr		The pointer value
+ */
+void buffer_write_ptr(UINT* buffer, int idx, void* ptr) {
+	memcpy(&buffer[BUFFLEN- ((idx+1)*sizeof(ptr))
+			/sizeof(buffer[0])], &ptr, sizeof(ptr));
+}

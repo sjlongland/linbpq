@@ -396,3 +396,23 @@ extern int REALTIMETICKS;
 
 int InOctets[32];
 int OutOctets[32];
+
+// Reading and writing arbitrary pointers from or to buffers
+
+/*!
+ * Read an arbitrary pointer at the end of a buffer.
+ *
+ * @param	buffer		The buffer to read
+ * @param	index		Read the ${index}th pointer from the end
+ * @returns	The pointer value
+ */
+void* buffer_read_ptr(UINT* buffer, int idx);
+
+/*!
+ * Write an arbitrary pointer at the end of a buffer.
+ *
+ * @param	buffer		The buffer to write
+ * @param	index		Read the ${index}th pointer from the end
+ * @param	ptr		The pointer value
+ */
+void buffer_write_ptr(UINT* buffer, int idx, void* ptr);

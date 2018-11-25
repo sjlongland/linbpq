@@ -1478,12 +1478,12 @@ int GetTickCount()
 void SetWindowText(HWND hWnd, char * lpString)
 {
 	return;
-};
+}
 
 BOOL SetDlgItemText(HWND hWnd, int item, char * lpString)
 {
 	return 0;
-};
+}
 
 #endif
 
@@ -1525,7 +1525,7 @@ VOID Check_Timer()
 {
 }
 
-VOID POSTDATAAVAIL(){};
+VOID POSTDATAAVAIL(){}
 
 COLORREF Colours[256] = {0,
 		RGB(0,0,0), RGB(0,0,128), RGB(0,0,192), RGB(0,0,255),				// 1 - 4

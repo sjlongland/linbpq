@@ -5,6 +5,8 @@
 #ifndef _ASMSTRUCS_
 #define _ASMSTRUCS_
 
+#include <stdint.h>
+
 #ifdef WIN32
 
 #define _USE_32BIT_TIME_T	// Until the ASM code switches to 64 bit time
@@ -513,6 +515,10 @@ struct WL2KInfo
 };
 
 
+/*!
+ * Port control structure.  This is a linked list (see PORTPOINTER) of ports
+ * which define the states of all "ports" (AX.25 radio links) for the station.
+ */
 typedef struct PORTCONTROL
 {
 	UCHAR PORTCALL[7];
@@ -525,8 +531,8 @@ typedef struct PORTCONTROL
 	struct PORTCONTROL * PORTPOINTER; // NEXT IN CHAIN
 
 	UCHAR PORTQUALITY;		// 'STANDARD' QUALITY FOR THIS PORT
-	UINT PORTRX_Q;			// FRAMES RECEIVED ON THIS PORT
-	UINT PORTTX_Q;			// FRAMES TO BE SENT ON THIS PORT
+	uintptr_t PORTRX_Q;		// FRAMES RECEIVED ON THIS PORT
+	uintptr_t PORTTX_Q;		// FRAMES TO BE SENT ON THIS PORT
 
 	void (FAR * PORTTXROUTINE)();	// POINTER TO TRANSMIT ROUTINE FOR THIS PORT
 	void (FAR * PORTRXROUTINE)();	// POINTER TO RECEIVE ROUTINE FOR THIS PORT

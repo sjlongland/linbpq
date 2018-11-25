@@ -218,8 +218,6 @@ int	L3TIMER	= 1;					// TIMER FOR 'NODES' MESSAGE
 int	IDTIMER = 0;					// TIMER FOR ID MESSAGE
 int	BTTIMER = 0;					// TIMER FOR BT MESSAGE
 
-UCHAR * NEXTFREEDATA = NULL;				// ADDRESS OF NEXT FREE BYTE of shared memory
-
 int NEEDMH = 0;
 
 struct DATAMESSAGE BTHDDR = {0,0,9,240,13};
@@ -238,8 +236,6 @@ char BridgeMap[33][33] = {0};
 // Keep Buffers at end
 
 #define DATABYTES 400000		// WAS 320000
-
-UCHAR DATAAREA[DATABYTES] = "";
 
 UINT * Bufferlist[1000] = {0};
 

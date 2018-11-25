@@ -577,8 +577,8 @@ int main(int argc, char * argv[])
 #ifdef WIN32
 	CreateDirectory(LogDir, NULL);
 #else
-	mkdir(LogDir, S_IRWXU | S_IRWXG | S_IRWXO);
-	chmod(LogDir, S_IRWXU | S_IRWXG | S_IRWXO);
+	mkdir(LogDir, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+	chmod(LogDir, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
 #endif
 
 	if (!ProcessConfig())

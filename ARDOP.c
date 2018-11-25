@@ -234,7 +234,7 @@ BOOL checkcrc16(unsigned char * Data, unsigned short length)
 
 BOOL ARDOPOpenLogFiles(struct TNCINFO * TNC)
 {
-	UCHAR FN[MAX_PATH];
+	char FN[MAX_PATH];
 
 	time_t T;
 	struct tm * tm;
@@ -261,9 +261,9 @@ void SendARDOPorPacketData(struct TNCINFO * TNC, int Stream, UCHAR * Buff, int t
 
 	if (Stream == 0)
 	{
-		ARDOPSendData(TNC, Buff, txlen);
+		ARDOPSendData(TNC, (char *)Buff, txlen);
 		STREAM->BytesTXed += txlen;
-		WritetoTrace(TNC, Buff, txlen);
+		WritetoTrace(TNC, (char *)Buff, txlen);
 	}
 	else
 	{
@@ -299,7 +299,7 @@ void SendARDOPorPacketData(struct TNCINFO * TNC, int Stream, UCHAR * Buff, int t
 
 static int ProcessLine(char * buf, int Port)
 {
-	UCHAR * ptr,* p_cmd;
+	char * ptr,* p_cmd;
 	char * p_ipad = 0;
 	char * p_port = 0;
 	char * PktPort = 0;
@@ -342,9 +342,9 @@ static int ProcessLine(char * buf, int Port)
 		PktPort = strlop(p_port, '/');
 
 		if (PktPort)
-			TNC->PacketPort = atoi(PktPort);
+			TNC->PacketPort = atoi((char *)PktPort);
 
-		WINMORport = atoi(p_port);
+		WINMORport = atoi((char *)p_port);
 
 		TNC->destaddr.sin_family = AF_INET;
 		TNC->destaddr.sin_port = htons(WINMORport);
@@ -377,7 +377,7 @@ static int ProcessLine(char * buf, int Port)
 		if (p_port == NULL) return (FALSE);
 
 		TNC->ARDOPSerialPort = _strdup(p_ipad);
-		TNC->ARDOPSerialSpeed = atoi(p_port);
+		TNC->ARDOPSerialSpeed = atoi((char *)p_port);
 
 		TNC->ARDOPCommsMode = 'S';
 	}
@@ -396,7 +396,7 @@ static int ProcessLine(char * buf, int Port)
 		if (p_port == NULL) return (FALSE);
 
 		TNC->ARDOPSerialPort = _strdup(p_ipad);
-		TNC->ARDOPSerialSpeed = atoi(p_port);
+		TNC->ARDOPSerialSpeed = atoi((char *)p_port);
 
 		TNC->ARDOPCommsMode = 'I';
 	}
@@ -436,7 +436,7 @@ static int ProcessLine(char * buf, int Port)
 
 		if (ptr)
 		{
-			if (_memicmp(ptr, "PATH", 4) == 0)
+			if (_memicmp((UCHAR *)ptr, (UCHAR *)"PATH", 4) == 0)
 			{
 				p_cmd = strtok(NULL, "\n\r");
 				if (p_cmd) TNC->ProgramPath = _strdup(p_cmd);
@@ -458,18 +458,18 @@ static int ProcessLine(char * buf, int Port)
 			if (memcmp(buf, "****", 4) == 0)
 				return TRUE;
 
-			ptr = strchr(buf, ';');
+			ptr = strchr((char *)buf, ';');
 			if (ptr)
 			{
 				*ptr++ = 13;
 				*ptr = 0;
 			}
 
-			if ((_memicmp(buf, "CAPTURE", 7) == 0) || (_memicmp(buf, "PLAYBACK", 8) == 0))
+			if ((_memicmp((UCHAR *)buf, (UCHAR *)"CAPTURE", 7) == 0) || (_memicmp((UCHAR *)buf, (UCHAR *)"PLAYBACK", 8) == 0))
 			{}		// Ignore
 			else
 /*
-			if (_memicmp(buf, "PATH", 4) == 0)
+			if (_memicmp((UCHAR *)buf, (UCHAR *)"PATH", 4) == 0)
 			{
 				char * Context;
 				p_cmd = strtok_s(&buf[5], "\n\r", &Context);
@@ -477,47 +477,47 @@ static int ProcessLine(char * buf, int Port)
 			}
 			else
 */
-			if (_memicmp(buf, "WL2KREPORT", 10) == 0)
+			if (_memicmp((UCHAR *)buf, (UCHAR *)"WL2KREPORT", 10) == 0)
 				TNC->WL2K = DecodeWL2KReportLine(buf);
 			else
-			if (_memicmp(buf, "PACKETCHANNELS", 14) == 0)	// Packet Channels
-				TNC->PacketChannels = atoi(&buf[14]);
+			if (_memicmp((UCHAR *)buf, (UCHAR *)"PACKETCHANNELS", 14) == 0)	// Packet Channels
+				TNC->PacketChannels = atoi((char *)&buf[14]);
 			else
-			if (_memicmp(buf, "BUSYHOLD", 8) == 0)		// Hold Time for Busy Detect
-				TNC->BusyHold = atoi(&buf[8]);
+			if (_memicmp((UCHAR *)buf, (UCHAR *)"BUSYHOLD", 8) == 0)		// Hold Time for Busy Detect
+				TNC->BusyHold = atoi((char *)&buf[8]);
 
 			else
-			if (_memicmp(buf, "BUSYWAIT", 8) == 0)		// Wait time beofre failing connect if busy
-				TNC->BusyWait = atoi(&buf[8]);
+			if (_memicmp((UCHAR *)buf, (UCHAR *)"BUSYWAIT", 8) == 0)		// Wait time beofre failing connect if busy
+				TNC->BusyWait = atoi((char *)&buf[8]);
 
 			else
-			if (_memicmp(buf, "MAXCONREQ", 9) == 0)		// Hold Time for Busy Detect
-				TNC->MaxConReq = atoi(&buf[9]);
+			if (_memicmp((UCHAR *)buf, (UCHAR *)"MAXCONREQ", 9) == 0)		// Hold Time for Busy Detect
+				TNC->MaxConReq = atoi((char *)&buf[9]);
 
 			else
-			if (_memicmp(buf, "STARTINROBUST", 13) == 0)
+			if (_memicmp((UCHAR *)buf, (UCHAR *)"STARTINROBUST", 13) == 0)
 				TNC->StartInRobust = TRUE;
 
 			else
-			if (_memicmp(buf, "ROBUST", 6) == 0)
+			if (_memicmp((UCHAR *)buf, (UCHAR *)"ROBUST", 6) == 0)
 			{
-				if (_memicmp(&buf[7], "TRUE", 4) == 0)
+				if (_memicmp((UCHAR *)&buf[7], (UCHAR *)"TRUE", 4) == 0)
 					TNC->Robust = TRUE;
 
 				strcat (TNC->InitScript, buf);
 			}
 			else
-			if (_memicmp(buf, "LOGDIR ", 7) == 0)
+			if (_memicmp((UCHAR *)buf, (UCHAR *)"LOGDIR ", 7) == 0)
 				TNC->LogPath = _strdup(&buf[7]);
 			else
-			if (_memicmp(buf, "ENABLEPACKET", 12) == 0)
+			if (_memicmp((UCHAR *)buf, (UCHAR *)"ENABLEPACKET", 12) == 0)
 			{
 				if (TNC->PacketChannels == 0)
 					TNC->PacketChannels = 5;
 			//	AddVirtualKISSPort(TNC, Port, buf);
 			}
 			else
-//			if (_memicmp(buf, "PAC ", 4) == 0 && _memicmp(buf, "PAC MODE", 8) != 0)
+//			if (_memicmp((UCHAR *)buf, (UCHAR *)"PAC ", 4) == 0 && _memicmp(buf, "PAC MODE", 8) != 0)
 //			{
 				// PAC MODE goes to TNC, others are parsed locally
 //
@@ -561,7 +561,7 @@ VOID ARDOPSendPktCommand(struct TNCINFO * TNC, int Stream, char * Buff)
 {
 	// Encode and send to TNC. May be TCP or Serial
 
-	int EncLen;
+	size_t EncLen;
 	UCHAR Encoded[256];
 
 	if (Stream == 0)
@@ -581,7 +581,7 @@ VOID ARDOPSendPktCommand(struct TNCINFO * TNC, int Stream, char * Buff)
 
 		int SentLen;
 
-		EncLen = sprintf(Encoded, "%c%c%c%s\r", Buff[0], 1, strlen(Buff) -2, &Buff[1]);
+		EncLen = sprintf((char *)Encoded, "%c%c%c%s\r", Buff[0], 1, (int)strlen(Buff) -2, &Buff[1]);
 		SentLen = send(TNC->PacketSock, Encoded, EncLen, 0);
 
 		if (SentLen != EncLen)
@@ -599,7 +599,7 @@ VOID ARDOPSendPktCommand(struct TNCINFO * TNC, int Stream, char * Buff)
 
 	}
 
-	EncLen = sprintf(Encoded, "%s\r", Buff);
+	EncLen = sprintf((char *)Encoded, "%s\r", Buff);
 	SendToTNC(TNC, Stream, Encoded, EncLen);
 
 	return;
@@ -618,7 +618,7 @@ VOID ARDOPSendCommand(struct TNCINFO * TNC, char * Buff, BOOL Queue)
 	if (Buff[0] == 0)		// Terminal Keepalive?
 		return;
 
-	EncLen = sprintf(Encoded, "%s\r", Buff);
+	EncLen = sprintf((char *)Encoded, "%s\r", Buff);
 
 	// it is possible for binary data to be dumped into the command
 	// handler if a session disconnects in middle of transfer
@@ -780,7 +780,7 @@ int ARDOPSendData(struct TNCINFO * TNC, char * Buff, int Len)
 
 VOID ARDOPChangeMYC(struct TNCINFO * TNC, char * Call)
 {
-	UCHAR TXMsg[100];
+	char TXMsg[100];
 	int datalen;
 
 	if (strcmp(Call, TNC->CurrentMYC) == 0)
@@ -790,7 +790,7 @@ VOID ARDOPChangeMYC(struct TNCINFO * TNC, char * Call)
 
 //	ARDOPSendCommand(TNC, "CODEC FALSE");
 
-	datalen = sprintf(TXMsg, "MYCALL %s", Call);
+	datalen = snprintf(TXMsg, sizeof(TXMsg)-1, "MYCALL %s", Call);
 	ARDOPSendCommand(TNC, TXMsg, TRUE);
 
 //	ARDOPSendCommand(TNC, "CODEC TRUE");
@@ -909,20 +909,20 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 			}
 
 			datalen = buffptr->LENGTH - 7;
-			Buffer = &buffptr->DEST[0];		// Raw Frame
+			Buffer = (char *)&buffptr->DEST[0];	// Raw Frame
 			Buffer[datalen] = 0;
 
 			*ptr++ = '^';		// delimit fram ewith ^
 
 			// Frame has ax.25 format header. Convert to Text
 
-			CallLen = ConvFromAX25(Buffer + 7, Call);		// Origin
+			CallLen = ConvFromAX25((UCHAR *)Buffer + 7, Call);		// Origin
 			memcpy(ptr, Call, CallLen);
 			ptr += CallLen;
 
 			*ptr++ = '>';
 
-			CallLen = ConvFromAX25(Buffer, Call);			// Dest
+			CallLen = ConvFromAX25((UCHAR *)Buffer, Call);			// Dest
 			memcpy(ptr, Call, CallLen);
 			ptr += CallLen;
 
@@ -932,7 +932,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 			while ((Buffer[-1] & 1) == 0)
 			{
 				*ptr++ = ',';
-				CallLen = ConvFromAX25(Buffer,  Call);
+				CallLen = ConvFromAX25((UCHAR *)Buffer,  Call);
 				memcpy(ptr, Call, CallLen);
 				ptr += CallLen;
 				Buffer += 7;	// End of addr
@@ -1220,8 +1220,8 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 
 					if (Stream == 0)
 					{
-						bytes=ARDOPSendData(TNC, data, txlen);
-						WritetoTrace(TNC, data, txlen);
+						bytes=ARDOPSendData(TNC, (char *)data, txlen);
+						WritetoTrace(TNC, (char *)data, txlen);
 					}
 					else
 					{
@@ -1234,7 +1234,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 							int EncLen;
 							int SentLen;
 
-							EncLen = sprintf(Encoded, "%c%c%c%s\r", Stream, 0, txlen - 1, data);
+							EncLen = sprintf((char *)Encoded, "%c%c%c%s\r", Stream, 0, txlen - 1, data);
 							SentLen = send(TNC->PacketSock, Encoded, EncLen, 0);
 
 							if (SentLen != EncLen)
@@ -1325,10 +1325,10 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 
 			if (Stream == 0)
 			{
-				bytes=ARDOPSendData(TNC, &buff[8], txlen);
+				bytes=ARDOPSendData(TNC, (char *)&buff[8], txlen);
 				TNC->Streams[Stream].BytesOutstanding += bytes;		// So flow control works - will be updated by BUFFER response
 				STREAM->BytesTXed += bytes;
-				WritetoTrace(TNC, &buff[8], txlen);
+				WritetoTrace(TNC, (char *)&buff[8], txlen);
 			}
 			else
 			{
@@ -1400,7 +1400,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 		}
 		else
 		{
-			if (_memicmp(&buff[8], "D\r", 2) == 0 || _memicmp(&buff[8], "BYE\r", 4) == 0)
+			if (_memicmp((UCHAR *)&buff[8], (UCHAR *)"D\r", 2) == 0 || _memicmp((UCHAR *)&buff[8], (UCHAR *)"BYE\r", 4) == 0)
 			{
 				STREAM->ReportDISC = TRUE;		// Tell Node
 				return 0;
@@ -1425,11 +1425,11 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 
 			// See if Local command (eg RADIO)
 
-			if (_memicmp(&buff[8], "RADIO ", 6) == 0)
+			if (_memicmp(&buff[8], (UCHAR *)"RADIO ", 6) == 0)
 			{
-				sprintf(&buff[8], "%d %s", TNC->Port, &buff[14]);
+				sprintf((char *)&buff[8], "%d %s", TNC->Port, &buff[14]);
 
-				if (Rig_Command(TNC->PortRecord->ATTACHEDSESSIONS[0]->L4CROSSLINK->CIRCUITINDEX, &buff[8]))
+				if (Rig_Command(TNC->PortRecord->ATTACHEDSESSIONS[0]->L4CROSSLINK->CIRCUITINDEX, (char *)&buff[8]))
 				{
 				}
 				else
@@ -1438,7 +1438,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 
 					if (buffptr == 0) return 1;			// No buffers, so ignore
 
-					buffptr[1] = sprintf((UCHAR *)&buffptr[2], "%s", &buff[8]);
+					buffptr[1] = sprintf((char *)&buffptr[2], "%s", &buff[8]);
 					C_Q_ADD(&TNC->Streams[Stream].PACTORtoBPQ_Q, buffptr);
 				}
 				return 1;
@@ -1453,7 +1453,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 //				return 1;
 //			}
 
-			if (_memicmp(&buff[8], "OVERRIDEBUSY", 12) == 0)
+			if (_memicmp(&buff[8], (UCHAR *)"OVERRIDEBUSY", 12) == 0)
 			{
 				UINT * buffptr = GetBuff();
 
@@ -1461,7 +1461,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 
 				if (buffptr)
 				{
-					buffptr[1] = sprintf((UCHAR *)&buffptr[2], "ARDOP} OK\r");
+					buffptr[1] = sprintf((char *)&buffptr[2], "ARDOP} OK\r");
 					C_Q_ADD(&TNC->Streams[Stream].PACTORtoBPQ_Q, buffptr);
 				}
 
@@ -1470,7 +1470,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 			}
 
 
-			if (_memicmp(&buff[8], "MAXCONREQ", 9) == 0)
+			if (_memicmp(&buff[8], (UCHAR *)"MAXCONREQ", 9) == 0)
 			{
 				if (buff[17] != 13)
 				{
@@ -1478,38 +1478,38 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 
 					// Limit connects
 
-					int tries = atoi(&buff[18]);
+					int tries = atoi((char *)&buff[18]);
 					if (tries > 10) tries = 10;
 
 					TNC->MaxConReq = tries;
 
 					if (buffptr)
 					{
-						buffptr[1] = sprintf((UCHAR *)&buffptr[2], "ARDOP} OK\r");
+						buffptr[1] = sprintf((char *)&buffptr[2], "ARDOP} OK\r");
 						C_Q_ADD(&TNC->Streams[Stream].PACTORtoBPQ_Q, buffptr);
 					}
 					return 0;
 				}
 			}
-			if (_memicmp(&buff[8], "ARQBW ", 6) == 0)
+			if (_memicmp(&buff[8], (UCHAR *)"ARQBW ", 6) == 0)
 				TNC->WinmorCurrentMode = 0;			// So scanner will set next value
 
-			if (_memicmp(&buff[8], "CODEC TRUE", 9) == 0)
+			if (_memicmp(&buff[8], (UCHAR *)"CODEC TRUE", 9) == 0)
 				TNC->StartSent = TRUE;
 
-			if (_memicmp(&buff[8], "D\r", 2) == 0)
+			if (_memicmp(&buff[8], (UCHAR *)"D\r", 2) == 0)
 			{
 				STREAM->ReportDISC = TRUE;		// Tell Node
 				return 0;
 			}
 
-			if (_memicmp(&buff[8], "FEC\r", 4) == 0 || _memicmp(&buff[8], "FEC ", 4) == 0)
+			if (_memicmp(&buff[8], (UCHAR *)"FEC\r", 4) == 0 || _memicmp(&buff[8], (UCHAR *)"FEC ", 4) == 0)
 			{
 				TNC->FECMode = TRUE;
 				TNC->FECIDTimer = 0;
 //				ARDOPSendCommand(TNC,"FECRCV TRUE");
 
-				if (_memicmp(&buff[8], "FEC 1600", 8) == 0)
+				if (_memicmp(&buff[8], (UCHAR *)"FEC 1600", 8) == 0)
 					TNC->FEC1600 = TRUE;
 				else
 					TNC->FEC1600 = FALSE;
@@ -1517,7 +1517,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 				return 0;
 			}
 
-			if (_memicmp(&buff[8], "PING ", 5) == 0)
+			if (_memicmp(&buff[8], (UCHAR *)"PING ", 5) == 0)
 			{
 				if (InterlockedCheckBusy(TNC))
 				{
@@ -1531,7 +1531,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 
 						if (buffptr)
 						{
-							buffptr[1] = sprintf((UCHAR *)&buffptr[2], "ARDOP} Ping blocked by Busy\r");
+							buffptr[1] = sprintf((char *)&buffptr[2], "ARDOP} Ping blocked by Busy\r");
 							C_Q_ADD(&TNC->Streams[Stream].PACTORtoBPQ_Q, buffptr);
 						}
 						return 0;
@@ -1545,14 +1545,14 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 			if (toupper(buff[8]) == 'C' && buff[9] == ' ' && txlen > 2)	// Connect
 			{
 				char Connect[80];
-				char * ptr = strchr(&buff[10], 13);
+				char * ptr = strchr((char *)&buff[10], 13);
 
 				if (ptr)
 					*ptr = 0;
 
-				_strupr(&buff[10]);
+				_strupr((char *)&buff[10]);
 
-				if (strlen(&buff[10]) > 9)
+				if (strlen((char *)&buff[10]) > 9)
 					buff[19] = 0;
 
 				if (Stream == 0)
@@ -1585,7 +1585,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 //					ARDOPSendCommand(TNC, "LISTEN TRUE", TRUE);  // !!!! Temp bug workaround !!!!
 
 					memset(TNC->Streams[0].RemoteCall, 0, 10);
-					strcpy(TNC->Streams[0].RemoteCall, &buff[10]);
+					strcpy(TNC->Streams[0].RemoteCall, (char *)&buff[10]);
 
 					sprintf(TNC->WEB_TNCSTATE, "%s Connecting to %s", STREAM->MyCall, STREAM->RemoteCall);
 					ARDOPSendCommand(TNC, Connect, TRUE);
@@ -1604,7 +1604,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 
 			}
 			buff[7 + txlen] = 0;
-			ARDOPSendCommand(TNC, &buff[8], TRUE);
+			ARDOPSendCommand(TNC, (char *)&buff[8], TRUE);
 		}
 		return 0;
 
@@ -1612,7 +1612,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 
 		// CHECK IF OK TO SEND (And check TNC Status)
 
-		Stream = (int)buff;
+		Stream = (intptr_t)buff;
 
 		// I think we should check buffer space for all comms modes
 
@@ -1670,7 +1670,7 @@ static int ExtProc(int fn, int port,unsigned char * buff)
 
 	case 6:				// Scan Stop Interface
 
-		Param = (int)buff;
+		Param = (intptr_t)buff;
 
 		if (Param == 1)		// Request Permission
 		{
@@ -1764,7 +1764,7 @@ VOID ARDOPReleaseTNC(struct TNCINFO * TNC)
 {
 	// Set mycall back to Node or Port Call, and Start Scanner
 
-	UCHAR TXMsg[1000];
+	char TXMsg[1000];
 
 	ARDOPChangeMYC(TNC, TNC->NodeCall);
 
@@ -1825,7 +1825,7 @@ static int WebProc(struct TNCINFO * TNC, char * Buff, BOOL LOCAL)
 }
 
 
-UINT ARDOPExtInit(EXTPORTDATA * PortEntry)
+ExtDriverInitFn ARDOPExtInit(EXTPORTDATA * PortEntry)
 {
 	int i, port;
 	char Msg[255];
@@ -1856,7 +1856,7 @@ UINT ARDOPExtInit(EXTPORTDATA * PortEntry)
 		sprintf(Msg," ** Error - no info in BPQ32.cfg for this port\n");
 		WritetoConsole(Msg);
 
-		return (int) ExtProc;
+		return (ExtDriverInitFn) ExtProc;
 	}
 
 	TNC->Port = port;
@@ -2123,7 +2123,7 @@ UINT ARDOPExtInit(EXTPORTDATA * PortEntry)
 
 	time(&TNC->lasttime);			// Get initial time value
 
-	return ((int) ExtProc);
+	return ((ExtDriverInitFn) ExtProc);
 }
 
 VOID TNCLost(struct TNCINFO * TNC)
@@ -2461,7 +2461,7 @@ VOID ARDOPThread(struct TNCINFO * TNC)
 
 		// if Date or Time command add current time
 
-		if (_memicmp(ptr1, "DATETIME", 4) == 0)
+		if (_memicmp((UCHAR *)ptr1, (UCHAR *)"DATETIME", 4) == 0)
 		{
 			time_t T;
 			struct tm * tm;
@@ -2748,16 +2748,16 @@ VOID ARDOPProcessResponse(struct TNCINFO * TNC, UCHAR * Buffer, int MsgLen)
 
 	Buffer[MsgLen - 1] = 0;		// Remove CR
 
-	if (_memicmp(Buffer, "RDY", 3) == 0)
+	if (_memicmp(Buffer, (UCHAR *)"RDY", 3) == 0)
 		return;		// RDY not used now
 
-	if (_memicmp(Buffer, "RADIOHEX ", 9) == 0)
+	if (_memicmp(Buffer, (UCHAR *)"RADIOHEX ", 9) == 0)
 	{
 		// Parameter is block to send to radio, in hex
 
 		char c;
 		int val;
- 		char * ptr1 = &Buffer[9];
+ 		char * ptr1 = (char *)&Buffer[9];
 		UCHAR * ptr2 = Buffer;
 		UINT * buffptr;
 		int Len;
@@ -2797,23 +2797,23 @@ VOID ARDOPProcessResponse(struct TNCINFO * TNC, UCHAR * Buffer, int MsgLen)
 	}
 
 
-	if (_memicmp(Buffer, "INPUTPEAKS", 10) == 0)
+	if (_memicmp(Buffer, (UCHAR *)"INPUTPEAKS", 10) == 0)
 	{
-		sscanf(&Buffer[10], "%i %i", &TNC->InputLevelMin, &TNC->InputLevelMax);
+		sscanf((char *)&Buffer[10], "%i %i", &TNC->InputLevelMin, &TNC->InputLevelMax);
 		sprintf(TNC->WEB_LEVELS, "Input peaks %s", &Buffer[10]);
 		MySetWindowText(TNC->xIDC_LEVELS, TNC->WEB_LEVELS);
 		return;				// Response shouldn't go to user
 	}
 
-	if (_memicmp(Buffer, "LISTEN NOW", 10) == 0)
+	if (_memicmp(Buffer, (UCHAR *)"LISTEN NOW", 10) == 0)
 		return;				// Response shouldn't go to user
 
-	if (_memicmp(Buffer, "ARQCALL ", 7) == 0)
+	if (_memicmp(Buffer, (UCHAR *)"ARQCALL ", 7) == 0)
 		return;				// Response shouldn't go to user
 
-	if (_memicmp(Buffer, "FAULT failure to Restart Sound card", 20) == 0)
+	if (_memicmp(Buffer, (UCHAR *)"FAULT failure to Restart Sound card", 20) == 0)
 	{
-		Debugprintf(Buffer);
+		Debugprintf((char *)Buffer);
 
 		// Force a restart
 
@@ -2826,9 +2826,9 @@ VOID ARDOPProcessResponse(struct TNCINFO * TNC, UCHAR * Buffer, int MsgLen)
 	}
 
 
-	if (_memicmp(Buffer, "STATE ", 6) == 0)
+	if (_memicmp(Buffer, (UCHAR *)"STATE ", 6) == 0)
 	{
-		if (_memicmp(&Buffer[6], "OFFLINE", 7) == 0)
+		if (_memicmp(&Buffer[6], (UCHAR *)"OFFLINE", 7) == 0)
 		{
 			// Force a restart
 
@@ -2838,7 +2838,7 @@ VOID ARDOPProcessResponse(struct TNCINFO * TNC, UCHAR * Buffer, int MsgLen)
 		return;
 	}
 
-	if (_memicmp(Buffer, "PTT T", 5) == 0)
+	if (_memicmp(Buffer, (UCHAR *)"PTT T", 5) == 0)
 	{
 		TNC->Busy = TNC->BusyHold * 10;				// BusyHold  delay
 		TNC->PTTState = TRUE;
@@ -2848,7 +2848,7 @@ VOID ARDOPProcessResponse(struct TNCINFO * TNC, UCHAR * Buffer, int MsgLen)
 
 		return;
 	}
-	if (_memicmp(Buffer, "PTT F", 5) == 0)
+	if (_memicmp(Buffer, (UCHAR *)"PTT F", 5) == 0)
 	{
 		TNC->PTTState = FALSE;
 		if (TNC->PTTMode)
@@ -2857,7 +2857,7 @@ VOID ARDOPProcessResponse(struct TNCINFO * TNC, UCHAR * Buffer, int MsgLen)
 		return;
 	}
 
-	if (_memicmp(Buffer, "BUSY TRUE", 9) == 0)
+	if (_memicmp(Buffer, (UCHAR *)"BUSY TRUE", 9) == 0)
 	{
 		TNC->BusyFlags |= CDBusy;
 		TNC->Busy = TNC->BusyHold * 10;				// BusyHold  delay
@@ -2870,7 +2870,7 @@ VOID ARDOPProcessResponse(struct TNCINFO * TNC, UCHAR * Buffer, int MsgLen)
 		return;
 	}
 
-	if (_memicmp(Buffer, "BUSY FALSE", 10) == 0)
+	if (_memicmp(Buffer, (UCHAR *)"BUSY FALSE", 10) == 0)
 	{
 		TNC->BusyFlags &= ~CDBusy;
 		if (TNC->Busy)
@@ -2883,24 +2883,24 @@ VOID ARDOPProcessResponse(struct TNCINFO * TNC, UCHAR * Buffer, int MsgLen)
 		return;
 	}
 
-	if (_memicmp(Buffer, "TARGET", 6) == 0)
+	if (_memicmp(Buffer, (UCHAR *)"TARGET", 6) == 0)
 	{
 		TNC->ConnectPending = 6;					// This comes before Pending
-		Debugprintf(Buffer);
-		WritetoTrace(TNC, Buffer, MsgLen - 1);
+		Debugprintf((char *)Buffer);
+		WritetoTrace(TNC, (char *)Buffer, MsgLen - 1);
 		memcpy(TNC->TargetCall, &Buffer[7], 10);
 		return;
 	}
 
-	if (_memicmp(Buffer, "OFFSET", 6) == 0)
+	if (_memicmp(Buffer, (UCHAR *)"OFFSET", 6) == 0)
 	{
-//		WritetoTrace(TNC, Buffer, MsgLen - 5);
+//		WritetoTrace(TNC, (char *)Buffer, MsgLen - 5);
 		return;
 	}
 
-	if (_memicmp(Buffer, "BUFFER", 6) == 0)
+	if (_memicmp(Buffer, (UCHAR *)"BUFFER", 6) == 0)
 	{
-		sscanf(&Buffer[7], "%d", &STREAM->BytesOutstanding);
+		sscanf((char *)&Buffer[7], "%d", &STREAM->BytesOutstanding);
 
 		if (STREAM->BytesOutstanding == 0)
 		{
@@ -2933,7 +2933,7 @@ VOID ARDOPProcessResponse(struct TNCINFO * TNC, UCHAR * Buffer, int MsgLen)
 		return;
 	}
 
-	if (_memicmp(Buffer, "CONNECTED ", 10) == 0)
+	if (_memicmp(Buffer, (UCHAR *)"CONNECTED ", 10) == 0)
 	{
 		char Call[11];
 		char * ptr;
@@ -2944,8 +2944,8 @@ VOID ARDOPProcessResponse(struct TNCINFO * TNC, UCHAR * Buffer, int MsgLen)
 		struct WL2KInfo * WL2K = TNC->WL2K;
 		int Speed = 0;
 
-		Debugprintf(Buffer);
-		WritetoTrace(TNC, Buffer, MsgLen - 1);
+		Debugprintf((char *)Buffer);
+		WritetoTrace(TNC, (char *)Buffer, MsgLen - 1);
 
 		STREAM->ConnectTime = time(NULL);
 		STREAM->BytesRXed = STREAM->BytesTXed = STREAM->PacketsSent = 0;
@@ -2957,10 +2957,10 @@ VOID ARDOPProcessResponse(struct TNCINFO * TNC, UCHAR * Buffer, int MsgLen)
 
 		// Get Speed
 
-		ptr = strchr(&Buffer[10], ' ');
+		ptr = strchr((char *)&Buffer[10], ' ');
 		if (ptr)
 		{
-			Speed = atoi(ptr);
+			Speed = atoi((char *)ptr);
 
 			if (Speed == 200)
 				TNC->WL2KMode = 40;
@@ -3053,7 +3053,7 @@ VOID ARDOPProcessResponse(struct TNCINFO * TNC, UCHAR * Buffer, int MsgLen)
 
 				if (CheckAppl(TNC, AppName))
 				{
-					MsgLen = sprintf(Buffer, "%s\r", AppName);
+					MsgLen = sprintf((char *)Buffer, "%s\r", AppName);
 
 					buffptr = GetBuff();
 
@@ -3089,7 +3089,7 @@ VOID ARDOPProcessResponse(struct TNCINFO * TNC, UCHAR * Buffer, int MsgLen)
 						SendARDOPorPacketData(TNC, 0, data, txlen);
 					}
 
-					SendARDOPorPacketData(TNC, 0, Msg, strlen(Msg));
+					SendARDOPorPacketData(TNC, 0, (UCHAR *)Msg, strlen(Msg));
 					STREAM->NeedDisc = 100;	// 10 secs
 				}
 			}
@@ -3126,17 +3126,17 @@ VOID ARDOPProcessResponse(struct TNCINFO * TNC, UCHAR * Buffer, int MsgLen)
 
 			MySetWindowText(TNC->xIDC_TNCSTATE, TNC->WEB_TNCSTATE);
 
-			UpdateMH(TNC, Call, '+', 'O');
+			UpdateMH(TNC, (UCHAR*)Call, '+', 'O');
 			return;
 		}
 	}
 
 
-	if (_memicmp(Buffer, "DISCONNECTED", 12) == 0
-		|| _memicmp(Buffer, "STATUS CONNECT TO", 17) == 0
-		|| _memicmp(Buffer, "STATUS ARQ TIMEOUT FROM PROTOCOL STATE", 24) == 0
-//		|| _memicmp(Buffer, "NEWSTATE DISC", 13) == 0
-		|| _memicmp(Buffer, "ABORT", 5) == 0)
+	if (_memicmp(Buffer, (UCHAR *)"DISCONNECTED", 12) == 0
+		|| _memicmp(Buffer, (UCHAR *)"STATUS CONNECT TO", 17) == 0
+		|| _memicmp(Buffer, (UCHAR *)"STATUS ARQ TIMEOUT FROM PROTOCOL STATE", 24) == 0
+//		|| _memicmp(Buffer, (UCHAR *)"NEWSTATE DISC", 13) == 0
+		|| _memicmp(Buffer, (UCHAR *)"ABORT", 5) == 0)
 
 	{
 		TNC->ConnectPending = FALSE;			// Cancel Scan Lock
@@ -3163,7 +3163,7 @@ VOID ARDOPProcessResponse(struct TNCINFO * TNC, UCHAR * Buffer, int MsgLen)
 				return;			// No buffers, so ignore
 			}
 
-			buffptr[1] = sprintf((UCHAR *)&buffptr[2], "*** Failure with %s\r", TNC->Streams[0].RemoteCall);
+			buffptr[1] = sprintf((char *)&buffptr[2], "*** Failure with %s\r", TNC->Streams[0].RemoteCall);
 
 			C_Q_ADD(&STREAM->PACTORtoBPQ_Q, buffptr);
 
@@ -3178,7 +3178,7 @@ VOID ARDOPProcessResponse(struct TNCINFO * TNC, UCHAR * Buffer, int MsgLen)
 			return;
 		}
 
-		WritetoTrace(TNC, Buffer, MsgLen - 1);
+		WritetoTrace(TNC, (char *)Buffer, MsgLen - 1);
 
 		// Release Session3
 
@@ -3215,22 +3215,22 @@ VOID ARDOPProcessResponse(struct TNCINFO * TNC, UCHAR * Buffer, int MsgLen)
 		return;
 	}
 
-	if (_memicmp(Buffer, "MODE", 4) == 0)
+	if (_memicmp(Buffer, (UCHAR *)"MODE", 4) == 0)
 	{
-		strcpy(TNC->WEB_MODE, &Buffer[5]);
-		MySetWindowText(TNC->xIDC_MODE, &Buffer[5]);
+		strcpy(TNC->WEB_MODE, (char*)&Buffer[5]);
+		MySetWindowText(TNC->xIDC_MODE, (char*)&Buffer[5]);
 		return;
 	}
 
-	if (_memicmp(Buffer, "STATUS ", 7) == 0)
+	if (_memicmp(Buffer, (UCHAR *)"STATUS ", 7) == 0)
 	{
 		return;
 	}
 
-	if (_memicmp(Buffer, "RADIOMODELS", 11) == 0)
+	if (_memicmp(Buffer, (UCHAR *)"RADIOMODELS", 11) == 0)
 		return;
 
-	if (_memicmp(&Buffer[0], "PENDING", 7) == 0)	// Save Pending state for scan control
+	if (_memicmp(&Buffer[0], (UCHAR *)"PENDING", 7) == 0)	// Save Pending state for scan control
 	{
 		TNC->ConnectPending = 6;				// Time out after 6 Scanintervals
 		return;
@@ -3238,7 +3238,7 @@ VOID ARDOPProcessResponse(struct TNCINFO * TNC, UCHAR * Buffer, int MsgLen)
 
 	// REJECTEDBW and REJECTEDBUSY are sent to both calling and called
 
-	if (_memicmp(&Buffer[0], "REJECTEDBUSY", 12) == 0)
+	if (_memicmp(&Buffer[0], (UCHAR *)"REJECTEDBUSY", 12) == 0)
 	{
 		TNC->ConnectPending = FALSE;
 
@@ -3255,14 +3255,14 @@ VOID ARDOPProcessResponse(struct TNCINFO * TNC, UCHAR * Buffer, int MsgLen)
 				return;			// No buffers, so ignore
 			}
 
-			buffptr[1] = sprintf((UCHAR *)&buffptr[2], "ARDOP} Connection to %s Rejected - Channel Busy\r", TNC->Streams[0].RemoteCall);
+			buffptr[1] = sprintf((char *)&buffptr[2], "ARDOP} Connection to %s Rejected - Channel Busy\r", TNC->Streams[0].RemoteCall);
 
 			C_Q_ADD(&STREAM->PACTORtoBPQ_Q, buffptr);
 			return;
 		}
 	}
 
-	if (_memicmp(&Buffer[0], "REJECTEDBW", 10) == 0)
+	if (_memicmp(&Buffer[0], (UCHAR *)"REJECTEDBW", 10) == 0)
 	{
 		TNC->ConnectPending = FALSE;
 
@@ -3279,7 +3279,7 @@ VOID ARDOPProcessResponse(struct TNCINFO * TNC, UCHAR * Buffer, int MsgLen)
 				return;			// No buffers, so ignore
 			}
 
-			buffptr[1] = sprintf((UCHAR *)&buffptr[2], "ARDOP} Connection to %s Rejected - Incompatible Bandwidth\r", TNC->Streams[0].RemoteCall);
+			buffptr[1] = sprintf((char *)&buffptr[2], "ARDOP} Connection to %s Rejected - Incompatible Bandwidth\r", TNC->Streams[0].RemoteCall);
 
 			C_Q_ADD(&STREAM->PACTORtoBPQ_Q, buffptr);
 			return;
@@ -3288,28 +3288,28 @@ VOID ARDOPProcessResponse(struct TNCINFO * TNC, UCHAR * Buffer, int MsgLen)
 
 
 
-	if (_memicmp(&Buffer[0], "CANCELPENDING", 13) == 0
-		|| _memicmp(&Buffer[0], "REJECTEDB", 9) == 0)  //REJECTEDBUSY or REJECTEDBW
+	if (_memicmp(&Buffer[0], (UCHAR *)"CANCELPENDING", 13) == 0
+		|| _memicmp(&Buffer[0], (UCHAR *)"REJECTEDB", 9) == 0)  //REJECTEDBUSY or REJECTEDBW
 	{
 		TNC->ConnectPending = FALSE;
 		return;
 	}
 
-	if (_memicmp(Buffer, "FAULT", 5) == 0)
+	if (_memicmp(Buffer, (UCHAR *)"FAULT", 5) == 0)
 	{
-		Debugprintf(Buffer);
-		WritetoTrace(TNC, Buffer, MsgLen - 1);
+		Debugprintf((char *)Buffer);
+		WritetoTrace(TNC, (char *)Buffer, MsgLen - 1);
 //		return;
 	}
 
-	if (_memicmp(Buffer, "NEWSTATE", 8) == 0)
+	if (_memicmp(Buffer, (UCHAR *)"NEWSTATE", 8) == 0)
 	{
 		TNC->WinmorRestartCodecTimer = time(NULL);
 
-		MySetWindowText(TNC->xIDC_PROTOSTATE, &Buffer[9]);
-		strcpy(TNC->WEB_PROTOSTATE,  &Buffer[9]);
+		MySetWindowText(TNC->xIDC_PROTOSTATE, (char *)&Buffer[9]);
+		strcpy(TNC->WEB_PROTOSTATE,  (char *)&Buffer[9]);
 
-		if (_memicmp(&Buffer[9], "DISC", 4) == 0)
+		if (_memicmp(&Buffer[9], (UCHAR *)"DISC", 4) == 0)
 		{
 			TNC->DiscPending = FALSE;
 			TNC->ConnectPending = FALSE;
@@ -3317,15 +3317,15 @@ VOID ARDOPProcessResponse(struct TNCINFO * TNC, UCHAR * Buffer, int MsgLen)
 			return;
 		}
 
-		if (strcmp(&Buffer[9], "ISS") == 0)	// Save Pending state for scan control
+		if (strcmp((char *)&Buffer[9], "ISS") == 0)	// Save Pending state for scan control
 			TNC->TXRXState = 'S';
-		else if (strcmp(&Buffer[9], "IRS") == 0)
+		else if (strcmp((char *)&Buffer[9], "IRS") == 0)
 			TNC->TXRXState = 'R';
 
 		return;
 	}
 
-	if ((_memicmp(Buffer, "FAULT Not from state FEC", 24) == 0) || (_memicmp(Buffer, "FAULT Blocked by Busy Lock", 24) == 0))
+	if ((_memicmp(Buffer, (UCHAR *)"FAULT Not from state FEC", 24) == 0) || (_memicmp(Buffer, (UCHAR *)"FAULT Blocked by Busy Lock", 24) == 0))
 	{
 		if (TNC->FECMode)
 		{
@@ -3339,25 +3339,25 @@ VOID ARDOPProcessResponse(struct TNCINFO * TNC, UCHAR * Buffer, int MsgLen)
 		}
 	}
 
-	if (_memicmp(Buffer, "PLAYBACKDEVICES", 15) == 0)
+	if (_memicmp(Buffer, (UCHAR *)"PLAYBACKDEVICES", 15) == 0)
 	{
-		TNC->PlaybackDevices = _strdup(&Buffer[16]);
+		TNC->PlaybackDevices = _strdup((char *)&Buffer[16]);
 	}
 	// Others should be responses to commands
 
-	if (_memicmp(Buffer, "BLOCKED", 6) == 0)
+	if (_memicmp(Buffer, (UCHAR *)"BLOCKED", 6) == 0)
 	{
-		WritetoTrace(TNC, Buffer, MsgLen - 1);
+		WritetoTrace(TNC, (char *)Buffer, MsgLen - 1);
 		return;
 	}
 
-	if (_memicmp(Buffer, "OVER", 4) == 0)
+	if (_memicmp(Buffer, (UCHAR *)"OVER", 4) == 0)
 	{
-		WritetoTrace(TNC, Buffer, MsgLen - 1);
+		WritetoTrace(TNC, (char *)Buffer, MsgLen - 1);
 		return;
 	}
 
-	if (_memicmp(Buffer, "PING ", 5) == 0)
+	if (_memicmp(Buffer, (UCHAR *)"PING ", 5) == 0)
 	{
 		char Call[32];
 
@@ -3366,10 +3366,10 @@ VOID ARDOPProcessResponse(struct TNCINFO * TNC, UCHAR * Buffer, int MsgLen)
 		// c:ping gm8bpq-1 5
 		// c:PING GM8BPQ>GM8BPQ-1 15 98
 
-		if (strchr(Buffer, '>') == 0)	// Echoed
+		if (strchr((char *)Buffer, '>') == 0)	// Echoed
 			return;
 
-		WritetoTrace(TNC, Buffer, MsgLen - 1);
+		WritetoTrace(TNC, (char *)Buffer, MsgLen - 1);
 
 		// Release scanlock after another interval (to allow time for response to be sent)
 		// ?? use cancelpending TNC->ConnectPending = 1;
@@ -3377,40 +3377,40 @@ VOID ARDOPProcessResponse(struct TNCINFO * TNC, UCHAR * Buffer, int MsgLen)
 
 		memcpy(Call, &Buffer[5], 20);
 		strlop(Call, '>');
-		UpdateMH(TNC, Call, '!', 'I');
+		UpdateMH(TNC, (UCHAR *)Call, '!', 'I');
 
 		return;
 	}
 
-	if (_memicmp(Buffer, "VERSION ", 8) == 0)
+	if (_memicmp(Buffer, (UCHAR *)"VERSION ", 8) == 0)
 	{
 		// If contains "OFDM" increase data session busy level
 
-		if (strstr(&Buffer[8], "OFDM"))
+		if (strstr((char*)&Buffer[8], "OFDM"))
 			TNC->Mode = 'O';
 		else
 			TNC->Mode = 0;
 	}
 
-	if (_memicmp(Buffer, "PINGACK ", 8) == 0)
+	if (_memicmp(Buffer, (UCHAR *)"PINGACK ", 8) == 0)
 	{
-		WritetoTrace(TNC, Buffer, MsgLen - 1);
+		WritetoTrace(TNC, (char *)Buffer, MsgLen - 1);
 		// Drop through to return touser
 	}
 
-	if (_memicmp(Buffer, "CQ ", 3) == 0 && MsgLen > 10)
+	if (_memicmp(Buffer, (UCHAR *)"CQ ", 3) == 0 && MsgLen > 10)
 	{
 		char Call[32];
 		char * Loc;
 
-		WritetoTrace(TNC, Buffer, MsgLen - 1);
+		WritetoTrace(TNC, (char *)Buffer, MsgLen - 1);
 
 		// Update MH
 			{
 			memcpy(Call, &Buffer[3], 32);
 			Loc = strlop(Call, ' ');
 			strlop(Loc, ']');
-			UpdateMHEx(TNC, Call, '!', 'I', &Loc[1]);
+			UpdateMHEx(TNC, (UCHAR *)Call, '!', 'I', &Loc[1]);
 		}
 		// Drop through to go to user if attached but not connected
 
@@ -3433,7 +3433,7 @@ VOID ARDOPProcessResponse(struct TNCINFO * TNC, UCHAR * Buffer, int MsgLen)
 		return;			// No buffers, so ignore
 	}
 
-	buffptr[1] = sprintf((UCHAR *)&buffptr[2], "ARDOP} %s\r", Buffer);
+	buffptr[1] = sprintf((char *)&buffptr[2], "ARDOP} %s\r", Buffer);
 
 	C_Q_ADD(&STREAM->PACTORtoBPQ_Q, buffptr);
 }
@@ -3592,7 +3592,7 @@ loop:
 	if (ptr == 0)	//  CR in buffer
 		return;		// Wait for it
 
-	ptr2 = &TNC->ARDOPBuffer[TNC->InputLen];
+	ptr2 = (char *)&TNC->ARDOPBuffer[TNC->InputLen];
 
 	if ((ptr2 - ptr) == 1)	// CR (no CRC in new version)
 	{
@@ -3611,7 +3611,7 @@ loop:
 
 		memcpy(Buffer, TNC->ARDOPBuffer, MsgLen);
 
-		ARDOPProcessResponse(TNC, Buffer, MsgLen);
+		ARDOPProcessResponse(TNC, (UCHAR *)Buffer, MsgLen);
 
 		if (TNC->InputLen < MsgLen)
 		{
@@ -3639,7 +3639,7 @@ VOID ARDOPProcessDataPacket(struct TNCINFO * TNC, UCHAR * Type, UCHAR * Data, in
 
 	TNC->TimeSinceLast = 0;
 
-	if (strcmp(Type, "IDF") == 0)
+	if (strcmp((char *)Type, "IDF") == 0)
 	{
 		// Place ID frames in Monitor Window and MH
 
@@ -3661,7 +3661,7 @@ VOID ARDOPProcessDataPacket(struct TNCINFO * TNC, UCHAR * Type, UCHAR * Data, in
 //ID:GM8BPQ-2 [IO68vl] :
 
 		Data[Length] = 0;
-		WritetoTrace(TNC, Data, Length);
+		WritetoTrace(TNC, (char *)Data, Length);
 
 		Debugprintf("ARDOP IDF %s", Data);
 
@@ -3672,7 +3672,7 @@ VOID ARDOPProcessDataPacket(struct TNCINFO * TNC, UCHAR * Type, UCHAR * Data, in
 			memcpy(Call, &Data[3], 20);
 			Loc = strlop(Call, ' ');
 			strlop(Loc, ']');
-			UpdateMHEx(TNC, Call, '!', 'I', &Loc[1]);
+			UpdateMHEx(TNC, (UCHAR *)Call, '!', 'I', &Loc[1]);
 		}
 		return;
 	}
@@ -3689,26 +3689,26 @@ VOID ARDOPProcessDataPacket(struct TNCINFO * TNC, UCHAR * Type, UCHAR * Data, in
 
 	if (TNC->FECMode)
 	{
-		Length = strlen(Data);
+		Length = strlen((char *)Data);
 		if (Data[Length - 1] == 10)
 			Data[Length - 1] = 13;
 
 	}
 
-	if (strcmp(Type, "FEC") == 0)
+	if (strcmp((char *)Type, "FEC") == 0)
 	{
 		// May be an APRS Message
 		// These are delimired with ^ characters
 		// As they are likely to be split across
 		// FEC blocks they need to be recombined
 
-		char * ptr = Data;
+		char * ptr = (char *)Data;
 		char * ptr1;
 		char * ptr2;
 		char c;
 		int Len = Length;
 
-		Debugprintf(Data);
+		Debugprintf((char *)Data);
 
 		if (*ptr == '^' || TNC->ARDOPAPRSLen)
 		{
@@ -3730,7 +3730,7 @@ VOID ARDOPProcessDataPacket(struct TNCINFO * TNC, UCHAR * Type, UCHAR * Data, in
 
 					Debugprintf("beacon %s", TNC->ARDOPAPRS);
 
-					ptr1 = TNC->ARDOPAPRS;
+					ptr1 = (char *)TNC->ARDOPAPRS;
 					ptr2 = strchr(ptr1, '>');
 
 					if (ptr2 && (ptr2 - ptr1) < 10)
@@ -3812,7 +3812,7 @@ VOID ARDOPProcessDataPacket(struct TNCINFO * TNC, UCHAR * Type, UCHAR * Data, in
 			return;
 	}
 
-	WritetoTrace(TNC, Data, Length);
+	WritetoTrace(TNC, (char *)Data, Length);
 
 	// We can get messages of form ARQ [ConReq2000M: GM8BPQ-2 > OE3FQU]
 	// Noe (V2) [ConReq2500 >  G8XXX]
@@ -3821,7 +3821,7 @@ VOID ARDOPProcessDataPacket(struct TNCINFO * TNC, UCHAR * Type, UCHAR * Data, in
 
 	if (TNC->Streams[0].Connected == FALSE)
 	{
-		if (strcmp(Type, "ARQ") == 0)
+		if (strcmp((char *)Type, "ARQ") == 0)
 		{
 			if (Data[1] == '[')
 			{
@@ -3835,13 +3835,13 @@ VOID ARDOPProcessDataPacket(struct TNCINFO * TNC, UCHAR * Type, UCHAR * Data, in
 				Data[Length++] = 13;
 				Data[Length] = 0;
 
-				ptr = strchr(Data, ':');
+				ptr = strchr((char *)Data, ':');
 
 				if (ptr)
 				{
 					memcpy(Call, &ptr[2], 20);
 					strlop(Call, ' ');
-					UpdateMH(TNC, Call, '!', 'I');
+					UpdateMH(TNC, (UCHAR *)Call, '!', 'I');
 				}
 			}
 		}
@@ -4270,7 +4270,7 @@ VOID ARDOPProcessTermModeResponse(struct TNCINFO * TNC)
 
 		// Send ARDOP to make sure TNC is in a known state
 
-		strcpy(Poll, "ARDOP\r");
+		strcpy((char *)Poll, "ARDOP\r");
 
 //		OpenLogFile(TNC->Port);
 //		WriteLogLine(TNC->Port, Poll, 7);
@@ -4287,115 +4287,115 @@ VOID ARDOPProcessTermModeResponse(struct TNCINFO * TNC)
 	{
 		// Sending Init Commands
 
-	// Send INIT script
+		// Send INIT script
 
-	ptr1 = &TNC->InitScript[0];
+		ptr1 = &TNC->InitScript[0];
 
-/*	GetSemaphore(&Semaphore, 52);
+		/*	GetSemaphore(&Semaphore, 52);
 
-	while(TNC->BPQtoWINMOR_Q)
-	{
-		UINT * buffptr = Q_REM(&TNC->BPQtoWINMOR_Q);
+			while(TNC->BPQtoWINMOR_Q)
+			{
+			UINT * buffptr = Q_REM(&TNC->BPQtoWINMOR_Q);
 
-		if (buffptr)
+			if (buffptr)
 			ReleaseBuffer(buffptr);
-	}
-
-	FreeSemaphore(&Semaphore, 52);
-*/
-	while (ptr1 && ptr1[0])
-	{
-		ptr2 = strchr(ptr1, 13);
-
-		if (ptr2 == 0)
-			break;
-
-		len = (ptr2 - ptr1) + 1;
-
-		memcpy(Poll, ptr1, len);
-
-		// if Date or Time command add current time
-
-		if (_memicmp(ptr1, "DATETIME", 4) == 0)
-		{
-			time_t T;
-			struct tm * tm;
-
-			T = time(NULL);
-			tm = gmtime(&T);
-
-			len = sprintf(Poll, "DATETIME %02d %02d %02d %02d %02d %02d\r",
-				tm->tm_mday, tm->tm_mon + 1, tm->tm_year - 100,
-				tm->tm_hour, tm->tm_min, tm->tm_sec);
-		}
-
-		// if RADIOPTTON ? or RADIOPTTOFF ? replace ?
-		// with correct string
-
-		if (_memicmp(ptr1, "RADIOPTTOFF ?", 13) == 0)
-		{
-			int Len = TNC->RIG->PTTOffLen;
-			UCHAR * Cmd = TNC->RIG->PTTOff;
-			char Hex[256];
-			char * hexptr = Hex;
-			int i, j;
-			while(Len--)
-			{
-				i = *(Cmd++);
-				j = i >>4;
-				j += '0';		// ascii
-				if (j > '9')
-					j += 7;
-				*(hexptr++) = j;
-
-				j = i & 0xf;
-				j += '0';		// ascii
-				if (j > '9')
-					j += 7;
-				*(hexptr++) = j;
 			}
-			*(hexptr++) = 0;
 
-			len = sprintf(Poll, "RADIOPTTOFF %s\r", Hex);
-		}
-
-		if (_memicmp(ptr1, "RADIOPTTON ?", 12) == 0)
+			FreeSemaphore(&Semaphore, 52);
+			*/
+		while (ptr1 && ptr1[0])
 		{
-			int Len = TNC->RIG->PTTOnLen;
-			UCHAR * Cmd = TNC->RIG->PTTOn;
-			char Hex[256];
-			char * hexptr = Hex;
-			int i, j;
-			while(Len--)
+			ptr2 = strchr(ptr1, 13);
+
+			if (ptr2 == 0)
+				break;
+
+			len = (ptr2 - ptr1) + 1;
+
+			memcpy(Poll, ptr1, len);
+
+			// if Date or Time command add current time
+
+			if (_memicmp((UCHAR *)ptr1, (UCHAR *)"DATETIME", 4) == 0)
 			{
-				i = *(Cmd++);
-				j = i >>4;
-				j += '0';		// ascii
-				if (j > '9')
-					j += 7;
-				*(hexptr++) = j;
+				time_t T;
+				struct tm * tm;
 
-				j = i & 0xf;
-				j += '0';		// ascii
-				if (j > '9')
-					j += 7;
-				*(hexptr++) = j;
+				T = time(NULL);
+				tm = gmtime(&T);
+
+				len = sprintf((char *)Poll, "DATETIME %02d %02d %02d %02d %02d %02d\r",
+						tm->tm_mday, tm->tm_mon + 1, tm->tm_year - 100,
+						tm->tm_hour, tm->tm_min, tm->tm_sec);
 			}
-			*(hexptr++) = 0;
 
-			len = sprintf(Poll, "RADIOPTTON %s\r", Hex);
+			// if RADIOPTTON ? or RADIOPTTOFF ? replace ?
+			// with correct string
+
+			if (_memicmp((UCHAR *)ptr1, (UCHAR *)"RADIOPTTOFF ?", 13) == 0)
+			{
+				int Len = TNC->RIG->PTTOffLen;
+				UCHAR * Cmd = (UCHAR *)TNC->RIG->PTTOff;
+				char Hex[256];
+				char * hexptr = Hex;
+				int i, j;
+				while(Len--)
+				{
+					i = *(Cmd++);
+					j = i >>4;
+					j += '0';		// ascii
+					if (j > '9')
+						j += 7;
+					*(hexptr++) = j;
+
+					j = i & 0xf;
+					j += '0';		// ascii
+					if (j > '9')
+						j += 7;
+					*(hexptr++) = j;
+				}
+				*(hexptr++) = 0;
+
+				len = sprintf((char *)Poll, "RADIOPTTOFF %s\r", Hex);
+			}
+
+			if (_memicmp((UCHAR *)ptr1, (UCHAR *)"RADIOPTTON ?", 12) == 0)
+			{
+				int Len = TNC->RIG->PTTOnLen;
+				UCHAR * Cmd = (UCHAR *)TNC->RIG->PTTOn;
+				char Hex[256];
+				char * hexptr = Hex;
+				int i, j;
+				while(Len--)
+				{
+					i = *(Cmd++);
+					j = i >>4;
+					j += '0';		// ascii
+					if (j > '9')
+						j += 7;
+					*(hexptr++) = j;
+
+					j = i & 0xf;
+					j += '0';		// ascii
+					if (j > '9')
+						j += 7;
+					*(hexptr++) = j;
+				}
+				*(hexptr++) = 0;
+
+				len = sprintf((char *)Poll, "RADIOPTTON %s\r", Hex);
+			}
+
+			TNC->TXLen = len;
+			ARDOPWriteCommBlock(TNC);
+
+			TNC->Timeout = 60;				// 6 secs
+
+			if (ptr2)
+				*(ptr2++) = 13;		// Put CR back for next time
+
+			ptr1 = ptr2;
 		}
-
-		TNC->TXLen = len;
-		ARDOPWriteCommBlock(TNC);
-
-		TNC->Timeout = 60;				// 6 secs
-
-		if (ptr2)
-			*(ptr2++) = 13;		// Put CR back for next time
-
-		ptr1 = ptr2;
-	}
 
 
 
@@ -4457,11 +4457,11 @@ tcpHostFrame:
 	{
 		// Ardop Packet Data. Probably Buffer Status
 
-		int Len = strlen(&Msg[4]);
+		int Len = strlen((char *)&Msg[4]);
 
-		if (memcmp(&Msg[4], "Queued ", 7) == 0)
+		if (memcmp(&Msg[4], (UCHAR *)"Queued ", 7) == 0)
 		{
-			int Count = atoi(&Msg[11]);
+			int Count = atoi((char *)&Msg[11]);
 			TNC->Streams[Stream].BytesOutstanding = Count;
 		}
 
@@ -4472,7 +4472,7 @@ tcpHostFrame:
 	{
 		if (Msg[3] == 1)	// Null terminated response
 		{
-			int Len = strlen(&Msg[4]) + 1;
+			int Len = strlen((char *)&Msg[4]) + 1;
 			ARDOPProcessResponse(TNC, &Msg[4], Len);
 			return Len + 5;
 		}
@@ -4554,7 +4554,7 @@ tcpHostFrame:
 #endif
 		// Messages may be blocked with top bit of first byte set
 
-		ptr = &Msg[5];
+		ptr = (char *)&Msg[5];
 		ptr2 = Line;
 
 		while(Len--)
@@ -4723,7 +4723,7 @@ tcpHostFrame:
 
 		if (buffptr == NULL) return 4;			// No buffers, so ignore
 
-		buffptr[1] = sprintf((UCHAR *)&buffptr[2],"ARDOP} Ok\r");
+		buffptr[1] = sprintf((char *)&buffptr[2],"ARDOP} Ok\r");
 
 
 		C_Q_ADD(&TNC->Streams[Stream].PACTORtoBPQ_Q, buffptr);
@@ -4751,7 +4751,7 @@ tcpHostFrame:
 			{
 				// More than one to poll - save the list of channels to poll
 
-				strcpy(TNC->NexttoPoll, &Msg[5]);
+				strcpy((char *)TNC->NexttoPoll, (char *)&Msg[5]);
 			}
 
 			// Poll the channel that had data
@@ -4779,7 +4779,7 @@ tcpHostFrame:
 
 		Buffer = &Msg[4];
 
-		ptr = strchr(Buffer, 0);
+		ptr = (UCHAR *)strchr((char *)Buffer, 0);
 
 		if (ptr == 0)
 			return 0;
@@ -4799,7 +4799,7 @@ tcpHostFrame:
 			struct STREAMINFO * STREAM = &TNC->Streams[Stream];
 			UINT * buffptr;
 
-			if (strstr(Buffer, "Incoming"))
+			if (strstr((char *)Buffer, "Incoming"))
 			{
 				// incoming call. Check which application it is for
 
@@ -4813,7 +4813,7 @@ tcpHostFrame:
 				TRANSPORTENTRY * SESS;
 
 				Buffer[len-1] = 0;
-				WritetoTrace(TNC, Buffer, len);
+				WritetoTrace(TNC, (char *)Buffer, len);
 
 				STREAM->ConnectTime = time(NULL);
 				STREAM->BytesRXed = STREAM->BytesTXed = STREAM->PacketsSent = 0;
@@ -4822,7 +4822,7 @@ tcpHostFrame:
 				ptr = strchr(Call, ' ');
 				if (ptr) *ptr = 0;
 
-				ptr = strstr(&Buffer[19], " to ");
+				ptr = strstr((char *)&Buffer[19], " to ");
 				if (ptr)
 				{
 					memcpy(TargetCall, ptr + 4, 10);
@@ -4911,7 +4911,7 @@ tcpHostFrame:
 							ReleaseBuffer(buffptr);
 						}
 
-						SendARDOPorPacketData(TNC, Stream, Msg, strlen(Msg));
+						SendARDOPorPacketData(TNC, Stream, (UCHAR *)Msg, strlen(Msg));
 						STREAM->NeedDisc = 100;	// 10 secs
 					}
 				}
@@ -4927,23 +4927,23 @@ tcpHostFrame:
 			if (buffptr == 0)
 				return len + 5;			// No buffers, so ignore
 
-			buffptr[1] = sprintf((UCHAR *)&buffptr[2], "%s", Buffer);
+			buffptr[1] = sprintf((char *)&buffptr[2], "%s", Buffer);
 			C_Q_ADD(&STREAM->PACTORtoBPQ_Q, buffptr);
 
 			// Unless Connected response close session
 
 			STREAM->Connecting = FALSE;
 
-			if (strstr(Buffer, "Connected"))
+			if (strstr((char *)Buffer, "Connected"))
 				STREAM->Connected = TRUE;
 			else
-			if (strstr(Buffer, "Failure with"))
+			if (strstr((char *)Buffer, "Failure with"))
 				STREAM->ReportDISC = 10;		// Gives time for failure message to display
 			else
-			if (strstr(Buffer, "Busy from"))
+			if (strstr((char *)Buffer, "Busy from"))
 				STREAM->ReportDISC = 10;		// Gives time for failure message to display
 			else
-			if (strstr(Buffer, "Disconnected from"))
+			if (strstr((char *)Buffer, "Disconnected from"))
 			{
 				if (STREAM->Disconnecting)		// We requested disconnect
 				{
@@ -5133,7 +5133,7 @@ void ARDOPSCSCheckRX(struct TNCINFO * TNC)
 
 		while ((TNC->RXLen + Len) < 460)
 		{
-			i2clen = ReadCOMBlockEx(TNC->hDevice, Buffer, 33, &Error);
+			i2clen = ReadCOMBlockEx(TNC->hDevice, (char *)Buffer, 33, &Error);
 
 			if (i2clen < 33 || i2clen == 5)
 				return;
@@ -5174,7 +5174,7 @@ void ARDOPSCSCheckRX(struct TNCINFO * TNC)
 		Len = SerialGetTCPMessage(TNC, &TNC->RXBuffer[TNC->RXLen], 500 - TNC->RXLen);
 	else
 		if (TNC->hDevice)
-			Len = ReadCOMBlock(TNC->hDevice, &TNC->RXBuffer[TNC->RXLen], 500 - TNC->RXLen);
+			Len = ReadCOMBlock(TNC->hDevice, (char *)&TNC->RXBuffer[TNC->RXLen], 500 - TNC->RXLen);
 
 	if (Len == 0)
 		return;
@@ -5210,17 +5210,17 @@ void ARDOPSCSCheckRX(struct TNCINFO * TNC)
 
 //		if (TNC->Streams[Stream].RXBuffer[TNC->Streams[Stream].RXLen-2] != ':')
 
-		if (strlen(TNC->RXBuffer) < TNC->RXLen)
+		if (strlen((char *)TNC->RXBuffer) < TNC->RXLen)
 			TNC->RXLen = 0;
 
-		if ((strstr(TNC->RXBuffer, "cmd: ") == 0) && (strstr(TNC->RXBuffer, "pac: ") == 0))
+		if ((strstr((char *)TNC->RXBuffer, "cmd: ") == 0) && (strstr((char *)TNC->RXBuffer, "pac: ") == 0))
 
 			return;				// Wait for rest of frame
 
 		// Complete Char Mode Frame
 
 //		OpenLogFile(TNC->Port);
-//		WriteLogLine(TNC->Port, TNC->RXBuffer, strlen(TNC->RXBuffer));
+//		WriteLogLine(TNC->Port, TNC->RXBuffer, strlen((char *)TNC->RXBuffer));
 //		CloseLogFile(TNC->Port);
 
 		TNC->RXLen = 0;		// Ready for next frame
@@ -5260,7 +5260,7 @@ void ARDOPSCSCheckRX(struct TNCINFO * TNC)
 	// Can't unstuff into same buffer - fails if partial msg received, and we unstuff twice
 
 
-	Length = Unstuff(&TNC->RXBuffer[2], &UnstuffBuffer[2], Length - 2);
+	Length = Unstuff((UCHAR *)&TNC->RXBuffer[2], (UCHAR *)&UnstuffBuffer[2], Length - 2);
 
 	if (Length == -1)
 	{
@@ -5270,13 +5270,13 @@ void ARDOPSCSCheckRX(struct TNCINFO * TNC)
 		return;				// Ignore for now
 	}
 
-	crc = compute_crc(&UnstuffBuffer[2], Length);
+	crc = compute_crc((UCHAR *)&UnstuffBuffer[2], Length);
 
 	if (crc == 0xf0b8)		// Good CRC
 	{
 		TNC->RXLen = 0;		// Ready for next frame
 		UnstuffBuffer[0] = 0;		// Make sure not seen as TCP Frame
-		ARDOPProcessDEDFrame(TNC, UnstuffBuffer, Length);
+		ARDOPProcessDEDFrame(TNC, (UCHAR *)UnstuffBuffer, Length);
 
 		// If there are more channels to poll (more than 1 entry in general poll response,
 		// and link is not active, poll the next one
@@ -5742,7 +5742,7 @@ VOID ARAXTX(struct PORTCONTROL * PORT, UINT * Buffer)
 	UINT * TXMsg = NULL;			// KISS Message to queue to Hostmode KISS Queue
 	UCHAR * TXPtr;
 	int TXLen = 0;
-	UINT ACKWORD = Buffer[(BUFFLEN-4)/4];
+	uintptr_t ACKWORD = (uintptr_t)buffer_read_ptr(Buffer, 0);
 	struct _MESSAGE * Message = (struct _MESSAGE *)Buffer;
 	UCHAR c;
 
@@ -5758,14 +5758,15 @@ VOID ARAXTX(struct PORTCONTROL * PORT, UINT * Buffer)
 	{
 		// Reset any ACKMODE Timer and release buffer	C_Q_ADD(&TRACE_Q, Buffer);
 
-		struct _LINKTABLE * LINK = (struct _LINKTABLE *)Buffer[(BUFFLEN-4)/4];
+		struct _LINKTABLE * LINK = (struct _LINKTABLE *)buffer_read_ptr(Buffer, 0);
 
 		if (LINK)
 		{
 			if (LINK->L2TIMER)
 				LINK->L2TIMER = LINK->L2TIME;
 
-			Buffer[(BUFFLEN-4)/4] = 0;	// CLEAR FLAG FROM BUFFER
+			// CLEAR FLAG FROM BUFFER
+			buffer_write_ptr(Buffer, 0, NULL);
 		}
 		C_Q_ADD(&TRACE_Q, Buffer);
 		return;
@@ -5773,20 +5774,19 @@ VOID ARAXTX(struct PORTCONTROL * PORT, UINT * Buffer)
 
 	TXPtr = (UCHAR *)&TXMsg[2];
 
-	ptr1 = &Message->DEST[0];
+	ptr1 = (char *)&Message->DEST[0];
 	Len = Message->LENGTH - 7;
 	*(TXPtr++) = FEND;
 
 	if (ACKWORD)					// Frame Needs ACK
 	{
 		*TXPtr++ = 0x0c;			// ACK OPCODE
-		ACKWORD -= (UINT)LINKS;		// Con only send 16 bits, so use offset into LINKS
+		ACKWORD -= (uintptr_t)LINKS;		// Con only send 16 bits, so use offset into LINKS
 		*TXPtr++ = ACKWORD & 0xff;
 		*TXPtr++ = (ACKWORD >> 8) &0xff;
 
 		// have to reset flag so trace doesnt clear it
-
-		Buffer[(BUFFLEN-4)/4] = 0;
+		buffer_write_ptr(Buffer, 0, NULL);
 		TXLen = 4;
 	}
 	else
@@ -5874,7 +5874,7 @@ VOID AddVirtualKISSPort(struct TNCINFO * TNC, int ARDOPPort, char * buf)
 		return;
 
 	if (buf[12] == '=')
-		newPortNumber = atoi(&buf[13]);
+		newPortNumber = atoi((char *)&buf[13]);
 
 	PORT = calloc(1, sizeof(struct PORTCONTROL));
 	if (PORT)
@@ -5972,7 +5972,7 @@ int ConfigVirtualKISSPort(struct TNCINFO * TNC, char * Cmd)
 
 	if (PORT == NULL)
 	{
-		buffptr[1] = sprintf((UCHAR *)&buffptr[2], "ARDOP} Packet Mode nor Enabled\r");
+		buffptr[1] = sprintf((char *)&buffptr[2], "ARDOP} Packet Mode nor Enabled\r");
 		C_Q_ADD(&TNC->Streams[Stream].PACTORtoBPQ_Q, buffptr);
 		return 0;
 	}
@@ -5983,18 +5983,18 @@ int ConfigVirtualKISSPort(struct TNCINFO * TNC, char * Cmd)
 	Param = strtok_s(NULL, " \n\r", &Context);
 
 	if (Param)
-		Value = atoi(Param);
+		Value = atoi((char *)Param);
 
 	if (strcmp(Command, "PACLEN") == 0)
 	{
 		if (Param == NULL)
-			buffptr[1] = sprintf((UCHAR *)&buffptr[2], "ARDOP} PAC %s %d\r", Command, PORT->PORTPACLEN);
+			buffptr[1] = sprintf((char *)&buffptr[2], "ARDOP} PAC %s %d\r", Command, PORT->PORTPACLEN);
 		else
 		{
 			if (Value > 0 && Value <= 256)
 				PORT->PORTPACLEN = Value;
 
-			buffptr[1] = sprintf((UCHAR *)&buffptr[2], "ARDOP} PAC %s now %d\r", Command, PORT->PORTPACLEN);
+			buffptr[1] = sprintf((char *)&buffptr[2], "ARDOP} PAC %s now %d\r", Command, PORT->PORTPACLEN);
 		}
 		C_Q_ADD(&TNC->Streams[Stream].PACTORtoBPQ_Q, buffptr);
 		return 0;
@@ -6002,13 +6002,13 @@ int ConfigVirtualKISSPort(struct TNCINFO * TNC, char * Cmd)
 	else if (strcmp(Command, "RETRIES") == 0)
 	{
 		if (Param == NULL)
-			buffptr[1] = sprintf((UCHAR *)&buffptr[2], "ARDOP} PAC %s %d\r", Command, PORT->PORTN2);
+			buffptr[1] = sprintf((char *)&buffptr[2], "ARDOP} PAC %s %d\r", Command, PORT->PORTN2);
 		else
 		{
 			if (Value > 0 && Value <= 16)
 				PORT->PORTN2 = Value;
 
-			buffptr[1] = sprintf((UCHAR *)&buffptr[2], "ARDOP} PAC %s now %d\r", Command, PORT->PORTN2);
+			buffptr[1] = sprintf((char *)&buffptr[2], "ARDOP} PAC %s now %d\r", Command, PORT->PORTN2);
 		}
 		C_Q_ADD(&TNC->Streams[Stream].PACTORtoBPQ_Q, buffptr);
 		return 0;
@@ -6016,13 +6016,13 @@ int ConfigVirtualKISSPort(struct TNCINFO * TNC, char * Cmd)
 	else if (strcmp(Command, "WINDOW") == 0 || strcmp(Command, "MAXFRAME") == 0)
 	{
 		if (Param == NULL)
-			buffptr[1] = sprintf((UCHAR *)&buffptr[2], "ARDOP} PAC %s %d\r", Command, PORT->PORTWINDOW);
+			buffptr[1] = sprintf((char *)&buffptr[2], "ARDOP} PAC %s %d\r", Command, PORT->PORTWINDOW);
 		else
 		{
 			if (Value > 0 && Value <= 7)
 				PORT->PORTWINDOW = Value;
 
-			buffptr[1] = sprintf((UCHAR *)&buffptr[2], "ARDOP} PAC %s now %d\r", Command, PORT->PORTWINDOW);
+			buffptr[1] = sprintf((char *)&buffptr[2], "ARDOP} PAC %s now %d\r", Command, PORT->PORTWINDOW);
 		}
 		C_Q_ADD(&TNC->Streams[Stream].PACTORtoBPQ_Q, buffptr);
 		return 0;
@@ -6030,13 +6030,13 @@ int ConfigVirtualKISSPort(struct TNCINFO * TNC, char * Cmd)
 	else if (strcmp(Command, "FRACK") == 0)
 	{
 		if (Param == NULL)
-			buffptr[1] = sprintf((UCHAR *)&buffptr[2], "ARDOP} PAC %s %d mS\r", Command, PORT->PORTT1 * 333);
+			buffptr[1] = sprintf((char *)&buffptr[2], "ARDOP} PAC %s %d mS\r", Command, PORT->PORTT1 * 333);
 		else
 		{
 			if (Value > 0 && Value <= 20000)
 				PORT->PORTT1 = Value / 333;
 
-			buffptr[1] = sprintf((UCHAR *)&buffptr[2], "ARDOP} PAC %s now %d mS\r", Command, PORT->PORTT1 * 333);
+			buffptr[1] = sprintf((char *)&buffptr[2], "ARDOP} PAC %s now %d mS\r", Command, PORT->PORTT1 * 333);
 		}
 		C_Q_ADD(&TNC->Streams[Stream].PACTORtoBPQ_Q, buffptr);
 		return 0;
@@ -6044,19 +6044,19 @@ int ConfigVirtualKISSPort(struct TNCINFO * TNC, char * Cmd)
 	else if (strcmp(Command, "RESPTIME") == 0)
 	{
 		if (Param == NULL)
-			buffptr[1] = sprintf((UCHAR *)&buffptr[2], "ARDOP} PAC %s %d mS\r", Command, PORT->PORTT2 * 333);
+			buffptr[1] = sprintf((char *)&buffptr[2], "ARDOP} PAC %s %d mS\r", Command, PORT->PORTT2 * 333);
 		else
 		{
 			if (Value > 0 && Value <= 20000)
 				PORT->PORTT2 = Value / 333;
 
-			buffptr[1] = sprintf((UCHAR *)&buffptr[2], "ARDOP} PAC %s now %d mS\r", Command, PORT->PORTT2 * 333);
+			buffptr[1] = sprintf((char *)&buffptr[2], "ARDOP} PAC %s now %d mS\r", Command, PORT->PORTT2 * 333);
 		}
 		C_Q_ADD(&TNC->Streams[Stream].PACTORtoBPQ_Q, buffptr);
 		return 0;
 	}
 	else
-		buffptr[1] = sprintf((UCHAR *)&buffptr[2], "ARDOP} Invalid Command %s\r", Cmd);
+		buffptr[1] = sprintf((char *)&buffptr[2], "ARDOP} Invalid Command %s\r", Cmd);
 
 
 	C_Q_ADD(&TNC->Streams[Stream].PACTORtoBPQ_Q, buffptr);
@@ -6150,9 +6150,9 @@ void ProcessKISSPacket(struct TNCINFO * TNC, UCHAR * KISSBuffer, int Len)
 		//	ACK FRAME - reset link timer
 
 		struct _LINKTABLE * LINK;
-		UINT ACKWORD = KISSBuffer[1] | KISSBuffer[2] << 8;
+		uintptr_t ACKWORD = KISSBuffer[1] | KISSBuffer[2] << 8;
 
-		ACKWORD += (UINT)LINKS;
+		ACKWORD += (uintptr_t)LINKS;
 		LINK = (struct _LINKTABLE *)ACKWORD;
 
 		if (LINK->L2TIMER)

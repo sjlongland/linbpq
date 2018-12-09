@@ -1,0 +1,11 @@
+linbpq-6.0.17.1 for Debian
+--------------------------
+
+This is an unofficial distribution of John Wiseman's linbpq AX.25 software
+for Debian GNU/Linux systems.  The software is installed in `/var/lib/linbpq`
+with a `linbpq` user created automatically and an init script created in
+`/etc/init.d/linbpq` so that the service can start at boot.
+
+The package at this time is highly experimental, and not guaranteed to work.
+
+ -- Stuart Longland <me@vk4msl.id.au>  Sun, 09 Dec 2018 00:25:50 +0000

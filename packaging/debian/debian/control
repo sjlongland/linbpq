@@ -1,0 +1,20 @@
+Source: linbpq
+Section: hamradio
+Priority: optional
+Maintainer: Stuart Longland <me@vk4msl.id.au>
+Build-Depends: debhelper (>= 9), libconfig-dev, libpcap-dev, make, gcc
+Standards-Version: 3.9.5
+Homepage: https://github.com/sjlongland/linbpq
+#Vcs-Git: git://anonscm.debian.org/collab-maint/linbpq-6.0.17.1.git
+#Vcs-Browser: http://anonscm.debian.org/?p=collab-maint/linbpq-6.0.17.1.git;a=summary
+
+Package: linbpq
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: AX.25 and NET/ROM stack for Linux and Windows
+ linbpq is the Linux port of BPQ32, an AX.25 network stack for IBM PC
+ compatibles running Microsoft Windows developed by John Wiseman G8BPQ.
+ .
+ This package is an unofficial distribution of linbpq, intended to provide
+ a consistent and repeatable installation of linbpq.  It is provided as-is
+ with no support whatsoever.

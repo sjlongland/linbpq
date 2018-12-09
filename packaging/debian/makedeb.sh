@@ -69,6 +69,11 @@ tar -C ${SOURCEDIR}/packaging/debian -cf - debian \
 sed -i -e "1 s/(.*)/(${VERSION#v}-${PATCHREV})/" \
 	${WORKDIR}/linbpq-${VERSION}/debian/changelog
 
+# Create a list of conffiles.
+( cd ${SOURCEDIR}/bpqhome ; find . -type f ) \
+	| sed -e 's:^\.:/var/lib/linbpq:' \
+	> ${WORKDIR}/linbpq-${VERSION}/debian/conffiles
+
 # Try a build
 ( cd ${WORKDIR}/linbpq-${VERSION} && dpkg-buildpackage $@ )
 

@@ -119,7 +119,7 @@ $(DESTDIR)/linbpq-$(VERSION).tar.xz.asc: $(DESTDIR)/linbpq-$(VERSION).tar.xz
 $(DESTDIR)/linbpq-$(VERSION).tar.xz: .git
 	-rm -f $(DESTDIR)/linbpq-$(VERSION).tar.xz
 	git archive --format=tar \
-		--prefix=linbpq-$(VERSION) \
+		--prefix=linbpq-$(VERSION)/ \
 		-o $(DESTDIR)/linbpq-$(VERSION).tar \
 		HEAD
 	xz -9 $(DESTDIR)/linbpq-$(VERSION).tar

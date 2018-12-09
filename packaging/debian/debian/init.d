@@ -1,5 +1,5 @@
 #!/bin/sh
-# vim: set tw=78 et sw=4 ts=4 noai syn=sh fileencoding=utf-8:
+# vim: set tw=78 noet sw=4 ts=4 noai syn=sh fileencoding=utf-8:
 ### BEGIN INIT INFO
 # Provides:          linbpq-6.0.17.1
 # Required-Start:    $local_fs $network $remote_fs $syslog
@@ -48,6 +48,15 @@ do_start()
 	#   0 if daemon has been started
 	#   1 if daemon was already running
 	#   2 if daemon could not be started
+
+# Check that the configuration file has been updated by the user.
+	if grep -qF BPQ32_NOT_CONFIGURED_PLEASE_UPDATE_BPQ32_CONF \
+		${LINBPQ_HOME}/bpq32.cfg
+	then
+		echo "linbpq not configured, please edit ${LINBPQ_HOME}/bpq32.cfg"
+		return 2
+	fi
+
 	start-stop-daemon --chdir ${LINBPQ_HOME} --start --quiet --pidfile $PIDFILE --exec $DAEMON --test > /dev/null \
 		|| return 1
 	start-stop-daemon --chdir ${LINBPQ_HOME} --start --quiet --pidfile $PIDFILE --exec $DAEMON -- \

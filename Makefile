@@ -78,6 +78,12 @@ ifneq ($(I2C),y)
 all: CPPFLAGS+=-DNOI2C
 endif
 
+# Do we want code coverage?
+ifeq ($(COVERAGE),y)
+# http://www.drdobbs.com/code-coverage-for-c-unit-tests/184401989
+all: CFLAGS+= -fprofile-arcs -ftest-coverage
+endif
+
 $(OBJECTS)/linbpq: $(addprefix $(OBJECTS)/,$(OBJS))
 	$(CC) $^ $(LDFLAGS) $(LIBS) -o $@
 
